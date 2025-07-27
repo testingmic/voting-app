@@ -4,8 +4,12 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/layout/Navbar';
 import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ElectionsPage from './pages/ElectionsPage';
+import CandidatesPage from './pages/CandidatesPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import SettingsPage from './pages/SettingsPage';
 import './index.css';
 
 // Protected Route Component
@@ -45,6 +49,7 @@ const App: React.FC = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             
             {/* Protected Routes */}
             <Route
@@ -85,10 +90,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Candidates</h1>
-                      <p className="mt-2 text-gray-600">Candidates management coming soon...</p>
-                    </div>
+                    <CandidatesPage />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -98,10 +100,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-                      <p className="mt-2 text-gray-600">Analytics dashboard coming soon...</p>
-                    </div>
+                    <AnalyticsPage />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -111,10 +110,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-                      <p className="mt-2 text-gray-600">Settings page coming soon...</p>
-                    </div>
+                    <SettingsPage />
                   </Layout>
                 </ProtectedRoute>
               }

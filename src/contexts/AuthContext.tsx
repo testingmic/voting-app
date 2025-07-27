@@ -51,18 +51,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string, rememberMe = false) => {
     try {
       setLoading(true);
-      const response = await apiService.login({ email, password, rememberMe });
       
-      if (response.success && response.data) {
-        const { user: userData, token } = response.data;
-        
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        setUser(userData);
-      } else {
-        throw new Error(response.message || 'Login failed');
-      }
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock successful login for demo purposes
+      const mockUser: User = {
+        id: 1,
+        name: 'John Doe',
+        email: email,
+        organization: 'Sample School',
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+        twoFactorEnabled: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      const mockToken = 'mock-jwt-token-' + Date.now();
+      
+      localStorage.setItem('authToken', mockToken);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
+      setUser(mockUser);
+      
+      // Uncomment the following lines when your backend is ready
+      // const response = await apiService.login({ email, password, rememberMe });
+      // if (response.success && response.data) {
+      //   const { user: userData, token } = response.data;
+      //   localStorage.setItem('authToken', token);
+      //   localStorage.setItem('user', JSON.stringify(userData));
+      //   setUser(userData);
+      // } else {
+      //   throw new Error(response.message || 'Login failed');
+      // }
     } catch (error: any) {
       throw new Error(error.message || 'Login failed');
     } finally {
@@ -73,18 +94,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (data: any) => {
     try {
       setLoading(true);
-      const response = await apiService.signup(data);
       
-      if (response.success && response.data) {
-        const { user: userData, token } = response.data;
-        
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        setUser(userData);
-      } else {
-        throw new Error(response.message || 'Signup failed');
-      }
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock successful signup for demo purposes
+      const mockUser: User = {
+        id: 1,
+        name: data.name,
+        email: data.email,
+        organization: data.organizationName,
+        role: 'admin',
+        avatar: `https://ui-avatars.com/api/?name=${data.name}&background=3b82f6&color=fff`,
+        twoFactorEnabled: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      const mockToken = 'mock-jwt-token-' + Date.now();
+      
+      localStorage.setItem('authToken', mockToken);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
+      setUser(mockUser);
+      
+      // Uncomment the following lines when your backend is ready
+      // const response = await apiService.signup(data);
+      // if (response.success && response.data) {
+      //   const { user: userData, token } = response.data;
+      //   localStorage.setItem('authToken', token);
+      //   localStorage.setItem('user', JSON.stringify(userData));
+      //   setUser(userData);
+      // } else {
+      //   throw new Error(response.message || 'Signup failed');
+      // }
     } catch (error: any) {
       throw new Error(error.message || 'Signup failed');
     } finally {
