@@ -10,6 +10,8 @@ import ElectionsPage from './pages/ElectionsPage';
 import CandidatesPage from './pages/CandidatesPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
+import OrganizationPage from './pages/OrganizationPage';
 import './index.css';
 
 // Protected Route Component
@@ -120,10 +122,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-                      <p className="mt-2 text-gray-600">Profile page coming soon...</p>
-                    </div>
+                    <ProfilePage />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -133,10 +132,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Organization</h1>
-                      <p className="mt-2 text-gray-600">Organization settings coming soon...</p>
-                    </div>
+                    <OrganizationPage />
                   </Layout>
                 </ProtectedRoute>
               }
