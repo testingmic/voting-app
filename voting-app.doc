@@ -1,0 +1,185 @@
+---
+
+## 📘 Project Documentation: Voting App for Schools, Organizations & Churches (Final Scope)
+
+---
+
+### 1. 📌 Project Overview
+
+This voting platform allows **schools, churches, and organizations** to conduct transparent elections with rich features like:
+
+* ✅ **User & Subscription Management**
+* ✅ **Custom Branding & 2FA**
+* ✅ **Device Fingerprinting for Secure Voting**
+* ✅ **Live Results & Analytics**
+* ✅ **Vote Scheduling & Notifications**
+* ✅ **Vote Administration Tools**
+* ✅ **Candidate Profiles & Voter Engagement**
+
+---
+
+### 2. 🛠️ Technology Stack
+
+| Layer           | Technology               |
+| --------------- | ------------------------ |
+| Frontend        | React + TypeScript       |
+| Styling         | Tailwind CSS             |
+| Backend API     | PHP (Codeigniter preferred)  |
+| Database        | MySQL or SQLite      |
+| Authentication  | JWT + 2FA (Authenticator)   |
+| Payment Gateway | Stripe / Paystack        |
+| Device ID       | FingerprintJS / custom   |
+| Notification    | Email + SMS (via Twilio) |
+| Scheduling      | Codeigniter Scheduler / CRON |
+| Charts          | Recharts / Chart.js      |
+
+---
+
+### 3. 🧩 Feature Summary
+
+#### 👤 User & Organization
+
+* Signup/Login + 2FA
+* Profile & organization branding
+* Subscription: Free / Premium
+
+#### 🗳️ Election Management
+
+* Create/Edit/Delete elections
+* **Vote Scheduling** (start & end time)
+* **Vote Administration**:
+
+  * Pause/resume elections
+  * Close voting manually
+  * Monitor election progress
+* Set eligibility rules
+
+#### 🔔 Notifications
+
+* **Email & SMS Reminders**:
+
+  * Before voting begins
+  * During voting
+  * Final voting reminder (1 hr left)
+* Confirmation notification after vote
+* Admin notifications on election end
+
+#### 🧑‍💼 Candidate Profiles
+
+* Upload photo, manifesto, and bio
+* Social media links or contact info
+* Shareable profile page
+* Voters can browse candidate info before voting
+
+#### 📊 Analytics & Results
+
+* Total voters vs turnout
+* Device types, browsers
+* Real-time vote count
+* Export to CSV / PDF
+* Breakdown by candidate, voter location, time of day
+
+#### 🛡️ Security
+
+* Device fingerprinting
+* IP logging
+* Rate limiting
+* JWT + 2FA login protection
+* Audit logs
+
+---
+
+### 4. 🔗 Expanded API Endpoints
+
+#### 📅 Vote Scheduling
+
+* `POST /api/elections` (start\_time, end\_time)
+* `GET /api/elections/upcoming`
+* `POST /api/elections/:id/close`
+* `POST /api/elections/:id/pause`
+
+#### 🛠️ Vote Administration
+
+* `POST /api/elections/:id/resume`
+* `GET /api/elections/:id/live-status`
+* `GET /api/elections/:id/admin-dashboard`
+
+#### 🔔 Notifications
+
+* `POST /api/notifications/send`
+* `GET /api/notifications/history`
+
+#### 🧑‍💼 Candidate Profiles
+
+* `POST /api/candidates`
+* `PUT /api/candidates/:id`
+* `GET /api/elections/:id/candidates`
+* `GET /api/candidates/:id`
+
+---
+
+### 5. 🧱 Updated DB Tables
+
+#### `candidate_profiles`
+
+* id
+* user\_id
+* election\_id
+* manifesto
+* bio
+* image\_url
+* social\_links (JSON)
+
+#### `notifications`
+
+* id
+* user\_id
+* type (email/sms)
+* message
+* status (sent/pending/failed)
+* sent\_at
+
+#### `scheduled_jobs`
+
+* id
+* type (reminder, open\_vote, close\_vote)
+* election\_id
+* scheduled\_for
+* status (pending/completed)
+
+---
+
+### 6. 📅 Development Roadmap (Revised: 14 Weeks)
+
+| Week | Milestone                                  |
+| ---- | ------------------------------------------ |
+| 1–2  | Core Setup (auth, orgs, subscriptions)     |
+| 3–4  | Voting Engine + Device Fingerprinting      |
+| 5    | Vote Scheduling Module                     |
+| 6    | Notification Service (Email/SMS)           |
+| 7    | Candidate Profile Pages                    |
+| 8    | Admin Tools (pause/resume/close elections) |
+| 9    | Analytics & Result Dashboard               |
+| 10   | Custom Branding & Theme Settings           |
+| 11   | 2FA & Security Enhancements                |
+| 12   | QA Testing & Bug Fixes                     |
+| 13   | Final Deployment                           |
+| 14   | Documentation & Admin Training             |
+
+---
+
+### 7. ✅ Final Feature Set Summary
+
+| Module             | Included        |
+| ------------------ | --------------- |
+| User Signup/Login  | ✅               |
+| Subscription Plans | ✅ (Free + Paid) |
+| 2FA                | ✅ (TOTP/SMS)    |
+| Election Mgmt      | ✅               |
+| Vote Scheduling    | ✅               |
+| Vote Admin Tools   | ✅               |
+| Notifications      | ✅ (Email/SMS)   |
+| Candidate Profiles | ✅               |
+| Custom Branding    | ✅               |
+| Analytics & Charts | ✅               |
+| Device Fingerprint | ✅               |
