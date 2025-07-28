@@ -66,6 +66,15 @@ const DashboardPage: React.FC = () => {
       totalVotes: 289,
       totalVoters: 300,
       progress: 96
+    },
+    {
+      id: 4,
+      title: 'Department of Computer Science Election',
+      status: 'draft',
+      endDate: '2024-01-30',
+      totalVotes: 250,
+      totalVoters: 300,
+      progress: 85
     }
   ];
 

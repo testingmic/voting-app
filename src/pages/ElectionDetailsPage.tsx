@@ -266,7 +266,7 @@ const ElectionDetailsPage: React.FC = () => {
         <div className="space-y-6">
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <GlassCard>
+            <GlassCard className="hover:scale-105 transition-all duration-300">
               <GlassCardBody>
                 <div className="flex items-center">
                   <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -280,7 +280,7 @@ const ElectionDetailsPage: React.FC = () => {
               </GlassCardBody>
             </GlassCard>
 
-            <GlassCard>
+            <GlassCard className="hover:scale-105 transition-all duration-300">
               <GlassCardBody>
                 <div className="flex items-center">
                   <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -294,7 +294,7 @@ const ElectionDetailsPage: React.FC = () => {
               </GlassCardBody>
             </GlassCard>
 
-            <GlassCard>
+            <GlassCard className="hover:scale-105 transition-all duration-300">
               <GlassCardBody>
                 <div className="flex items-center">
                   <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
@@ -308,7 +308,7 @@ const ElectionDetailsPage: React.FC = () => {
               </GlassCardBody>
             </GlassCard>
 
-            <GlassCard>
+            <GlassCard className="hover:scale-105 transition-all duration-300">
               <GlassCardBody>
                 <div className="flex items-center">
                   <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">

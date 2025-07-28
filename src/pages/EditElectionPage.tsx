@@ -83,7 +83,7 @@ const EditElectionPage: React.FC = () => {
   ];
 
   const steps = [
-    { id: 1, name: 'Basic Information', icon: FileText },
+    { id: 1, name: 'Details', icon: FileText },
     { id: 2, name: 'Positions', icon: Users },
     { id: 3, name: 'Candidates', icon: Users },
     { id: 4, name: 'Review & Update', icon: Settings }

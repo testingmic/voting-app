@@ -23,6 +23,7 @@ import {
 import { toast } from 'react-hot-toast';
 
 interface CSVMember {
+  member_id: string;
   name: string;
   email: string;
   role: 'admin' | 'voter';
@@ -65,6 +66,7 @@ const BulkImportPage: React.FC = () => {
       // Validate required fields
       if (row.name && row.email && row.role) {
         data.push({
+          member_id: row.member_id,
           name: row.name,
           email: row.email,
           role: row.role.toLowerCase() === 'admin' ? 'admin' : 'voter',
@@ -132,12 +134,12 @@ const BulkImportPage: React.FC = () => {
   };
 
   const downloadCSVTemplate = () => {
-    const headers = ['name', 'email', 'role', 'phone', 'position', 'department', 'status'];
+    const headers = ['member_id', 'name', 'email', 'role', 'phone', 'position', 'department', 'status'];
     const sampleData = [
-      ['John Doe', 'john.doe@example.com', 'voter', '+1 (555) 123-4567', 'Teacher', 'Mathematics', 'active'],
-      ['Jane Smith', 'jane.smith@example.com', 'admin', '+1 (555) 234-5678', 'Principal', 'Administration', 'active'],
-      ['Mike Johnson', 'mike.johnson@example.com', 'voter', '+1 (555) 345-6789', 'Teacher', 'Science', 'active'],
-      ['Sarah Wilson', 'sarah.wilson@example.com', 'voter', '+1 (555) 456-7890', 'Teacher', 'English', 'inactive']
+      ['STU830', 'John Doe', 'john.doe@example.com', 'voter', '+1 (555) 123-4567', 'Teacher', 'Mathematics', 'active'],
+      ['STU831', 'Jane Smith', 'jane.smith@example.com', 'admin', '+1 (555) 234-5678', 'Principal', 'Administration', 'active'],
+      ['STU832', 'Mike Johnson', 'mike.johnson@example.com', 'voter', '+1 (555) 345-6789', 'Teacher', 'Science', 'active'],
+      ['STU833', 'Sarah Wilson', 'sarah.wilson@example.com', 'voter', '+1 (555) 456-7890', 'Teacher', 'English', 'inactive']
     ];
     
     const csvContent = [
@@ -340,6 +342,7 @@ const BulkImportPage: React.FC = () => {
                         <div>
                           <h5 className="font-medium mb-2">Required Fields:</h5>
                           <ul className="space-y-1">
+                            <li>• <strong>member_id</strong> - Member ID (must be unique)</li>
                             <li>• <strong>name</strong> - Full name of the member</li>
                             <li>• <strong>email</strong> - Email address (must be unique)</li>
                             <li>• <strong>role</strong> - "admin" or "voter"</li>

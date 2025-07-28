@@ -291,7 +291,7 @@ const CandidateDetailsPage: React.FC = () => {
           </div>
 
           {/* Election Performance */}
-          <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCard className="transform">
             <GlassCardBody>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Election Performance</h3>
               <div className="space-y-4">

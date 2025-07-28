@@ -96,7 +96,7 @@ const OrganizationPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Organization Card */}
         <div className="lg:col-span-1">
-          <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCard className="transform ">
             <GlassCardBody className="text-center">
               <div className="relative inline-block">
                 <div className="w-32 h-32 bg-gray-100 dark:bg-dark-300 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -172,7 +172,7 @@ const OrganizationPage: React.FC = () => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard className="transform ">
                 <GlassCardBody>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Organization Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -293,7 +293,7 @@ const OrganizationPage: React.FC = () => {
               </GlassCard>
 
               {/* Statistics */}
-              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard className="transform ">
                 <GlassCardBody>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Organization Statistics</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -321,7 +321,7 @@ const OrganizationPage: React.FC = () => {
           {/* Branding Tab */}
           {activeTab === 'branding' && (
             <div className="space-y-6">
-              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard className="transform ">
                 <GlassCardBody>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Branding & Appearance</h3>
                   <div className="space-y-6">
@@ -403,7 +403,7 @@ const OrganizationPage: React.FC = () => {
           {/* Settings Tab */}
           {activeTab === 'settings' && (
             <div className="space-y-6">
-              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard className="transform ">
                 <GlassCardBody>
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Organization Settings</h3>
                   <div className="space-y-6">
