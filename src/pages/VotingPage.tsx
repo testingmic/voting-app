@@ -19,10 +19,11 @@ import {
   ListChecks,
   Timer,
   Home,
-  Share2
+  Share2,
 } from 'lucide-react';
 import GlassCard, { GlassCardHeader, GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast';
 
 interface Position {
@@ -68,9 +69,12 @@ const VotingPage: React.FC = () => {
     type: 'invalid' | 'not-started' | 'ended' | 'paused' | 'already-voted' | null;
     message: string;
   }>({ type: null, message: '' });
-  const [currentStep, setCurrentStep] = useState<'intro' | 'voting' | 'review' | 'success'>('intro');
+  const [currentStep, setCurrentStep] = useState<'intro' | 'voter-id' | 'voting' | 'review' | 'success'>('intro');
   const [selectedVotes, setSelectedVotes] = useState<VoteSelection[]>([]);
   const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
+  const [voterId, setVoterId] = useState('');
+  const [voterIdValidating, setVoterIdValidating] = useState(false);
+  const [voterInfo, setVoterInfo] = useState<any>(null);
 
   // Initialize FingerprintJS and get device ID
   useEffect(() => {
@@ -301,16 +305,68 @@ const VotingPage: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (election && currentPositionIndex < election.positions.length - 1) {
-      setCurrentPositionIndex(currentPositionIndex + 1);
-    } else {
-      setCurrentStep('review');
+    if (currentStep === 'intro') {
+      setCurrentStep('voter-id');
+    } else if (currentStep === 'voter-id') {
+      // Voter ID validation is handled separately
+      return;
+    } else if (currentStep === 'voting') {
+      if (currentPositionIndex < election!.positions.length - 1) {
+        setCurrentPositionIndex(currentPositionIndex + 1);
+      } else {
+        setCurrentStep('review');
+      }
     }
   };
 
   const handlePrevious = () => {
-    if (currentPositionIndex > 0) {
-      setCurrentPositionIndex(currentPositionIndex - 1);
+    if (currentStep === 'voter-id') {
+      setCurrentStep('intro');
+    } else if (currentStep === 'voting') {
+      if (currentPositionIndex > 0) {
+        setCurrentPositionIndex(currentPositionIndex - 1);
+      } else {
+        setCurrentStep('voter-id');
+      }
+    } else if (currentStep === 'review') {
+      setCurrentStep('voting');
+      setCurrentPositionIndex(election!.positions.length - 1);
+    }
+  };
+
+  const handleVoterIdValidation = async () => {
+    if (!voterId.trim()) {
+      toast.error('Please enter your Voter ID');
+      return;
+    }
+
+    setVoterIdValidating(true);
+    try {
+      // Simulate API call to validate voter ID
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mock voter validation - in real app, this would be an API call
+      // For demo purposes, we'll accept any voter ID that starts with "VOT"
+      if (voterId.toUpperCase().startsWith('VOT')) {
+        const mockVoterInfo = {
+          id: '1',
+          name: 'John Smith',
+          email: 'john.smith@email.com',
+          voterId: voterId.toUpperCase(),
+          status: 'active',
+          validatedAt: '2024-01-15T10:30:00Z'
+        };
+        
+        setVoterInfo(mockVoterInfo);
+        setCurrentStep('voting');
+        toast.success('Voter ID validated successfully!');
+      } else {
+        throw new Error('Invalid Voter ID format');
+      }
+    } catch (error) {
+      toast.error('Invalid Voter ID or voter not activated. Please contact election officials.');
+    } finally {
+      setVoterIdValidating(false);
     }
   };
 
@@ -534,34 +590,120 @@ const VotingPage: React.FC = () => {
 
             {/* Begin Voting Button */}
             <div className="flex items-center justify-between pt-6">
-              <Button variant="outline" onClick={() => navigate('/')}>
+              <Button variant="outline" onClick={() => navigate('/dashboard')}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Exit
               </Button>
-              <Button onClick={() => setCurrentStep('voting')} size="lg">
+              <Button onClick={handleNext} size="lg" className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
                 Begin Voting
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
+        ) : currentStep === 'voter-id' ? (
+          <div className="space-y-6">
+            <GlassCard>
+              <GlassCardHeader>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Enter Voter ID</h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Please enter your unique Voter ID to begin voting.
+                </p>
+              </GlassCardHeader>
+              <GlassCardBody>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="voterId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Voter ID
+                    </label>
+                    <Input
+                      type="text"
+                      id="voterId"
+                      value={voterId}
+                      onChange={(e) => setVoterId(e.target.value)}
+                      placeholder="Enter your Voter ID"
+                      disabled={voterIdValidating}
+                    />
+                    {voterIdValidating && (
+                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Validating Voter ID...</p>
+                    )}
+                  </div>
+                  
+                  {/* Help Information */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-start space-x-2">
+                      <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-blue-700 dark:text-blue-300">
+                        <p className="font-medium mb-1">About Voter ID Validation:</p>
+                        <ul className="space-y-1">
+                          <li>• Your Voter ID was provided by election officials</li>
+                          <li>• This step ensures only authorized voters can participate</li>
+                          <li>• If you don't have a Voter ID, please contact election officials</li>
+                          <li className="text-yellow-700 dark:text-yellow-300 font-medium">• Demo: Use any ID starting with "VOT" (e.g., VOT001234)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-4">
+                    <Button variant="outline" onClick={handlePrevious}>
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleVoterIdValidation}
+                      loading={voterIdValidating}
+                      className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                      disabled={!voterId.trim() || voterIdValidating}
+                    >
+                      Validate Voter ID
+                    </Button>
+                  </div>
+                </div>
+              </GlassCardBody>
+            </GlassCard>
+          </div>
         ) : currentStep === 'voting' ? (
           <>
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{election.title}</h1>
-              <p className="text-gray-600 dark:text-gray-400">{election.description}</p>
-              
-              <div className="mt-4 flex items-center space-x-4">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
-                  <Clock className="w-4 h-4 mr-1" />
-                  Ends {new Date(election.endDate).toLocaleDateString()}
-                </span>
-                {election.allowMultipleVotes && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
-                    <AlertTriangle className="w-4 h-4 mr-1" />
-                    Multiple votes allowed
-                  </span>
-                )}
+            {/* Voting Header */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Cast Your Vote
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Position {currentPositionIndex + 1} of {election!.positions.length}
+                  </p>
+                  {voterInfo && (
+                    <div className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <span className="text-sm text-green-700 dark:text-green-300">
+                          Voter: {voterInfo.name} (ID: {voterInfo.voterId})
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" onClick={handlePrevious}>
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Previous
+                  </Button>
+                  <Button onClick={handleNext}>
+                    {currentPositionIndex < election!.positions.length - 1 ? (
+                      <>
+                        Next
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        Review Votes
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -650,7 +792,7 @@ const VotingPage: React.FC = () => {
             <div className="mt-8 flex items-center justify-between">
               <Button
                 variant="outline"
-                onClick={currentPositionIndex === 0 ? () => navigate('/') : handlePrevious}
+                onClick={currentPositionIndex === 0 ? () => navigate('/dashboard') : handlePrevious}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 {currentPositionIndex === 0 ? 'Exit' : 'Previous Position'}
@@ -661,6 +803,7 @@ const VotingPage: React.FC = () => {
                 </div>
                 <Button
                   onClick={handleNext}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
                   disabled={!getPositionVoteStatus(election.positions[currentPositionIndex].id).complete}
                 >
                   {currentPositionIndex === election.positions.length - 1 ? (
@@ -746,6 +889,7 @@ const VotingPage: React.FC = () => {
               <Button
                 onClick={handleSubmitVotes}
                 loading={loading}
+                className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
                 disabled={selectedVotes.every(vote => vote.candidateIds.length === 0)}
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
@@ -807,8 +951,8 @@ const VotingPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   variant="outline"
-                  onClick={() => navigate('/')}
-                  className="w-full sm:w-auto"
+                  onClick={() => navigate('/dashboard')}
+                  className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
                 >
                   <Home className="w-4 h-4 mr-2" />
                   Return Home

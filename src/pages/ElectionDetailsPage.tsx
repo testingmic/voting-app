@@ -202,9 +202,13 @@ const ElectionDetailsPage: React.FC = () => {
             <p className="mt-2 text-gray-600 dark:text-gray-400">{election.description}</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" onClick={handleCopyLink}>
+            {/* <Button variant="outline" onClick={handleCopyLink}>
               <Copy className="w-4 h-4 mr-2" />
               Copy Link
+            </Button> */}
+            <Button variant="outline" onClick={() => navigate(`/elections/${election.id}/validate-voters`)}>
+              <Users className="w-4 h-4 mr-2" />
+              Voter Validation
             </Button>
             <Button variant="outline" onClick={() => navigate(`/elections/${election.id}/edit`)}>
               <Edit className="w-4 h-4 mr-2" />

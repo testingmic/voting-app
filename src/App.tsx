@@ -29,6 +29,7 @@ import BulkImportPage from './pages/BulkImportPage';
 import StatusPage from './pages/StatusPage';
 import SecurityPrivacyPage from './pages/SecurityPrivacyPage';
 import NotFoundPage from './pages/NotFoundPage';
+import VoterValidationPage from './pages/VoterValidationPage';
 import './index.css';
 
 // Protected Route Component
@@ -123,6 +124,16 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Layout>
                       <EditElectionPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/elections/:id/validate-voters"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <VoterValidationPage />
                     </Layout>
                   </ProtectedRoute>
                 }

@@ -443,6 +443,14 @@ const ElectionsPage: React.FC = () => {
                         <LinkIcon className="w-4 h-4 mr-3" />
                         Copy Vote Link
                       </button>
+                      <Link
+                        to={`/elections/${election.id}/validate-voters`}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Users className="w-4 h-4 mr-3" />
+                        Voter Validation
+                      </Link>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
