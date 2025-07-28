@@ -75,6 +75,20 @@ const VotingPage: React.FC = () => {
   const [voterId, setVoterId] = useState('');
   const [voterIdValidating, setVoterIdValidating] = useState(false);
   const [voterInfo, setVoterInfo] = useState<any>(null);
+  const [hasVoted, setHasVoted] = useState(false);
+
+  // Check if user has already voted in this election
+  useEffect(() => {
+    if (id) {
+      const votedElections = JSON.parse(localStorage.getItem('votedElections') || '[]');
+      const hasVotedInThisElection = votedElections.some((vote: any) => vote.electionId === id);
+      setHasVoted(hasVotedInThisElection);
+      
+      if (hasVotedInThisElection) {
+        setCurrentStep('success');
+      }
+    }
+  }, [id]);
 
   // Initialize FingerprintJS and get device ID
   useEffect(() => {
@@ -196,8 +210,10 @@ const VotingPage: React.FC = () => {
         }
 
         // Simulate checking if user has already voted
-        const hasVoted = false; // This would be an API call in production
-        if (hasVoted && !mockElection.allowMultipleVotes) {
+        const votedElections = JSON.parse(localStorage.getItem('votedElections') || '[]');
+        const hasVotedInThisElection = votedElections.some((vote: any) => vote.electionId === id);
+        
+        if (hasVotedInThisElection && !mockElection.allowMultipleVotes) {
           setError({
             type: 'already-voted',
             message: 'You have already cast your vote in this election.'
@@ -269,6 +285,24 @@ const VotingPage: React.FC = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Save vote to local storage
+      const votedElections = JSON.parse(localStorage.getItem('votedElections') || '[]');
+      const voteRecord = {
+        electionId: id,
+        voterId: voterInfo?.voterId || 'unknown',
+        voterName: voterInfo?.name || 'Unknown Voter',
+        votedAt: new Date().toISOString(),
+        deviceId: deviceId
+      };
+      
+      // Check if already voted in this election
+      const existingVoteIndex = votedElections.findIndex((vote: any) => vote.electionId === id);
+      if (existingVoteIndex === -1) {
+        votedElections.push(voteRecord);
+        localStorage.setItem('votedElections', JSON.stringify(votedElections));
+      }
+      
+      setHasVoted(true);
       toast.success('Your votes have been cast successfully!');
       setCurrentStep('success');
     } catch (error) {
@@ -376,6 +410,11 @@ const VotingPage: React.FC = () => {
     return ((currentPositionIndex + 1) / totalPositions) * 100;
   };
 
+  const getVoteRecord = () => {
+    const votedElections = JSON.parse(localStorage.getItem('votedElections') || '[]');
+    return votedElections.find((vote: any) => vote.electionId === id);
+  };
+
   if (loading || validating) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
@@ -387,6 +426,11 @@ const VotingPage: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // If user has already voted, show success page
+  if (hasVoted && currentStep !== 'success') {
+    setCurrentStep('success');
   }
 
   if (error.type) {
@@ -929,9 +973,15 @@ const VotingPage: React.FC = () => {
                       <span className="font-medium text-gray-900 dark:text-white">{election.title}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Voter ID</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {getVoteRecord()?.voterId || 'Unknown'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">Date & Time</span>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {new Date().toLocaleString()}
+                        {getVoteRecord()?.votedAt ? new Date(getVoteRecord().votedAt).toLocaleString() : new Date().toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
