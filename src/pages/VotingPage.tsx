@@ -8,11 +8,16 @@ import {
   CheckCircle,
   ChevronRight,
   ArrowLeft,
+  ArrowRight,
   Edit2,
   Lock,
   AlertTriangle,
   ThumbsUp,
-  Users
+  Users,
+  Building2,
+  Info,
+  ListChecks,
+  Timer
 } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -61,8 +66,9 @@ const VotingPage: React.FC = () => {
     type: 'invalid' | 'not-started' | 'ended' | 'paused' | 'already-voted' | null;
     message: string;
   }>({ type: null, message: '' });
-  const [currentStep, setCurrentStep] = useState<'voting' | 'review'>('voting');
+  const [currentStep, setCurrentStep] = useState<'intro' | 'voting' | 'review'>('intro');
   const [selectedVotes, setSelectedVotes] = useState<VoteSelection[]>([]);
+  const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
 
   // Initialize FingerprintJS and get device ID
   useEffect(() => {
@@ -293,6 +299,26 @@ const VotingPage: React.FC = () => {
     };
   };
 
+  const handleNext = () => {
+    if (election && currentPositionIndex < election.positions.length - 1) {
+      setCurrentPositionIndex(currentPositionIndex + 1);
+    } else {
+      setCurrentStep('review');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentPositionIndex > 0) {
+      setCurrentPositionIndex(currentPositionIndex - 1);
+    }
+  };
+
+  const getProgress = () => {
+    if (!election) return 0;
+    const totalPositions = election.positions.length;
+    return ((currentPositionIndex + 1) / totalPositions) * 100;
+  };
+
   if (loading || validating) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -393,102 +419,255 @@ const VotingPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
-        <p className="text-gray-600">{election.description}</p>
-        
-        <div className="mt-4 flex items-center space-x-4">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <Clock className="w-4 h-4 mr-1" />
-            Ends {new Date(election.endDate).toLocaleDateString()}
-          </span>
-          {election.allowMultipleVotes && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              <AlertTriangle className="w-4 h-4 mr-1" />
-              Multiple votes allowed
-            </span>
-          )}
-        </div>
-      </div>
-
-      {currentStep === 'voting' ? (
-        <>
-          {/* Positions and Candidates */}
-          <div className="space-y-8">
-            {election.positions.map((position) => {
-              const voteStatus = getPositionVoteStatus(position.id);
-              const selectedIds = selectedVotes.find(v => v.positionId === position.id)?.candidateIds || [];
-              
-              return (
-                <Card key={position.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h2 className="text-xl font-bold text-gray-900">{position.title}</h2>
-                        <p className="text-sm text-gray-600">{position.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-medium ${
-                          voteStatus.complete ? 'text-green-600' : 'text-gray-500'
-                        }`}>
-                          {voteStatus.message}
-                        </p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {position.candidates.map((candidate) => {
-                        const isSelected = selectedIds.includes(candidate.id);
-                        
-                        return (
-                          <button
-                            key={candidate.id}
-                            onClick={() => handleVoteSelection(position.id, candidate.id)}
-                            className={`flex items-start space-x-4 p-4 rounded-lg border-2 transition-all duration-200 ${
-                              isSelected
-                                ? 'border-primary-500 bg-primary-50'
-                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                            }`}
-                          >
-                            <img
-                              src={candidate.photoUrl}
-                              alt={candidate.name}
-                              className="w-16 h-16 rounded-full object-cover"
-                            />
-                            <div className="flex-1 text-left">
-                              <h3 className="text-lg font-medium text-gray-900">
-                                {candidate.name}
-                                {isSelected && (
-                                  <CheckCircle className="w-5 h-5 text-primary-600 inline ml-2" />
-                                )}
-                              </h3>
-                              <p className="text-sm text-gray-600">{candidate.bio}</p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </CardBody>
-                </Card>
-              );
-            })}
+      {currentStep === 'intro' ? (
+        <div className="space-y-8">
+          {/* Organization & Election Info */}
+          <div className="text-center mb-8">
+            <Building2 className="w-16 h-16 text-primary-600 mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
+            <p className="text-lg text-gray-600">{election.description}</p>
           </div>
 
-          {/* Review & Submit */}
-          <div className="mt-8 flex items-center justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Election Details */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <Info className="w-5 h-5 text-primary-600" />
+                  <h2 className="text-xl font-medium text-gray-900">Election Details</h2>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Start Date</span>
+                    <span className="font-medium">{new Date(election.startDate).toLocaleDateString()} {new Date(election.startDate).toLocaleTimeString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">End Date</span>
+                    <span className="font-medium">{new Date(election.endDate).toLocaleDateString()} {new Date(election.endDate).toLocaleTimeString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Status</span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      election.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Multiple Votes</span>
+                    <span className="font-medium">{election.allowMultipleVotes ? 'Allowed' : 'Not Allowed'}</span>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Positions Overview */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center space-x-2">
+                  <ListChecks className="w-5 h-5 text-primary-600" />
+                  <h2 className="text-xl font-medium text-gray-900">Positions</h2>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-4">
+                  {election.positions.map((position, index) => (
+                    <div key={position.id} className="flex items-center space-x-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-medium">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-900">{position.title}</h3>
+                        <p className="text-xs text-gray-500">{position.candidates.length} candidates</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
+          {/* Important Information */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                <h2 className="text-xl font-medium text-gray-900">Important Information</h2>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <Timer className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">Time Limit</h3>
+                    <p className="text-sm text-gray-600">Once you begin voting, please complete your selections for all positions. Your session may expire if left inactive for too long.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <ListChecks className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">Selection Rules</h3>
+                    <p className="text-sm text-gray-600">You must select candidates for all positions. Each position may have different voting limits.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">Vote Confirmation</h3>
+                    <p className="text-sm text-gray-600">You will have a chance to review all your selections before final submission. {!election.allowMultipleVotes && "Once submitted, you cannot change your votes or vote again."}</p>
+                  </div>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          {/* Begin Voting Button */}
+          <div className="flex items-center justify-between pt-6">
             <Button variant="outline" onClick={() => navigate('/')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Exit
             </Button>
-            <Button
-              onClick={() => setCurrentStep('review')}
-              disabled={selectedVotes.every(vote => vote.candidateIds.length === 0)}
-            >
-              Review Votes
+            <Button onClick={() => setCurrentStep('voting')} size="lg">
+              Begin Voting
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
+          </div>
+        </div>
+      ) : currentStep === 'voting' ? (
+        <>
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
+            <p className="text-gray-600">{election.description}</p>
+            
+            <div className="mt-4 flex items-center space-x-4">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <Clock className="w-4 h-4 mr-1" />
+                Ends {new Date(election.endDate).toLocaleDateString()}
+              </span>
+              {election.allowMultipleVotes && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <AlertTriangle className="w-4 h-4 mr-1" />
+                  Multiple votes allowed
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <span>Position {currentPositionIndex + 1} of {election.positions.length}</span>
+              <span>{Math.round(getProgress())}% Complete</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full">
+              <div
+                className="h-2 bg-primary-600 rounded-full transition-all duration-300"
+                style={{ width: `${getProgress()}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Current Position */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      {election.positions[currentPositionIndex].title}
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      {election.positions[currentPositionIndex].description}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${
+                      getPositionVoteStatus(election.positions[currentPositionIndex].id).complete
+                        ? 'text-green-600'
+                        : 'text-gray-500'
+                    }`}>
+                      {getPositionVoteStatus(election.positions[currentPositionIndex].id).message}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {election.positions[currentPositionIndex].candidates.map((candidate) => {
+                    const selectedIds = selectedVotes.find(
+                      v => v.positionId === election.positions[currentPositionIndex].id
+                    )?.candidateIds || [];
+                    const isSelected = selectedIds.includes(candidate.id);
+                    
+                    return (
+                      <button
+                        key={candidate.id}
+                        onClick={() => handleVoteSelection(
+                          election.positions[currentPositionIndex].id,
+                          candidate.id
+                        )}
+                        className={`flex items-start space-x-4 p-4 rounded-lg border-2 transition-all duration-200 ${
+                          isSelected
+                            ? 'border-primary-500 bg-primary-50'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        <img
+                          src={candidate.photoUrl}
+                          alt={candidate.name}
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
+                        <div className="flex-1 text-left">
+                          <h3 className="text-lg font-medium text-gray-900">
+                            {candidate.name}
+                            {isSelected && (
+                              <CheckCircle className="w-5 h-5 text-primary-600 inline ml-2" />
+                            )}
+                          </h3>
+                          <p className="text-sm text-gray-600">{candidate.bio}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
+          {/* Navigation */}
+          <div className="mt-8 flex items-center justify-between">
+            <Button
+              variant="outline"
+              onClick={currentPositionIndex === 0 ? () => navigate('/') : handlePrevious}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {currentPositionIndex === 0 ? 'Exit' : 'Previous Position'}
+            </Button>
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-500">
+                Position {currentPositionIndex + 1} of {election.positions.length}
+              </div>
+              <Button
+                onClick={handleNext}
+                disabled={!getPositionVoteStatus(election.positions[currentPositionIndex].id).complete}
+              >
+                {currentPositionIndex === election.positions.length - 1 ? (
+                  <>
+                    Review Votes
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Next Position
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </>
       ) : (
