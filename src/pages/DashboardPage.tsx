@@ -1,273 +1,215 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Vote, 
-  Users, 
-  UserCheck, 
-  TrendingUp, 
+import {
+  BarChart,
+  Users,
+  Vote,
   Calendar,
   Clock,
+  TrendingUp,
+  ChevronRight,
+  Plus,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
-import { Election } from '../types';
-import { formatDistanceToNow } from 'date-fns';
+import GlassCard, { GlassCardBody as CardBody } from '../components/ui/GlassCard';
+import Button from '../components/ui/Button';
 
 const DashboardPage: React.FC = () => {
-  const [elections, setElections] = useState<Election[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Mock data
+  const stats = {
+    totalElections: 12,
+    activeElections: 3,
+    totalVoters: 1247,
+    totalVotes: 856,
+    upcomingElections: 2,
+    completedElections: 7
+  };
 
-  // Mock data for demonstration
-  useEffect(() => {
-    const mockElections: Election[] = [
-      {
-        id: 1,
-        title: 'Student Council Election 2024',
-        description: 'Annual election for student council positions',
-        startDate: '2024-01-15T09:00:00Z',
-        endDate: '2024-01-17T17:00:00Z',
-        status: 'active',
-        totalVoters: 1247,
-        totalVotes: 987,
-        candidates: [],
-        createdAt: '2024-01-10T10:00:00Z',
-        updatedAt: '2024-01-15T09:00:00Z'
-      },
-      {
-        id: 2,
-        title: 'Church Board Election',
-        description: 'Election for church board members',
-        startDate: '2024-01-20T10:00:00Z',
-        endDate: '2024-01-22T18:00:00Z',
-        status: 'completed',
-        totalVoters: 856,
-        totalVotes: 856,
-        candidates: [],
-        createdAt: '2024-01-15T14:00:00Z',
-        updatedAt: '2024-01-22T18:00:00Z'
-      },
-      {
-        id: 3,
-        title: 'Organization Leadership',
-        description: 'Leadership election for community organization',
-        startDate: '2024-02-01T08:00:00Z',
-        endDate: '2024-02-03T20:00:00Z',
-        status: 'upcoming',
-        totalVoters: 0,
-        totalVotes: 0,
-        candidates: [],
-        createdAt: '2024-01-25T09:00:00Z',
-        updatedAt: '2024-01-25T09:00:00Z'
-      }
-    ];
-
-    setElections(mockElections);
-    setLoading(false);
-  }, []);
-
-  const stats = [
+  const recentElections = [
     {
-      name: 'Active Elections',
-      value: elections.filter(e => e.status === 'active').length,
-      icon: Vote,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      id: 1,
+      title: 'Student Council Election 2024',
+      status: 'active',
+      endDate: '2024-02-15',
+      totalVotes: 234,
+      totalVoters: 450
     },
     {
-      name: 'Total Voters',
-      value: 1247,
-      icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      id: 2,
+      title: 'Department Representatives',
+      status: 'upcoming',
+      startDate: '2024-02-20',
+      totalVoters: 300
     },
     {
-      name: 'Candidates',
-      value: 12,
-      icon: UserCheck,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
-    },
-    {
-      name: 'Turnout Rate',
-      value: '78%',
-      icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
+      id: 3,
+      title: 'Sports Committee Selection',
+      status: 'completed',
+      endDate: '2024-01-30',
+      totalVotes: 289,
+      totalVoters: 300
     }
   ];
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Clock className="w-4 h-4 text-green-600" />;
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-gray-600" />;
-      case 'upcoming':
-        return <Calendar className="w-4 h-4 text-blue-600" />;
-      default:
-        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'completed':
-        return 'bg-gray-100 text-gray-800';
-      case 'upcoming':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-yellow-100 text-yellow-800';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Welcome back! Here's an overview of your voting activities.
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back!</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Here's what's happening with your elections</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => (
-          <Card key={stat.name} className="hover:shadow-md transition-shadow duration-200">
-            <CardBody>
-              <div className="flex items-center">
-                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <CardBody>
+            <div className="flex items-center">
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-lg shadow-lg">
+                <Vote className="w-6 h-6 text-white" />
               </div>
-            </CardBody>
-          </Card>
-        ))}
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Elections</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalElections}</p>
+              </div>
+            </div>
+          </CardBody>
+        </GlassCard>
+
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <CardBody>
+            <div className="flex items-center">
+              <div className="bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-lg shadow-lg">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Voters</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalVoters}</p>
+              </div>
+            </div>
+          </CardBody>
+        </GlassCard>
+
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <CardBody>
+            <div className="flex items-center">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-3 rounded-lg shadow-lg">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Votes</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalVotes}</p>
+              </div>
+            </div>
+          </CardBody>
+        </GlassCard>
       </div>
 
-      {/* Recent Elections */}
-      <Card>
-        <CardHeader>
+      {/* Active Elections */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">Recent Elections</h2>
-            <Link
-              to="/elections"
-              className="text-sm font-medium text-primary-600 hover:text-primary-500"
-            >
-              View all
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Active Elections</h2>
+            <Link to="/elections/create">
+              <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                <Plus className="w-4 h-4 mr-2" />
+                New Election
+              </Button>
             </Link>
           </div>
-        </CardHeader>
-        <CardBody>
-          <div className="space-y-4">
-            {elections.slice(0, 3).map((election) => (
-              <div
-                key={election.id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-              >
-                <div className="flex items-center space-x-4">
-                  {getStatusIcon(election.status)}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {election.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {election.totalVotes} votes • {election.totalVoters} voters
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(election.status)}`}>
+
+          {recentElections.map((election) => (
+            <GlassCard key={election.id} className="transform hover:scale-105 transition-all duration-300">
+              <CardBody>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium text-gray-900 dark:text-white">{election.title}</h3>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    election.status === 'active'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                      : election.status === 'upcoming'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                  }`}>
                     {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
                   </span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center text-gray-600 dark:text-gray-400">
+                    <Clock className="w-4 h-4 mr-1" />
+                    {election.status === 'upcoming' ? 'Starts' : 'Ends'}: {election.startDate || election.endDate}
+                  </div>
+                  <div className="flex items-center text-gray-600 dark:text-gray-400">
+                    <Users className="w-4 h-4 mr-1" />
+                    {election.totalVotes || 0}/{election.totalVoters} votes
+                  </div>
+                </div>
+
+                <div className="mt-4">
                   <Link
                     to={`/elections/${election.id}`}
-                    className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm"
                   >
                     View Details
+                    <ChevronRight className="w-4 h-4 ml-1" />
                   </Link>
                 </div>
-              </div>
-            ))}
+              </CardBody>
+            </GlassCard>
+          ))}
+        </div>
+
+        {/* Quick Stats */}
+        <div className="space-y-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Quick Stats</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <GlassCard variant="success" className="transform hover:scale-105 transition-all duration-300">
+              <CardBody>
+                <div className="flex items-center">
+                  <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.activeElections} Elections</p>
+                  </div>
+                </div>
+              </CardBody>
+            </GlassCard>
+
+            <GlassCard variant="primary" className="transform hover:scale-105 transition-all duration-300">
+              <CardBody>
+                <div className="flex items-center">
+                  <Calendar className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Upcoming</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">{stats.upcomingElections} Elections</p>
+                  </div>
+                </div>
+              </CardBody>
+            </GlassCard>
+
+            <GlassCard variant="warning" className="transform hover:scale-105 transition-all duration-300 sm:col-span-2">
+              <CardBody>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <BarChart className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Participation</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        {Math.round((stats.totalVotes / stats.totalVoters) * 100)}% Turnout
+                      </p>
+                    </div>
+                  </div>
+                  <div className="h-12 w-12 rounded-full border-4 border-orange-200 dark:border-orange-900/30 flex items-center justify-center">
+                    <span className="text-sm font-bold text-orange-600 dark:text-orange-400">
+                      {Math.round((stats.totalVotes / stats.totalVoters) * 100)}%
+                    </span>
+                  </div>
+                </div>
+              </CardBody>
+            </GlassCard>
           </div>
-        </CardBody>
-      </Card>
-
-      {/* Quick Actions */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer">
-          <CardBody>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Vote className="w-6 h-6 text-primary-600" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Create Election</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Set up a new election with candidates and voting rules
-              </p>
-              <Link
-                to="/elections/create"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-600 bg-primary-50 hover:bg-primary-100"
-              >
-                Get Started
-              </Link>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer">
-          <CardBody>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Manage Candidates</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Add and manage candidates for your elections
-              </p>
-              <Link
-                to="/candidates"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-600 bg-green-50 hover:bg-green-100"
-              >
-                Manage
-              </Link>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer">
-          <CardBody>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">View Analytics</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Analyze voting patterns and results
-              </p>
-              <Link
-                to="/analytics"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-600 bg-purple-50 hover:bg-purple-100"
-              >
-                View Reports
-              </Link>
-            </div>
-          </CardBody>
-        </Card>
+        </div>
       </div>
     </div>
   );

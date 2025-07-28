@@ -48,17 +48,40 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">
-                V
-              </div>
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">VoteFlow</span>
-            </Link>
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <Link to="/" className="flex items-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                  V
+                </div>
+                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">VoteFlow</span>
+              </Link>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:ml-8 md:flex md:space-x-4">
+              {navigation.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                      isActive
+                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300/50'
+                    }`}
+                  >
+                    <item.icon className="w-4 h-4 mr-2" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
+          {/* Desktop Right Section */}
+          <div className="hidden md:flex md:items-center md:space-x-4">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -85,22 +108,22 @@ const Navbar: React.FC = () => {
 
               {/* Notifications dropdown */}
               {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-900">Notifications</h3>
+                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-dark-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">Notifications</h3>
                   </div>
                   <div className="max-h-64 overflow-y-auto">
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-900">Student Council Election is now active</p>
-                      <p className="text-xs text-gray-500 mt-1">2 minutes ago</p>
+                    <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-300 cursor-pointer">
+                      <p className="text-sm text-gray-900 dark:text-white">Student Council Election is now active</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 minutes ago</p>
                     </div>
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-900">New candidate registered: Lisa Wilson</p>
-                      <p className="text-xs text-gray-500 mt-1">1 hour ago</p>
+                    <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-300 cursor-pointer">
+                      <p className="text-sm text-gray-900 dark:text-white">New candidate registered: Lisa Wilson</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">1 hour ago</p>
                     </div>
-                    <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                      <p className="text-sm text-gray-900">Voting ends in 2 hours</p>
-                      <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
+                    <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-dark-300 cursor-pointer">
+                      <p className="text-sm text-gray-900 dark:text-white">Voting ends in 2 hours</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 hours ago</p>
                     </div>
                   </div>
                 </div>
@@ -124,15 +147,15 @@ const Navbar: React.FC = () => {
 
               {/* User dropdown */}
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-dark-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                   </div>
                   <div className="py-1">
                     <Link
                       to="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <User className="w-4 h-4 mr-3" />
@@ -140,17 +163,17 @@ const Navbar: React.FC = () => {
                     </Link>
                     <Link
                       to="/organization"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <Building className="w-4 h-4 mr-3" />
                       Organization
                     </Link>
                   </div>
-                  <div className="border-t border-gray-200 py-1">
+                  <div className="border-t border-gray-200 dark:border-gray-700 py-1">
                     <button
                       onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                     >
                       <LogOut className="w-4 h-4 mr-3" />
                       Sign out
@@ -205,10 +228,10 @@ const Navbar: React.FC = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  className={`flex items-center px-3 py-2 rounded-lg text-base font-medium transition-colors duration-200 ${
                     isActive
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -220,7 +243,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile user info */}
-          <div className="px-4 py-3 border-t border-gray-200">
+          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center">
               <img
                 className="h-10 w-10 rounded-full object-cover"
@@ -228,14 +251,14 @@ const Navbar: React.FC = () => {
                 alt={user.name}
               />
               <div className="ml-3">
-                <p className="text-base font-medium text-gray-900">{user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="text-base font-medium text-gray-900 dark:text-white">{user.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
               </div>
             </div>
             <div className="mt-3 space-y-1">
               <Link
                 to="/profile"
-                className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <User className="w-5 h-5 mr-3" />
@@ -243,7 +266,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link
                 to="/organization"
-                className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Building className="w-5 h-5 mr-3" />
@@ -254,7 +277,7 @@ const Navbar: React.FC = () => {
                   handleLogout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="flex items-center w-full px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
               >
                 <LogOut className="w-5 h-5 mr-3" />
                 Sign out

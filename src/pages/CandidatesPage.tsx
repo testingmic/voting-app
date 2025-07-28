@@ -1,386 +1,528 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye,
-  User,
-  Mail,
-  Globe,
+import React, { useState } from 'react';
+import {
+  Search,
+  Filter,
+  Plus,
+  Edit2,
+  Trash2,
+  X,
+  Upload,
+  Camera,
+  Facebook,
   Twitter,
-  Linkedin
+  Linkedin,
+  Instagram,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Award,
+  Briefcase,
+  Save
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
-import { Candidate } from '../types';
+import GlassCard from '../components/ui/GlassCard';
+import { GlassCardBody } from '../components/ui/GlassCard';
+
+interface Candidate {
+  id: number;
+  name: string;
+  position: string;
+  bio: string;
+  photoUrl: string;
+  email: string;
+  phone: string;
+  location: string;
+  experience: string[];
+  education: string[];
+  achievements: string[];
+  socialLinks: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+  createdAt: string;
+}
 
 const CandidatesPage: React.FC = () => {
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [positionFilter, setPositionFilter] = useState<string>('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showCandidateModal, setShowCandidateModal] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedCandidate, setEditedCandidate] = useState<Candidate | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Mock data for demonstration
-  useEffect(() => {
-    const mockCandidates: Candidate[] = [
-      {
-        id: 1,
-        name: 'John Smith',
-        position: 'Student Council President',
-        bio: 'Experienced leader with a passion for student advocacy and community building. Committed to improving campus life and representing student voices.',
-        manifesto: 'I believe in creating an inclusive environment where every student feels heard and supported. My focus will be on improving campus facilities, enhancing student services, and fostering a strong sense of community.',
-        photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-        socialLinks: {
-          twitter: 'https://twitter.com/johnsmith',
-          linkedin: 'https://linkedin.com/in/johnsmith',
-          website: 'https://johnsmith.com'
-        },
-        electionId: 1,
-        voteCount: 245,
-        createdAt: '2024-01-10T10:00:00Z'
+  // Mock data
+  const positions = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Board Member'];
+  const candidates: Candidate[] = [
+    {
+      id: 1,
+      name: 'John Smith',
+      position: 'President',
+      bio: 'Experienced leader with a track record of success in organizational management and strategic planning.',
+      photoUrl: 'https://ui-avatars.com/api/?name=John+Smith&background=6366f1&color=fff',
+      email: 'john.smith@example.com',
+      phone: '+1 (555) 123-4567',
+      location: 'New York, NY',
+      experience: [
+        'CEO at Tech Innovations (2018-Present)',
+        'Director of Operations at Global Solutions (2015-2018)',
+        'Project Manager at Future Corp (2012-2015)'
+      ],
+      education: [
+        'MBA, Harvard Business School',
+        'BS in Business Administration, Yale University'
+      ],
+      achievements: [
+        'Led company to 300% growth in 3 years',
+        'Awarded "Leader of the Year" 2021',
+        'Published author in Business Weekly'
+      ],
+      socialLinks: {
+        linkedin: 'https://linkedin.com/in/johnsmith',
+        twitter: 'https://twitter.com/johnsmith'
       },
-      {
-        id: 2,
-        name: 'Sarah Johnson',
-        position: 'Student Council Vice President',
-        bio: 'Dedicated to improving student life and campus facilities. Experienced in event planning and student engagement.',
-        manifesto: 'My vision is to create memorable student experiences through better events, improved facilities, and stronger student-faculty relationships.',
-        photoUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-        socialLinks: {
-          twitter: 'https://twitter.com/sarahjohnson',
-          linkedin: 'https://linkedin.com/in/sarahjohnson'
-        },
-        electionId: 1,
-        voteCount: 198,
-        createdAt: '2024-01-10T10:00:00Z'
-      },
-      {
-        id: 3,
-        name: 'Mike Davis',
-        position: 'Student Council Secretary',
-        bio: 'Organized and detail-oriented with excellent communication skills. Committed to transparency and efficient record-keeping.',
-        manifesto: 'I will ensure transparent communication between the student body and administration, maintain accurate records, and keep everyone informed about important decisions.',
-        photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-        socialLinks: {
-          linkedin: 'https://linkedin.com/in/mikedavis'
-        },
-        electionId: 1,
-        voteCount: 156,
-        createdAt: '2024-01-10T10:00:00Z'
-      },
-      {
-        id: 4,
-        name: 'Lisa Wilson',
-        position: 'Student Council Treasurer',
-        bio: 'Financial management expert with a track record of fiscal responsibility. Committed to transparent budgeting and financial planning.',
-        manifesto: 'I will ensure responsible management of student funds, transparent budgeting, and strategic financial planning to maximize the impact of our resources.',
-        photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-        socialLinks: {
-          website: 'https://lisawilson.com'
-        },
-        electionId: 1,
-        voteCount: 98,
-        createdAt: '2024-01-10T10:00:00Z'
-      }
-    ];
+      createdAt: '2024-01-15T10:00:00Z'
+    },
+    // Add more mock candidates here
+  ];
 
-    setCandidates(mockCandidates);
-    setFilteredCandidates(mockCandidates);
-    setLoading(false);
-  }, []);
-
-  // Filter candidates based on search term and position
-  useEffect(() => {
-    let filtered = candidates;
-
-    if (searchTerm) {
-      filtered = filtered.filter(candidate =>
-        candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        candidate.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        candidate.bio.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+        if (editedCandidate) {
+          setEditedCandidate({
+            ...editedCandidate,
+            photoUrl: reader.result as string
+          });
+        }
+      };
+      reader.readAsDataURL(file);
     }
-
-    if (positionFilter !== 'all') {
-      filtered = filtered.filter(candidate => candidate.position === positionFilter);
-    }
-
-    setFilteredCandidates(filtered);
-  }, [candidates, searchTerm, positionFilter]);
-
-  const positions = Array.from(new Set(candidates.map(c => c.position)));
-
-  const handleViewCandidate = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    setShowCandidateModal(true);
   };
 
   const handleEditCandidate = (candidate: Candidate) => {
-    // TODO: Implement edit functionality
-    console.log('Edit candidate:', candidate);
+    setSelectedCandidate(candidate);
+    setEditedCandidate(candidate);
+    setPreviewImage(candidate.photoUrl);
+    setIsEditing(true);
+    setIsModalOpen(true);
   };
 
-  const handleDeleteCandidate = (candidateId: number) => {
-    if (window.confirm('Are you sure you want to delete this candidate?')) {
-      setCandidates(prev => prev.filter(c => c.id !== candidateId));
-    }
+  const handleSaveCandidate = () => {
+    // Here you would typically make an API call to save the candidate
+    console.log('Saving candidate:', editedCandidate);
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setSelectedCandidate(null);
+    setEditedCandidate(null);
+    setPreviewImage(null);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  const handleDeleteCandidate = (candidate: Candidate) => {
+    setSelectedCandidate(candidate);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    // Here you would typically make an API call to delete the candidate
+    console.log('Deleting candidate:', selectedCandidate?.id);
+    setIsDeleteModalOpen(false);
+    setSelectedCandidate(null);
+  };
+
+  const filteredCandidates = candidates.filter(candidate => {
+    const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         candidate.position.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPosition = selectedPosition === 'all' || candidate.position === selectedPosition;
+    return matchesSearch && matchesPosition;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Candidates</h1>
-            <p className="mt-2 text-gray-600">
-              Manage and view all election candidates
-            </p>
-          </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Candidate
-          </Button>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Candidates</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your election candidates</p>
         </div>
+        <Button
+          onClick={() => {
+            setIsEditing(false);
+            setSelectedCandidate(null);
+            setEditedCandidate(null);
+            setPreviewImage(null);
+            setIsModalOpen(true);
+          }}
+          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Add Candidate
+        </Button>
       </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardBody>
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search candidates..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                />
-              </div>
-            </div>
-
-            {/* Position Filter */}
-            <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-400" />
-              <select
-                value={positionFilter}
-                onChange={(e) => setPositionFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="all">All Positions</option>
-                {positions.map(position => (
-                  <option key={position} value={position}>{position}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </CardBody>
-      </Card>
+      {/* Search and Filter */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search candidates..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-200 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+          />
+        </div>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+          <select
+            value={selectedPosition}
+            onChange={(e) => setSelectedPosition(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-200 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+          >
+            <option value="all">All Positions</option>
+            {positions.map((position) => (
+              <option key={position} value={position}>{position}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {/* Candidates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCandidates.map((candidate) => (
-          <Card key={candidate.id} className="hover:shadow-md transition-shadow duration-200">
-            <CardBody>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <img
-                    className="h-12 w-12 rounded-full object-cover"
-                    src={candidate.photoUrl || `https://ui-avatars.com/api/?name=${candidate.name}&background=3b82f6&color=fff`}
-                    alt={candidate.name}
-                  />
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">{candidate.name}</h3>
-                    <p className="text-sm text-gray-500">{candidate.position}</p>
-                  </div>
-                </div>
-                <div className="flex space-x-1">
-                  <button
-                    onClick={() => handleViewCandidate(candidate)}
-                    className="p-1 text-gray-400 hover:text-gray-600"
-                    title="View Profile"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button
+          <GlassCard
+            key={candidate.id}
+            className="transform hover:scale-105 transition-all duration-300"
+          >
+            <GlassCardBody>
+              <div className="relative group">
+                <img
+                  src={candidate.photoUrl}
+                  alt={candidate.name}
+                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                />
+                <div className="absolute top-0 right-0 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Button
                     onClick={() => handleEditCandidate(candidate)}
-                    className="p-1 text-gray-400 hover:text-blue-600"
-                    title="Edit"
+                    variant="ghost"
+                    size="sm"
+                    className="bg-white/90 dark:bg-dark-200/90 text-gray-700 dark:text-gray-300"
                   >
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteCandidate(candidate.id)}
-                    className="p-1 text-gray-400 hover:text-red-600"
-                    title="Delete"
+                    <Edit2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteCandidate(candidate)}
+                    variant="ghost"
+                    size="sm"
+                    className="bg-white/90 dark:bg-dark-200/90 text-red-600 dark:text-red-400"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
-
-              <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                {candidate.bio}
-              </p>
-
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                <span>Votes: {candidate.voteCount}</span>
-                <span>Election ID: {candidate.electionId}</span>
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{candidate.name}</h3>
+                <p className="text-sm text-purple-600 dark:text-purple-400">{candidate.position}</p>
               </div>
-
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => handleViewCandidate(candidate)}
-                >
-                  View Profile
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => handleEditCandidate(candidate)}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center">
+                  <Mail className="w-4 h-4 mr-2" />
+                  {candidate.email}
+                </div>
+                <div className="flex items-center">
+                  <Phone className="w-4 h-4 mr-2" />
+                  {candidate.phone}
+                </div>
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  {candidate.location}
+                </div>
               </div>
-            </CardBody>
-          </Card>
+              <div className="mt-4 flex justify-center space-x-3">
+                {candidate.socialLinks.linkedin && (
+                  <a href={candidate.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                )}
+                {candidate.socialLinks.twitter && (
+                  <a href={candidate.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-400 dark:text-gray-400 dark:hover:text-blue-300">
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
+            </GlassCardBody>
+          </GlassCard>
         ))}
       </div>
 
-      {filteredCandidates.length === 0 && (
-        <Card>
-          <CardBody>
-            <div className="text-center py-12">
-              <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No candidates found</h3>
-              <p className="text-gray-600 mb-4">
-                {searchTerm || positionFilter !== 'all' 
-                  ? 'Try adjusting your search or filter criteria.'
-                  : 'Get started by adding your first candidate.'
-                }
-              </p>
-              {!searchTerm && positionFilter === 'all' && (
-                <Button onClick={() => setShowCreateModal(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Candidate
-                </Button>
-              )}
-            </div>
-          </CardBody>
-        </Card>
-      )}
-
-      {/* Candidate Detail Modal */}
-      {showCandidateModal && selectedCandidate && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Candidate Profile</h3>
+      {/* Add/Edit Candidate Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {isEditing ? 'Edit Candidate' : 'Add New Candidate'}
+                </h2>
                 <button
-                  onClick={() => setShowCandidateModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  ✕
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-              
-              <div className="text-center mb-4">
-                <img
-                  className="h-24 w-24 rounded-full object-cover mx-auto mb-3"
-                  src={selectedCandidate.photoUrl || `https://ui-avatars.com/api/?name=${selectedCandidate.name}&background=3b82f6&color=fff`}
-                  alt={selectedCandidate.name}
-                />
-                <h4 className="text-xl font-medium text-gray-900">{selectedCandidate.name}</h4>
-                <p className="text-sm text-gray-500">{selectedCandidate.position}</p>
-              </div>
 
-              <div className="space-y-3">
-                <div>
-                  <h5 className="text-sm font-medium text-gray-900 mb-1">Bio</h5>
-                  <p className="text-sm text-gray-600">{selectedCandidate.bio}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Photo Upload */}
+                <div className="md:col-span-2 flex justify-center">
+                  <div className="relative group">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700">
+                      {previewImage ? (
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <Camera className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                        </div>
+                      )}
+                    </div>
+                    <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer hover:bg-purple-700 transition-colors duration-200">
+                      <Upload className="w-4 h-4" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                  </div>
                 </div>
 
-                {selectedCandidate.manifesto && (
+                {/* Basic Information */}
+                <div className="space-y-4">
                   <div>
-                    <h5 className="text-sm font-medium text-gray-900 mb-1">Manifesto</h5>
-                    <p className="text-sm text-gray-600">{selectedCandidate.manifesto}</p>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editedCandidate?.name || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, name: e.target.value} : null)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
                   </div>
-                )}
-
-                <div>
-                  <h5 className="text-sm font-medium text-gray-900 mb-2">Social Links</h5>
-                  <div className="flex space-x-2">
-                    {selectedCandidate.socialLinks?.twitter && (
-                      <a
-                        href={selectedCandidate.socialLinks.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
-                      >
-                        <Twitter className="w-4 h-4" />
-                      </a>
-                    )}
-                    {selectedCandidate.socialLinks?.linkedin && (
-                      <a
-                        href={selectedCandidate.socialLinks.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </a>
-                    )}
-                    {selectedCandidate.socialLinks?.website && (
-                      <a
-                        href={selectedCandidate.socialLinks.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
-                      >
-                        <Globe className="w-4 h-4" />
-                      </a>
-                    )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Position
+                    </label>
+                    <select
+                      value={editedCandidate?.position || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, position: e.target.value} : null)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    >
+                      <option value="">Select Position</option>
+                      {positions.map((position) => (
+                        <option key={position} value={position}>{position}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={editedCandidate?.email || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, email: e.target.value} : null)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      value={editedCandidate?.phone || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, phone: e.target.value} : null)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
                   </div>
                 </div>
 
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Votes:</span>
-                  <span className="font-medium">{selectedCandidate.voteCount}</span>
+                {/* Additional Information */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={editedCandidate?.location || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, location: e.target.value} : null)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Bio
+                    </label>
+                    <textarea
+                      value={editedCandidate?.bio || ''}
+                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, bio: e.target.value} : null)}
+                      rows={3}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Social Links
+                    </label>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Linkedin className="w-5 h-5 text-gray-400" />
+                        <input
+                          type="url"
+                          placeholder="LinkedIn URL"
+                          value={editedCandidate?.socialLinks.linkedin || ''}
+                          onChange={(e) => setEditedCandidate(prev => prev ? {
+                            ...prev,
+                            socialLinks: { ...prev.socialLinks, linkedin: e.target.value }
+                          } : null)}
+                          className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Twitter className="w-5 h-5 text-gray-400" />
+                        <input
+                          type="url"
+                          placeholder="Twitter URL"
+                          value={editedCandidate?.socialLinks.twitter || ''}
+                          onChange={(e) => setEditedCandidate(prev => prev ? {
+                            ...prev,
+                            socialLinks: { ...prev.socialLinks, twitter: e.target.value }
+                          } : null)}
+                          className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Experience Section */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Experience & Achievements</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Experience
+                      </label>
+                      <div className="space-y-2">
+                        {editedCandidate?.experience.map((exp, index) => (
+                          <div key={index} className="flex items-center space-x-2">
+                            <Briefcase className="w-4 h-4 text-gray-400" />
+                            <input
+                              type="text"
+                              value={exp}
+                              onChange={(e) => {
+                                const newExp = [...(editedCandidate?.experience || [])];
+                                newExp[index] = e.target.value;
+                                setEditedCandidate(prev => prev ? {...prev, experience: newExp} : null);
+                              }}
+                              className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                            />
+                            <button
+                              onClick={() => {
+                                const newExp = editedCandidate?.experience.filter((_, i) => i !== index);
+                                setEditedCandidate(prev => prev ? {...prev, experience: newExp} : null);
+                              }}
+                              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                        <Button
+                          onClick={() => setEditedCandidate(prev => prev ? {
+                            ...prev,
+                            experience: [...prev.experience, '']
+                          } : null)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          Add Experience
+                        </Button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Achievements
+                      </label>
+                      <div className="space-y-2">
+                        {editedCandidate?.achievements.map((achievement, index) => (
+                          <div key={index} className="flex items-center space-x-2">
+                            <Award className="w-4 h-4 text-gray-400" />
+                            <input
+                              type="text"
+                              value={achievement}
+                              onChange={(e) => {
+                                const newAchievements = [...(editedCandidate?.achievements || [])];
+                                newAchievements[index] = e.target.value;
+                                setEditedCandidate(prev => prev ? {...prev, achievements: newAchievements} : null);
+                              }}
+                              className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                            />
+                            <button
+                              onClick={() => {
+                                const newAchievements = editedCandidate?.achievements.filter((_, i) => i !== index);
+                                setEditedCandidate(prev => prev ? {...prev, achievements: newAchievements} : null);
+                              }}
+                              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                        <Button
+                          onClick={() => setEditedCandidate(prev => prev ? {
+                            ...prev,
+                            achievements: [...prev.achievements, '']
+                          } : null)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                        >
+                          Add Achievement
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="mt-6 flex justify-end space-x-3">
                 <Button
+                  onClick={() => setIsModalOpen(false)}
                   variant="outline"
-                  onClick={() => setShowCandidateModal(false)}
                 >
-                  Close
+                  Cancel
                 </Button>
                 <Button
-                  onClick={() => {
-                    handleEditCandidate(selectedCandidate);
-                    setShowCandidateModal(false);
-                  }}
+                  onClick={handleSaveCandidate}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
                 >
-                  Edit Profile
+                  <Save className="w-4 h-4 mr-2" />
+                  {isEditing ? 'Save Changes' : 'Create Candidate'}
                 </Button>
               </div>
             </div>
@@ -388,57 +530,27 @@ const CandidatesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Create Candidate Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Candidate</h3>
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Enter candidate name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Position</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Enter position"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Enter candidate bio"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
-                  <input
-                    type="url"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="Enter photo URL"
-                  />
-                </div>
-                <div className="flex justify-end space-x-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCreateModal(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button>
-                    Add Candidate
-                  </Button>
-                </div>
-              </form>
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Delete Candidate</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete {selectedCandidate?.name}? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <Button
+                onClick={() => setIsDeleteModalOpen(false)}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Delete
+              </Button>
             </div>
           </div>
         </div>
