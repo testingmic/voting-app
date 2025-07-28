@@ -11,12 +11,17 @@ import {
   AlertCircle,
   Pause,
   Play,
-  MoreVertical
+  MoreVertical,
+  Eye,
+  Edit,
+  Trash2,
+  Link as LinkIcon
 } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { Election } from '../types';
 import { formatDistanceToNow, format } from 'date-fns';
+import { toast } from 'react-hot-toast';
 
 const ElectionsPage: React.FC = () => {
   const [elections, setElections] = useState<Election[]>([]);
@@ -24,6 +29,7 @@ const ElectionsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
   // Mock data for demonstration
   useEffect(() => {
@@ -236,9 +242,91 @@ const ElectionsPage: React.FC = () => {
                     {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
                   </span>
                 </div>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMenu(activeMenu === election.id ? null : election.id);
+                    }}
+                    className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+
+                  {activeMenu === election.id && (
+                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                      <Link
+                        to={`/elections/${election.id}`}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Eye className="w-4 h-4 mr-3" />
+                        View Details
+                      </Link>
+                      <Link
+                        to={`/elections/${election.id}/edit`}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Edit className="w-4 h-4 mr-3" />
+                        Edit Election
+                      </Link>
+                      {election.status === 'active' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePauseElection(election.id);
+                            setActiveMenu(null);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Pause className="w-4 h-4 mr-3" />
+                          Pause Election
+                        </button>
+                      )}
+                      {election.status === 'paused' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleResumeElection(election.id);
+                            setActiveMenu(null);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Play className="w-4 h-4 mr-3" />
+                          Resume Election
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(`https://voteflow.app/vote/${election.id}`);
+                          toast.success('Election link copied to clipboard');
+                          setActiveMenu(null);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <LinkIcon className="w-4 h-4 mr-3" />
+                        Copy Vote Link
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to delete this election?')) {
+                            // Handle delete
+                            setElections(prev => prev.filter(e => e.id !== election.id));
+                            toast.success('Election deleted successfully');
+                          }
+                          setActiveMenu(null);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4 mr-3" />
+                        Delete Election
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <h3 className="text-lg font-medium text-gray-900 mb-2">

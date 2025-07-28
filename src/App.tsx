@@ -12,6 +12,8 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import OrganizationPage from './pages/OrganizationPage';
+import CreateElectionPage from './pages/CreateElectionPage';
+import EditElectionPage from './pages/EditElectionPage';
 import './index.css';
 
 // Protected Route Component
@@ -75,6 +77,16 @@ const App: React.FC = () => {
               }
             />
             <Route
+              path="/elections/create"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <CreateElectionPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/elections/:id"
               element={
                 <ProtectedRoute>
@@ -83,6 +95,16 @@ const App: React.FC = () => {
                       <h1 className="text-3xl font-bold text-gray-900">Election Details</h1>
                       <p className="mt-2 text-gray-600">Detailed view coming soon...</p>
                     </div>
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/elections/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <EditElectionPage />
                   </Layout>
                 </ProtectedRoute>
               }
