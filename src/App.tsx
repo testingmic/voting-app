@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage';
 import OrganizationPage from './pages/OrganizationPage';
 import CreateElectionPage from './pages/CreateElectionPage';
 import EditElectionPage from './pages/EditElectionPage';
+import ElectionDetailsPage from './pages/ElectionDetailsPage';
 import './index.css';
 
 // Protected Route Component
@@ -91,10 +92,7 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      <h1 className="text-3xl font-bold text-gray-900">Election Details</h1>
-                      <p className="mt-2 text-gray-600">Detailed view coming soon...</p>
-                    </div>
+                    <ElectionDetailsPage />
                   </Layout>
                 </ProtectedRoute>
               }

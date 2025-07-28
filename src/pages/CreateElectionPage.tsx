@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -16,7 +16,9 @@ import {
   Eye,
   Trash2,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  X
 } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -47,6 +49,23 @@ interface ElectionData {
   positions: Position[];
   status: 'draft' | 'active' | 'inactive';
 }
+
+// Add debounce utility function
+const debounce = <F extends (...args: any[]) => any>(
+  func: F,
+  waitFor: number
+) => {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: Parameters<F>): Promise<ReturnType<F>> =>
+    new Promise(resolve => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      timeout = setTimeout(() => resolve(func(...args)), waitFor);
+    });
+};
 
 const CreateElectionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -579,31 +598,133 @@ const CandidateSelector: React.FC<CandidateSelectorProps> = ({
   onRemoveCandidate
 }) => {
   const [showAddNew, setShowAddNew] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
+  const [showResults, setShowResults] = useState(false);
   const [newCandidate, setNewCandidate] = useState({
     name: '',
     bio: '',
-    photoUrl: ''
+    photoFile: null as File | null,
+    photoPreview: ''
   });
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if (!query.trim()) {
+        setFilteredCandidates([]);
+        setShowResults(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const filtered = existingCandidates.filter(candidate =>
+          candidate.name.toLowerCase().includes(query.toLowerCase()) ||
+          candidate.bio.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        setFilteredCandidates(filtered);
+        setShowResults(true);
+      } catch (error) {
+        console.error('Error searching candidates:', error);
+        toast.error('Failed to search candidates');
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500),
+    [existingCandidates]
+  );
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error('Photo size should be less than 5MB');
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewCandidate(prev => ({
+          ...prev,
+          photoFile: file,
+          photoPreview: reader.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddExisting = (candidate: Candidate) => {
     if (!position.candidates.find(c => c.id === candidate.id)) {
       onAddCandidate(candidate);
+      // Clear search input and hide results
+      setSearchQuery('');
+      setShowResults(false);
+      setFilteredCandidates([]);
+      toast.success('Candidate added successfully');
     }
   };
 
-  const handleAddNew = () => {
-    if (newCandidate.name && newCandidate.bio) {
+  const handleAddNew = async () => {
+    if (!newCandidate.name || !newCandidate.bio) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      let photoUrl = '';
+      
+      if (newCandidate.photoFile) {
+        // Simulate photo upload API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        photoUrl = newCandidate.photoPreview;
+      } else {
+        photoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(newCandidate.name)}&background=3b82f6&color=fff`;
+      }
+
       const candidate: Candidate = {
         id: Date.now().toString(),
         name: newCandidate.name,
         bio: newCandidate.bio,
-        photoUrl: newCandidate.photoUrl || `https://ui-avatars.com/api/?name=${newCandidate.name}&background=3b82f6&color=fff`,
+        photoUrl,
         isNew: true
       };
+
       onAddCandidate(candidate);
-      setNewCandidate({ name: '', bio: '', photoUrl: '' });
+      setNewCandidate({
+        name: '',
+        bio: '',
+        photoFile: null,
+        photoPreview: ''
+      });
       setShowAddNew(false);
+      toast.success('Candidate added successfully');
+    } catch (error) {
+      toast.error('Failed to add candidate');
     }
+  };
+
+  const handleClearPhoto = () => {
+    setNewCandidate(prev => ({
+      ...prev,
+      photoFile: null,
+      photoPreview: ''
+    }));
   };
 
   return (
@@ -660,13 +781,55 @@ const CandidateSelector: React.FC<CandidateSelectorProps> = ({
               value={newCandidate.name}
               onChange={(e) => setNewCandidate(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter candidate name"
+              required
             />
-            <Input
-              label="Photo URL (optional)"
-              value={newCandidate.photoUrl}
-              onChange={(e) => setNewCandidate(prev => ({ ...prev, photoUrl: e.target.value }))}
-              placeholder="Enter photo URL"
-            />
+            
+            {/* Photo Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Photo
+              </label>
+              <div className="space-y-2">
+                {newCandidate.photoPreview ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={newCandidate.photoPreview}
+                      alt="Preview"
+                      className="w-24 h-24 rounded-lg object-cover"
+                    />
+                    <button
+                      onClick={handleClearPhoto}
+                      className="absolute -top-2 -right-2 p-1 bg-red-100 rounded-full text-red-600 hover:bg-red-200"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                      id="photo-upload"
+                    />
+                    <label
+                      htmlFor="photo-upload"
+                      className="flex items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 transition-colors duration-200"
+                    >
+                      <div className="text-center">
+                        <Upload className="w-6 h-6 text-gray-400 mx-auto" />
+                        <span className="mt-1 text-xs text-gray-500">Upload Photo</span>
+                      </div>
+                    </label>
+                  </div>
+                )}
+                <p className="text-xs text-gray-500">
+                  Max size: 5MB. Supported formats: JPG, PNG, GIF
+                </p>
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
               <textarea
@@ -675,6 +838,7 @@ const CandidateSelector: React.FC<CandidateSelectorProps> = ({
                 onChange={(e) => setNewCandidate(prev => ({ ...prev, bio: e.target.value }))}
                 placeholder="Enter candidate bio"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                required
               />
             </div>
             <div className="flex space-x-2">
@@ -688,44 +852,69 @@ const CandidateSelector: React.FC<CandidateSelectorProps> = ({
           </div>
         )}
 
-        {/* Existing Candidates */}
+        {/* Search Existing Candidates */}
         <div>
-          <h6 className="text-xs font-medium text-gray-600 mb-2">Select from existing candidates</h6>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {existingCandidates.map((candidate) => {
-              const isSelected = position.candidates.some(c => c.id === candidate.id);
-              return (
-                <button
-                  key={candidate.id}
-                  onClick={() => handleAddExisting(candidate)}
-                  disabled={isSelected}
-                  className={`flex items-center space-x-3 p-2 rounded-lg border transition-colors duration-200 ${
-                    isSelected
-                      ? 'border-green-300 bg-green-50 cursor-not-allowed'
-                      : 'border-gray-200 hover:border-primary-300 hover:bg-primary-50'
-                  }`}
-                >
-                  <img
-                    className="w-8 h-8 rounded-full object-cover"
-                    src={candidate.photoUrl}
-                    alt={candidate.name}
-                  />
-                  <div className="text-left">
-                    <p className={`text-sm font-medium ${
-                      isSelected ? 'text-green-700' : 'text-gray-900'
-                    }`}>
-                      {candidate.name}
-                    </p>
-                    <p className={`text-xs ${
-                      isSelected ? 'text-green-600' : 'text-gray-500'
-                    }`}>
-                      {candidate.bio.substring(0, 30)}...
-                    </p>
+          <h6 className="text-xs font-medium text-gray-600 mb-2">Search existing candidates</h6>
+          <div className="space-y-3">
+            <Input
+              placeholder="Type to search candidates..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="mb-3"
+            />
+
+            {isLoading && (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+              </div>
+            )}
+
+            {!isLoading && showResults && (
+              <>
+                {filteredCandidates.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500">No candidates found</p>
                   </div>
-                  {isSelected && <CheckCircle className="w-4 h-4 text-green-600 ml-auto" />}
-                </button>
-              );
-            })}
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                    {filteredCandidates.map((candidate) => {
+                      const isSelected = position.candidates.some(c => c.id === candidate.id);
+                      return (
+                        <button
+                          key={candidate.id}
+                          onClick={() => handleAddExisting(candidate)}
+                          disabled={isSelected}
+                          className={`flex items-center space-x-3 p-2 rounded-lg border transition-colors duration-200 ${
+                            isSelected
+                              ? 'border-green-300 bg-green-50 cursor-not-allowed'
+                              : 'border-gray-200 hover:border-primary-300 hover:bg-primary-50'
+                          }`}
+                        >
+                          <img
+                            className="w-8 h-8 rounded-full object-cover"
+                            src={candidate.photoUrl}
+                            alt={candidate.name}
+                          />
+                          <div className="text-left">
+                            <p className={`text-sm font-medium ${
+                              isSelected ? 'text-green-700' : 'text-gray-900'
+                            }`}>
+                              {candidate.name}
+                            </p>
+                            <p className={`text-xs ${
+                              isSelected ? 'text-green-600' : 'text-gray-500'
+                            }`}>
+                              {candidate.bio.substring(0, 30)}...
+                            </p>
+                          </div>
+                          {isSelected && <CheckCircle className="w-4 h-4 text-green-600 ml-auto" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
