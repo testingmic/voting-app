@@ -323,6 +323,32 @@ class ApiService {
       throw new Error(error.response?.data?.message || 'Failed to reset password');
     }
   }
+
+  // Organization Logo Upload
+  async uploadOrganizationLogo(logoFile: File): Promise<ApiResponse<{ logoUrl: string }>> {
+    try {
+      const formData = new FormData();
+      formData.append('logo', logoFile);
+      
+      const response: AxiosResponse<ApiResponse<{ logoUrl: string }>> = await this.api.put('/organization', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Logo upload failed');
+    }
+  }
+
+  async removeOrganizationLogo(): Promise<ApiResponse<void>> {
+    try {
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete('/organization/removelogo');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Logo removal failed');
+    }
+  }
 }
 
 export const apiService = new ApiService();

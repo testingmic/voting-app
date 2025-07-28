@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Building, 
   Users, 
@@ -22,7 +22,9 @@ import {
   CreditCard,
   X,
   AlertCircle,
-  Home
+  Home,
+  Upload,
+  Image
 } from 'lucide-react';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
@@ -30,16 +32,19 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast';
 import MembersTab from '../components/organization/MembersTab';
+import apiService from '../services/api';
 
 const OrganizationPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Organization data
   const [orgData, setOrgData] = useState({
     name: 'Sample School',
-    type: 'school',
+    type: 'school' as 'school' | 'church' | 'organization',
     description: 'A leading educational institution committed to excellence in learning and community engagement.',
     website: 'https://sampleschool.edu',
     email: 'info@sampleschool.edu',
@@ -71,17 +76,117 @@ const OrganizationPage: React.FC = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Make actual API call to update organization
+      const response = await apiService.updateOrganization({
+        name: orgData.name,
+        type: orgData.type,
+        primaryColor: orgData.primaryColor,
+        logo: orgData.logo,
+        settings: {
+          enableTwoFactor: true, // Default value
+          enableDeviceFingerprinting: true, // Default value
+          enableNotifications: true, // Default value
+          customBranding: orgData.customBranding
+        }
+      });
+      
+      // Update local state with response data
+      if (response.data) {
+        setOrgData(prev => ({
+          ...prev,
+          ...response.data
+        }));
+      }
+      
       setEditing(false);
       toast.success('Organization settings updated successfully');
-    } catch (error) {
-      toast.error('Failed to update organization settings');
+    } catch (error: any) {
+      console.error('Failed to update organization:', error);
+      toast.error(error.message || 'Failed to update organization settings');
     } finally {
       setLoading(false);
     }
   };
 
+  // Logo upload handling
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    setLogoUploading(true);
+    try {
+      // Make actual API call for logo upload
+      const response = await apiService.uploadOrganizationLogo(file);
+      
+      // Update organization data with new logo URL from API response
+      if (response.data?.logoUrl) {
+        setOrgData(prev => ({ ...prev, logo: response.data!.logoUrl }));
+      }
+      
+      toast.success('Logo uploaded successfully');
+    } catch (error: any) {
+      console.error('Logo upload failed:', error);
+      toast.error(error.message || 'Failed to upload logo. Please try again.');
+    } finally {
+      setLogoUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    setLogoUploading(true);
+    try {
+      // Make actual API call to remove logo
+      await apiService.removeOrganizationLogo();
+      
+      // Update organization data to remove logo
+      setOrgData(prev => ({ ...prev, logo: '' }));
+      
+      toast.success('Logo removed successfully');
+    } catch (error: any) {
+      console.error('Logo removal failed:', error);
+      toast.error(error.message || 'Failed to remove logo. Please try again.');
+    } finally {
+      setLogoUploading(false);
+    }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Load organization data on component mount
+  useEffect(() => {
+    const loadOrganizationData = async () => {
+      try {
+        const response = await apiService.getOrganization();
+        setOrgData(prev => ({
+          ...prev,
+          ...response.data
+        }));
+      } catch (error: any) {
+        console.error('Failed to load organization data:', error);
+        toast.error('Failed to load organization data');
+      }
+    };
+
+    loadOrganizationData();
+  }, []);
 
 
   return (
@@ -105,8 +210,17 @@ const OrganizationPage: React.FC = () => {
                   ) : (
                     <Building className="w-16 h-16 text-gray-400 dark:text-gray-500" />
                   )}
+                  {logoUploading && (
+                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    </div>
+                  )}
                 </div>
-                <button className="absolute bottom-4 right-4 p-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-full hover:from-purple-500 hover:to-purple-600 transition-colors duration-200">
+                <button 
+                  onClick={triggerFileUpload}
+                  disabled={logoUploading}
+                  className="absolute bottom-4 right-4 p-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-full hover:from-purple-500 hover:to-purple-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <Edit className="w-4 h-4" />
                 </button>
               </div>
@@ -194,7 +308,7 @@ const OrganizationPage: React.FC = () => {
                       </label>
                       <select
                         value={orgData.type}
-                        onChange={(e) => setOrgData(prev => ({ ...prev, type: e.target.value }))}
+                        onChange={(e) => setOrgData(prev => ({ ...prev, type: e.target.value as 'school' | 'church' | 'organization' }))}
                         disabled={!editing}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
                       >
@@ -326,21 +440,53 @@ const OrganizationPage: React.FC = () => {
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Branding & Appearance</h3>
                   <div className="space-y-6">
                     <div className="flex items-center space-x-6">
-                      <div className="w-24 h-24 bg-gray-100 dark:bg-dark-300 rounded-lg flex items-center justify-center">
-                        {orgData.logo ? (
-                          <img src={orgData.logo} alt="Logo" className="w-16 h-16 object-contain" />
-                        ) : (
-                          <Building className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      <div className="relative">
+                        <div className="w-24 h-24 bg-gray-100 dark:bg-dark-300 rounded-lg flex items-center justify-center">
+                          {orgData.logo ? (
+                            <img src={orgData.logo} alt="Logo" className="w-16 h-16 object-contain" />
+                          ) : (
+                            <Building className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                          )}
+                        </div>
+                        {logoUploading && (
+                          <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                          </div>
                         )}
                       </div>
-                      <div>
-                        <Button
-                          variant="outline"
-                          className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
-                        >
-                          Upload Logo
-                        </Button>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Recommended: 256x256px PNG or JPG</p>
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Button
+                            variant="outline"
+                            onClick={triggerFileUpload}
+                            disabled={logoUploading}
+                            className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            {orgData.logo ? 'Change Logo' : 'Upload Logo'}
+                          </Button>
+                          {orgData.logo && (
+                            <Button
+                              variant="outline"
+                              onClick={handleRemoveLogo}
+                              disabled={logoUploading}
+                              className="text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Remove Logo
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Recommended: 256x256px PNG or JPG (max 5MB)</p>
+                        
+                        {/* Hidden file input */}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                        />
                       </div>
                     </div>
 
