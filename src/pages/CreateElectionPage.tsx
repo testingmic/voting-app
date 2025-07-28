@@ -20,7 +20,7 @@ import {
   Upload,
   X
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard, { GlassCardHeader, GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast';
@@ -46,6 +46,8 @@ interface ElectionData {
   description: string;
   startDate: string;
   endDate: string;
+  imageUrl?: string;
+  imageFile?: File;
   positions: Position[];
   status: 'draft' | 'active' | 'inactive';
 }
@@ -80,6 +82,7 @@ const CreateElectionPage: React.FC = () => {
     description: '',
     startDate: '',
     endDate: '',
+    imageUrl: '',
     positions: [],
     status: 'draft'
   });
@@ -166,6 +169,51 @@ const CreateElectionPage: React.FC = () => {
     navigate('/elections');
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        e.target.value = ''; // Reset input
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file');
+        e.target.value = ''; // Reset input
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setElectionData(prev => ({
+          ...prev,
+          imageUrl: event.target?.result as string,
+          imageFile: file
+        }));
+        toast.success('Image uploaded successfully!');
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read image file');
+        e.target.value = ''; // Reset input
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  };
+
+  const handleClearImage = () => {
+    setElectionData(prev => ({
+      ...prev,
+      imageUrl: '',
+      imageFile: undefined
+    }));
+    toast.success('Image removed successfully!');
+  };
+
   const addPosition = () => {
     const newPosition: Position = {
       id: Date.now().toString(),
@@ -236,21 +284,21 @@ const CreateElectionPage: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {electionData.status === 'active' ? 'Election Activated!' : 'Draft Saved!'}
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
             {electionData.status === 'active' 
               ? 'Your election is now live and ready for voting.'
               : 'Your election draft has been saved successfully.'
             }
           </p>
 
-          <Card className="mb-8">
-            <CardBody>
+          <GlassCard className="mb-8">
+            <GlassCardBody>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Election Link</h3>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Election Link</h3>
                   <div className="flex items-center space-x-2">
                     <Input
                       value={electionLink}
@@ -279,8 +327,8 @@ const CreateElectionPage: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         </div>
       </div>
     );
@@ -292,8 +340,8 @@ const CreateElectionPage: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Create Election</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Election</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
               Set up a new election with positions and candidates
             </p>
           </div>
@@ -316,10 +364,10 @@ const CreateElectionPage: React.FC = () => {
               <div key={step.id} className="flex items-center">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                   isActive 
-                    ? 'border-primary-500 bg-primary-500 text-white'
+                    ? 'border-purple-500 bg-purple-500 text-white'
                     : isCompleted
                     ? 'border-green-500 bg-green-500 text-white'
-                    : 'border-gray-300 bg-white text-gray-500'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400'
                 }`}>
                   {isCompleted ? (
                     <CheckCircle className="w-5 h-5" />
@@ -329,14 +377,14 @@ const CreateElectionPage: React.FC = () => {
                 </div>
                 <div className="ml-3">
                   <p className={`text-sm font-medium ${
-                    isActive ? 'text-primary-600' : 'text-gray-500'
+                    isActive ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     {step.name}
                   </p>
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`w-16 h-0.5 mx-4 ${
-                    isCompleted ? 'bg-green-500' : 'bg-gray-300'
+                    isCompleted ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`} />
                 )}
               </div>
@@ -346,13 +394,13 @@ const CreateElectionPage: React.FC = () => {
       </div>
 
       {/* Step Content */}
-      <Card>
-        <CardBody>
+      <GlassCard>
+        <GlassCardBody>
           {/* Step 1: Basic Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
                     <Input
@@ -362,14 +410,83 @@ const CreateElectionPage: React.FC = () => {
                       placeholder="e.g., Student Council Election 2024"
                     />
                   </div>
+                  
+                  {/* Election Image Upload */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Election Flier Image (Optional)
+                    </label>
+                    <div className="space-y-3">
+                      {electionData.imageUrl ? (
+                        <div className="space-y-3">
+                          <div className="relative inline-block">
+                            <img
+                              src={electionData.imageUrl}
+                              alt="Election flier"
+                              className="w-48 h-32 rounded-lg object-cover border border-gray-200 dark:border-gray-700"
+                            />
+                            <button
+                              onClick={handleClearImage}
+                              className="absolute -top-2 -right-2 p-1 bg-red-100 dark:bg-red-900/20 rounded-full text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              id="election-image-upload-change"
+                            />
+                            <label
+                              htmlFor="election-image-upload-change"
+                              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-md cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200"
+                            >
+                              <Upload className="w-4 h-4 mr-1" />
+                              Change Image
+                            </label>
+                            <button
+                              onClick={handleClearImage}
+                              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200"
+                            >
+                              Remove Image
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            id="election-image-upload"
+                          />
+                          <label
+                            htmlFor="election-image-upload"
+                            className="flex items-center justify-center w-48 h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors duration-200 bg-gray-50 dark:bg-gray-800"
+                          >
+                            <div className="text-center">
+                              <Upload className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                              <span className="text-sm text-gray-600 dark:text-gray-400">Upload Flier Image</span>
+                              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Max 5MB • JPG, PNG, GIF</p>
+                            </div>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                     <textarea
                       rows={4}
                       value={electionData.description}
                       onChange={(e) => setElectionData(prev => ({ ...prev, description: e.target.value }))}
                       placeholder="Describe the purpose and scope of this election..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     />
                   </div>
                   <Input
@@ -393,7 +510,7 @@ const CreateElectionPage: React.FC = () => {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900">Election Positions</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Election Positions</h3>
                 <Button onClick={addPosition}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add Position
@@ -402,9 +519,9 @@ const CreateElectionPage: React.FC = () => {
 
               {electionData.positions.length === 0 ? (
                 <div className="text-center py-8">
-                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No positions added yet</h3>
-                  <p className="text-gray-600 mb-4">Add positions that candidates will run for in this election.</p>
+                  <Users className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No positions added yet</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">Add positions that candidates will run for in this election.</p>
                   <Button onClick={addPosition}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add First Position
@@ -413,14 +530,14 @@ const CreateElectionPage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {electionData.positions.map((position, index) => (
-                    <div key={position.id} className="border border-gray-200 rounded-lg p-4">
+                    <div key={position.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-md font-medium text-gray-900">Position {index + 1}</h4>
+                        <h4 className="text-md font-medium text-gray-900 dark:text-white">Position {index + 1}</h4>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => removePosition(position.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -441,13 +558,13 @@ const CreateElectionPage: React.FC = () => {
                         />
                       </div>
                       <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                         <textarea
                           rows={2}
                           value={position.description}
                           onChange={(e) => updatePosition(position.id, 'description', e.target.value)}
                           placeholder="Describe the responsibilities and requirements for this position..."
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
@@ -460,13 +577,13 @@ const CreateElectionPage: React.FC = () => {
           {/* Step 3: Candidates */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">Add Candidates</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Add Candidates</h3>
               
               {electionData.positions.length === 0 ? (
                 <div className="text-center py-8">
                   <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No positions available</h3>
-                  <p className="text-gray-600 mb-4">Please add positions first before adding candidates.</p>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No positions available</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">Please add positions first before adding candidates.</p>
                   <Button onClick={() => setCurrentStep(2)}>
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Go Back to Positions
@@ -475,8 +592,8 @@ const CreateElectionPage: React.FC = () => {
               ) : (
                 <div className="space-y-6">
                   {electionData.positions.map((position, index) => (
-                    <div key={position.id} className="border border-gray-200 rounded-lg p-4">
-                      <h4 className="text-md font-medium text-gray-900 mb-4">
+                    <div key={position.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
+                      <h4 className="text-md font-medium text-gray-900 dark:text-white mb-4">
                         {position.title || `Position ${index + 1}`}
                       </h4>
                       
@@ -496,27 +613,30 @@ const CreateElectionPage: React.FC = () => {
           {/* Step 4: Review & Publish */}
           {currentStep === 4 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">Review & Publish</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Review & Publish</h3>
               
               <div className="space-y-4">
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2">Election Details</h4>
-                  <div className="space-y-2 text-sm">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Election Details</h4>
+                  <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                     <p><span className="font-medium">Title:</span> {electionData.title}</p>
                     <p><span className="font-medium">Description:</span> {electionData.description}</p>
                     <p><span className="font-medium">Start Date:</span> {new Date(electionData.startDate).toLocaleString()}</p>
                     <p><span className="font-medium">End Date:</span> {new Date(electionData.endDate).toLocaleString()}</p>
+                    {electionData.imageUrl && (
+                      <p><span className="font-medium">Flier Image:</span> ✓ Uploaded</p>
+                    )}
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2">Positions & Candidates</h4>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Positions & Candidates</h4>
                   <div className="space-y-3">
                     {electionData.positions.map((position, index) => (
-                      <div key={position.id} className="border-l-4 border-primary-500 pl-3">
-                        <p className="font-medium">{position.title}</p>
-                        <p className="text-sm text-gray-600">{position.description}</p>
-                        <p className="text-sm text-gray-500">Candidates: {position.candidates.length}</p>
+                      <div key={position.id} className="border-l-4 border-purple-500 pl-3">
+                        <p className="font-medium text-gray-900 dark:text-white">{position.title}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{position.description}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-500">Candidates: {position.candidates.length}</p>
                       </div>
                     ))}
                   </div>
@@ -544,8 +664,8 @@ const CreateElectionPage: React.FC = () => {
               </div>
             </div>
           )}
-        </CardBody>
-      </Card>
+        </GlassCardBody>
+      </GlassCard>
 
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8">

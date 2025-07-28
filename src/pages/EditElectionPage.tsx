@@ -15,7 +15,9 @@ import {
   Trash2,
   CheckCircle,
   AlertCircle,
-  Edit
+  Edit,
+  Upload,
+  X
 } from 'lucide-react';
 import GlassCard, { GlassCardHeader, GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
@@ -44,6 +46,8 @@ interface ElectionData {
   description: string;
   startDate: string;
   endDate: string;
+  imageUrl?: string;
+  imageFile?: File;
   positions: Position[];
   status: 'draft' | 'active' | 'inactive' | 'paused' | 'completed';
 }
@@ -100,6 +104,7 @@ const EditElectionPage: React.FC = () => {
           description: 'Annual election for student council positions including President, Vice President, Secretary, and Treasurer.',
           startDate: '2024-01-15T09:00',
           endDate: '2024-01-17T17:00',
+          imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=400&fit=crop',
           status: 'active',
           positions: [
             {
@@ -259,6 +264,51 @@ const EditElectionPage: React.FC = () => {
     } : null);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        e.target.value = ''; // Reset input
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file');
+        e.target.value = ''; // Reset input
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setElectionData(prev => prev ? {
+          ...prev,
+          imageUrl: event.target?.result as string,
+          imageFile: file
+        } : null);
+        toast.success('Image uploaded successfully!');
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read image file');
+        e.target.value = ''; // Reset input
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  };
+
+  const handleClearImage = () => {
+    setElectionData(prev => prev ? {
+      ...prev,
+      imageUrl: '',
+      imageFile: undefined
+    } : null);
+    toast.success('Image removed successfully!');
+  };
+
   const canProceedToNext = () => {
     if (!electionData) return false;
     
@@ -385,7 +435,7 @@ const EditElectionPage: React.FC = () => {
               <div key={step.id} className="flex items-center">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                   isActive 
-                    ? 'border-primary-500 bg-primary-500 text-white'
+                    ? 'border-purple-500 bg-purple-500 text-white'
                     : isCompleted
                     ? 'border-green-500 bg-green-500 text-white'
                     : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400'
@@ -398,7 +448,7 @@ const EditElectionPage: React.FC = () => {
                 </div>
                 <div className="ml-3">
                   <p className={`text-sm font-medium ${
-                    isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'
+                    isActive ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     {step.name}
                   </p>
@@ -431,6 +481,75 @@ const EditElectionPage: React.FC = () => {
                       placeholder="e.g., Student Council Election 2024"
                     />
                   </div>
+                  
+                  {/* Election Image Upload */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Election Flier Image (Optional)
+                    </label>
+                    <div className="space-y-3">
+                      {electionData.imageUrl ? (
+                        <div className="space-y-3">
+                          <div className="relative inline-block">
+                            <img
+                              src={electionData.imageUrl}
+                              alt="Election flier"
+                              className="w-48 h-32 rounded-lg object-cover border border-gray-200 dark:border-gray-700"
+                            />
+                            <button
+                              onClick={handleClearImage}
+                              className="absolute -top-2 -right-2 p-1 bg-red-100 dark:bg-red-900/20 rounded-full text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                              id="election-image-upload-change"
+                            />
+                            <label
+                              htmlFor="election-image-upload-change"
+                              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-md cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200"
+                            >
+                              <Upload className="w-4 h-4 mr-1" />
+                              Change Image
+                            </label>
+                            <button
+                              onClick={handleClearImage}
+                              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200"
+                            >
+                              Remove Image
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            id="election-image-upload"
+                          />
+                          <label
+                            htmlFor="election-image-upload"
+                            className="flex items-center justify-center w-48 h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors duration-200 bg-gray-50 dark:bg-gray-800"
+                          >
+                            <div className="text-center">
+                              <Upload className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                              <span className="text-sm text-gray-600 dark:text-gray-400">Upload Flier Image</span>
+                              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Max 5MB • JPG, PNG, GIF</p>
+                            </div>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                     <textarea
@@ -438,7 +557,7 @@ const EditElectionPage: React.FC = () => {
                       value={electionData.description}
                       onChange={(e) => setElectionData(prev => prev ? { ...prev, description: e.target.value } : null)}
                       placeholder="Describe the purpose and scope of this election..."
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     />
                   </div>
                   <Input
@@ -516,7 +635,7 @@ const EditElectionPage: React.FC = () => {
                           value={position.description}
                           onChange={(e) => updatePosition(position.id, 'description', e.target.value)}
                           placeholder="Describe the responsibilities and requirements for this position..."
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
@@ -568,25 +687,28 @@ const EditElectionPage: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Review & Update</h3>
               
               <div className="space-y-4">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-2">Election Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="font-medium text-gray-900 dark:text-white">Title:</span> <span className="text-gray-600 dark:text-gray-400">{electionData.title}</span></p>
-                    <p><span className="font-medium text-gray-900 dark:text-white">Description:</span> <span className="text-gray-600 dark:text-gray-400">{electionData.description}</span></p>
-                    <p><span className="font-medium text-gray-900 dark:text-white">Start Date:</span> <span className="text-gray-600 dark:text-gray-400">{new Date(electionData.startDate).toLocaleString()}</span></p>
-                    <p><span className="font-medium text-gray-900 dark:text-white">End Date:</span> <span className="text-gray-600 dark:text-gray-400">{new Date(electionData.endDate).toLocaleString()}</span></p>
-                    <p><span className="font-medium text-gray-900 dark:text-white">Status:</span> <span className="text-gray-600 dark:text-gray-400">{electionData.status}</span></p>
+                  <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                    <p><span className="font-medium">Title:</span> {electionData.title}</p>
+                    <p><span className="font-medium">Description:</span> {electionData.description}</p>
+                    <p><span className="font-medium">Start Date:</span> {new Date(electionData.startDate).toLocaleString()}</p>
+                    <p><span className="font-medium">End Date:</span> {new Date(electionData.endDate).toLocaleString()}</p>
+                    <p><span className="font-medium">Status:</span> {electionData.status}</p>
+                    {electionData.imageUrl && (
+                      <p><span className="font-medium">Flier Image:</span> ✓ Uploaded</p>
+                    )}
                   </div>
                 </div>
 
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-gray-800/50">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-2">Positions & Candidates</h4>
                   <div className="space-y-3">
                     {electionData.positions.map((position, index) => (
-                      <div key={position.id} className="border-l-4 border-primary-500 dark:border-primary-400 pl-3">
+                      <div key={position.id} className="border-l-4 border-purple-500 pl-3">
                         <p className="font-medium text-gray-900 dark:text-white">{position.title}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{position.description}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Candidates: {position.candidates.length}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-500">Candidates: {position.candidates.length}</p>
                       </div>
                     ))}
                   </div>
