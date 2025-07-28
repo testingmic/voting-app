@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -9,6 +9,7 @@ import GlassCard from '../../components/ui/GlassCard';
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ const LoginPage: React.FC = () => {
     try {
       await login(formData.email, formData.password, formData.rememberMe);
       toast.success('Login successful!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error('Invalid email or password');
     } finally {

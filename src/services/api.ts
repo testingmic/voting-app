@@ -295,6 +295,34 @@ class ApiService {
       throw new Error(error.response?.data?.message || 'Failed to update organization');
     }
   }
+
+  // Password Reset
+  async forgotPassword(email: string): Promise<ApiResponse<void>> {
+    try {
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to send reset email');
+    }
+  }
+
+  async validateResetToken(token: string): Promise<ApiResponse<{ valid: boolean; email?: string }>> {
+    try {
+      const response: AxiosResponse<ApiResponse<{ valid: boolean; email?: string }>> = await this.api.get(`/auth/reset-password/validate/${token}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Invalid or expired reset token');
+    }
+  }
+
+  async resetPassword(token: string, email: string, password: string): Promise<ApiResponse<void>> {
+    try {
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.post('/auth/reset-password', { token, email, password });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to reset password');
+    }
+  }
 }
 
 export const apiService = new ApiService();
