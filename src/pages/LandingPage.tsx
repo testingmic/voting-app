@@ -285,7 +285,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20" id="features">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -379,7 +379,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20" id="pricing">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -482,9 +482,9 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20">
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Trusted by Organizations Worldwide
             </h2>
@@ -608,26 +608,26 @@ const LandingPage: React.FC = () => {
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Features</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Pricing</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">API</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Documentation</a></li>
+                <li><a href="#features" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Features</a></li>
+                <li><a href="#pricing" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Pricing</a></li>
+                {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">API</a></li> */}
+                <li><a href="/docs" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Documentation</a></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h3>
               <ul className="space-y-2">
                 <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">About</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Blog</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Careers</a></li>
+                {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Blog</a></li> */}
+                {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Careers</a></li> */}
                 <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Contact</a></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Support</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Help Center</a></li>
-                <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Community</a></li>
+                {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Help Center</a></li> */}
+                {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Community</a></li> */}
                 <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Status</a></li>
                 <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Security</a></li>
               </ul>
