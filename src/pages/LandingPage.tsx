@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import GlassCard, { GlassCardBody } from '../components/ui/GlassCard';
+import { toast } from 'react-hot-toast';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -103,6 +104,65 @@ const LandingPage: React.FC = () => {
     { number: '24/7', label: 'Support' }
   ];
 
+  const subscriptionPlans = [
+    {
+      id: 'free',
+      name: 'Free',
+      price: '$0',
+      period: 'forever',
+      description: 'Perfect for small organizations and testing',
+      highlight: null,
+      features: [
+        'Up to 3 elections per month',
+        'Up to 100 voters per election',
+        'Basic analytics',
+        'Email support',
+        'Standard templates'
+      ],
+      cta: 'Get Started Free',
+      popular: false
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: '$29',
+      period: 'per month',
+      description: 'Ideal for growing organizations',
+      highlight: 'Most Popular',
+      features: [
+        'Up to 20 elections per month',
+        'Up to 1,000 voters per election',
+        'Advanced analytics & reporting',
+        'Priority email support',
+        'Custom branding',
+        'API access',
+        'Export results'
+      ],
+      cta: 'Start Pro Trial',
+      popular: true
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: '$99',
+      period: 'per month',
+      description: 'For large organizations with complex needs',
+      highlight: 'Best Value',
+      features: [
+        'Unlimited elections',
+        'Unlimited voters',
+        'Real-time analytics dashboard',
+        '24/7 phone & email support',
+        'Custom integrations',
+        'Advanced security features',
+        'Dedicated account manager',
+        'White-label options'
+      ],
+      cta: 'Contact Sales',
+      popular: false
+    }
+  ];
+
   // Carousel functions
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -124,6 +184,18 @@ const LandingPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Handle plan selection
+  const handlePlanSelect = (planId: string) => {
+    if (planId === 'enterprise') {
+      // For enterprise, you might want to open a contact form or redirect to a sales page
+      toast.success('Our sales team will contact you soon!');
+      // You could also navigate to a contact page or open a modal
+    } else {
+      // For free and pro plans, navigate to signup
+      navigate('/signup', { state: { selectedPlan: planId } });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -301,6 +373,109 @@ const LandingPage: React.FC = () => {
                   </div>
                 </GlassCardBody>
               </GlassCard>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Choose the Perfect Plan for Your Organization
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              Start free and scale as you grow. All plans include our core features with no hidden fees.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {subscriptionPlans.map((plan, index) => (
+              <div key={plan.id} className="relative">
+                {/* Popular Badge */}
+                {plan.highlight && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                      {plan.highlight}
+                    </div>
+                  </div>
+                )}
+
+                <GlassCard className={`h-full transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                  plan.popular ? 'ring-2 ring-purple-500 dark:ring-purple-400' : ''
+                }`}>
+                  <GlassCardBody className="p-8">
+                    {/* Plan Header */}
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        {plan.name}
+                      </h3>
+                      <div className="mb-4">
+                        <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                          {plan.price}
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-400 ml-2">
+                          {plan.period}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {plan.description}
+                      </p>
+                    </div>
+
+                    {/* Features List */}
+                    <div className="space-y-4 mb-8">
+                      {plan.features.map((feature, featureIndex) => (
+                        <div key={featureIndex} className="flex items-start">
+                          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mr-3 mt-0.5" />
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {feature}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CTA Button */}
+                    <Button
+                      onClick={() => handlePlanSelect(plan.id)}
+                      className={`w-full ${
+                        plan.popular
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/25'
+                          : plan.id === 'free'
+                          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100'
+                          : 'bg-purple-600 hover:bg-purple-500 text-white'
+                      }`}
+                    >
+                      {plan.cta}
+                      {plan.id !== 'enterprise' && (
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      )}
+                    </Button>
+                  </GlassCardBody>
+                </GlassCard>
+              </div>
+            ))}
+          </div>
+
+          {/* Additional Info */}
+          <div className="text-center mt-12">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              All plans include a 14-day free trial. No credit card required.
+            </p>
+            <div className="flex flex-wrap justify-center items-center space-x-8 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                Cancel anytime
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                No setup fees
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                Instant activation
+              </div>
             </div>
           </div>
         </div>
