@@ -14,7 +14,12 @@ import {
   CheckCircle,
   Clock,
   MapPin,
-  Building
+  Building,
+  QrCode,
+  Copy,
+  Download,
+  Key,
+  AlertCircle
 } from 'lucide-react';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
@@ -45,6 +50,12 @@ const ProfilePage: React.FC = () => {
     newPassword: '',
     confirmPassword: ''
   });
+
+  // Add new state for 2FA setup
+  const [twoFactorSetupStep, setTwoFactorSetupStep] = useState<'initial' | 'qr' | 'verify' | 'backup' | 'complete'>('initial');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  const [qrCodeUrl] = useState('https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth://totp/VoteFlow:john.doe@example.com?secret=JBSWY3DPEHPK3PXP&issuer=VoteFlow');
 
   const tabs = [
     { id: 'overview', name: 'Overview', icon: User },
@@ -125,6 +136,55 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Function to handle 2FA verification
+  const handleVerifyCode = () => {
+    if (verificationCode.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+
+    // Simulate API verification
+    if (verificationCode === '123456') {
+      // Generate backup codes
+      const codes = Array.from({ length: 8 }, () => 
+        Math.random().toString(36).substring(2, 8).toUpperCase()
+      );
+      setBackupCodes(codes);
+      setTwoFactorSetupStep('backup');
+      toast.success('Code verified successfully');
+    } else {
+      toast.error('Invalid verification code');
+    }
+  };
+
+  // Function to copy backup codes
+  const handleCopyBackupCodes = () => {
+    const codesText = backupCodes.join('\n');
+    navigator.clipboard.writeText(codesText);
+    toast.success('Backup codes copied to clipboard');
+  };
+
+  // Function to download backup codes
+  const handleDownloadBackupCodes = () => {
+    const codesText = backupCodes.join('\n');
+    const blob = new Blob([codesText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'voteflow-2fa-backup-codes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    toast.success('Backup codes downloaded');
+  };
+
+  // Function to complete 2FA setup
+  const handleComplete2FASetup = () => {
+    setTwoFactorSetupStep('complete');
+    toast.success('Two-factor authentication enabled successfully');
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -148,6 +208,312 @@ const ProfilePage: React.FC = () => {
       default:
         return '📝';
     }
+  };
+
+  // Update the security tab content
+  const renderSecurityTab = () => {
+    if (twoFactorSetupStep === 'initial') {
+      return (
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Settings</h3>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Add an extra layer of security to your account</p>
+                </div>
+                <Button
+                  onClick={() => setTwoFactorSetupStep('qr')}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  Enable 2FA
+                </Button>
+              </div>
+
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Change Password</h4>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Current Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Button
+                    onClick={handlePasswordChange}
+                    loading={loading}
+                    className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                  >
+                    Update Password
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      );
+    }
+
+    if (twoFactorSetupStep === 'qr') {
+      return (
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Set Up Two-Factor Authentication</h3>
+              <Button
+                variant="outline"
+                onClick={() => setTwoFactorSetupStep('initial')}
+                className="border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
+              >
+                Cancel
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-gray-50 dark:bg-dark-400/50 p-4 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">Important Instructions</p>
+                    <ol className="mt-2 text-sm text-gray-600 dark:text-gray-400 list-decimal list-inside space-y-1">
+                      <li>Download and install an authenticator app (Google Authenticator, Authy, etc.)</li>
+                      <li>Scan the QR code with your authenticator app</li>
+                      <li>Enter the 6-digit code shown in your app to verify setup</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center space-y-6">
+                <div className="bg-white dark:bg-dark-300 p-4 rounded-lg">
+                  <img
+                    src={qrCodeUrl}
+                    alt="2FA QR Code"
+                    className="w-48 h-48"
+                  />
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Can't scan the QR code?</p>
+                  <div className="flex items-center justify-center space-x-2">
+                    <code className="px-3 py-1 bg-gray-100 dark:bg-dark-400 rounded text-sm font-mono text-gray-900 dark:text-white">
+                      JBSWY3DPEHPK3PXP
+                    </code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText('JBSWY3DPEHPK3PXP');
+                        toast.success('Secret key copied to clipboard');
+                      }}
+                      className="text-gray-600 dark:text-gray-400"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={() => setTwoFactorSetupStep('verify')}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                >
+                  Continue
+                </Button>
+              </div>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      );
+    }
+
+    if (twoFactorSetupStep === 'verify') {
+      return (
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Verify Setup</h3>
+              <Button
+                variant="outline"
+                onClick={() => setTwoFactorSetupStep('qr')}
+                className="border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
+              >
+                Back
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Enter the 6-digit code from your authenticator app to verify the setup
+              </p>
+
+              <div className="flex flex-col items-center space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                    className="w-48 px-4 py-2 text-center text-2xl tracking-widest font-mono rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    placeholder="000000"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleVerifyCode}
+                  disabled={verificationCode.length !== 6}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Verify Code
+                </Button>
+              </div>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      );
+    }
+
+    if (twoFactorSetupStep === 'backup') {
+      return (
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Save Backup Codes</h3>
+              <Button
+                variant="outline"
+                onClick={() => setTwoFactorSetupStep('verify')}
+                className="border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
+              >
+                Back
+              </Button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-gray-50 dark:bg-dark-400/50 p-4 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <Key className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">Important</p>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      Save these backup codes in a secure place. You can use them to access your account if you lose your authenticator device.
+                      Each code can only be used once.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-dark-300 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-2">
+                  {backupCodes.map((code, index) => (
+                    <code
+                      key={index}
+                      className="px-3 py-1 bg-gray-100 dark:bg-dark-400 rounded text-sm font-mono text-gray-900 dark:text-white text-center"
+                    >
+                      {code}
+                    </code>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center space-x-4">
+                <Button
+                  variant="outline"
+                  onClick={handleCopyBackupCodes}
+                  className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Codes
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleDownloadBackupCodes}
+                  className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <Button
+                  onClick={handleComplete2FASetup}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                >
+                  Complete Setup
+                </Button>
+              </div>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      );
+    }
+
+    // Complete state
+    return (
+      <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCardBody>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Two-Factor Authentication Enabled
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Your account is now protected with an additional layer of security
+            </p>
+            <Button
+              onClick={() => setTwoFactorSetupStep('initial')}
+              className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+            >
+              Done
+            </Button>
+          </div>
+        </GlassCardBody>
+      </GlassCard>
+    );
   };
 
   return (
@@ -338,96 +704,7 @@ const ProfilePage: React.FC = () => {
           )}
 
           {/* Security Tab */}
-          {activeTab === 'security' && (
-            <div className="space-y-6">
-              <GlassCard className="transform hover:scale-105 transition-all duration-300">
-                <GlassCardBody>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Settings</h3>
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Add an extra layer of security to your account</p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user?.twoFactorEnabled
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                        }`}>
-                          {user?.twoFactorEnabled ? 'Enabled' : 'Disabled'}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
-                        >
-                          {user?.twoFactorEnabled ? 'Disable' : 'Enable'}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Change Password</h4>
-                      <div className="space-y-4">
-                        <div className="relative">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Current Password
-                          </label>
-                          <div className="relative">
-                            <input
-                              type={showPassword ? 'text' : 'password'}
-                              value={passwordData.currentPassword}
-                              onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                              className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                            />
-                            <button
-                              type="button"
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            New Password
-                          </label>
-                          <input
-                            type="password"
-                            value={passwordData.newPassword}
-                            onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Confirm New Password
-                          </label>
-                          <input
-                            type="password"
-                            value={passwordData.confirmPassword}
-                            onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <Button
-                          onClick={handlePasswordChange}
-                          loading={loading}
-                          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
-                        >
-                          Update Password
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </GlassCardBody>
-              </GlassCard>
-            </div>
-          )}
+          {activeTab === 'security' && renderSecurityTab()}
 
           {/* Activity Tab */}
           {activeTab === 'activity' && (

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import {
   Home,
   Vote,
@@ -25,10 +26,24 @@ const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Click outside handlers
+  const handleClickOutside = useCallback(() => {
+    setIsNotificationsOpen(false);
+    setIsProfileOpen(false);
+  }, []);
+
+  const handleMobileClickOutside = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  // Click outside refs
+  const notificationsRef = useClickOutside<HTMLDivElement>(handleClickOutside);
+  const profileRef = useClickOutside<HTMLDivElement>(handleClickOutside);
+  const mobileMenuRef = useClickOutside<HTMLDivElement>(handleMobileClickOutside);
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
@@ -96,7 +111,7 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Notifications */}
-            <div className="relative">
+            <div ref={notificationsRef} className="relative">
               <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 className="p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors duration-200"
@@ -132,7 +147,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Profile Dropdown */}
-            <div className="relative">
+            <div ref={profileRef} className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center space-x-3 focus:outline-none"
@@ -211,7 +226,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-dark-200 border-t border-gray-200 dark:border-gray-800 absolute left-0 right-0 z-[60]">
+        <div ref={mobileMenuRef} className="md:hidden bg-white dark:bg-dark-200 border-t border-gray-200 dark:border-gray-800 absolute left-0 right-0 z-[60]">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {/* Theme Toggle */}
             <button
