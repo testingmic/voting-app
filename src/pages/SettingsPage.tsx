@@ -12,10 +12,12 @@ import {
   Smartphone,
   Monitor
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard from '../components/ui/GlassCard';
+import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage: React.FC = () => {
@@ -83,8 +85,8 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Manage your account settings and preferences
         </p>
       </div>
@@ -92,8 +94,8 @@ const SettingsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardBody className="p-0">
+          <GlassCard>
+            <GlassCardBody className="p-0">
               <nav className="space-y-1">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
@@ -103,8 +105,8 @@ const SettingsPage: React.FC = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 ${
                         activeTab === tab.id
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-dark-300/50'
                       }`}
                     >
                       <Icon className="w-4 h-4 mr-3" />
@@ -113,79 +115,101 @@ const SettingsPage: React.FC = () => {
                   );
                 })}
               </nav>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         </div>
 
         {/* Main Content */}
         <div className="lg:col-span-3">
           {/* Profile Settings */}
           {activeTab === 'profile' && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Profile Settings</h2>
-              </CardHeader>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Profile Settings</h2>
                 <div className="space-y-6">
                   <div className="flex items-center space-x-6">
                     <img
-                      className="h-20 w-20 rounded-full object-cover"
-                      src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=3b82f6&color=fff`}
+                      className="h-20 w-20 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                      src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=6366f1&color=fff`}
                       alt={user?.name}
                     />
                     <div>
-                      <Button variant="outline">Change Photo</Button>
+                      <Button
+                        variant="outline"
+                        className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                      >
+                        Change Photo
+                      </Button>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                      label="Full Name"
-                      value={profileData.name}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                    />
-                    <Input
-                      label="Email Address"
-                      type="email"
-                      value={profileData.email}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                    />
-                    <Input
-                      label="Phone Number"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={profileData.name}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={profileData.email}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={profileData.phone}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex justify-end">
-                    <Button onClick={handleProfileSave} loading={loading}>
+                    <Button
+                      onClick={handleProfileSave}
+                      loading={loading}
+                      className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                    >
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes
                     </Button>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           )}
 
           {/* Security Settings */}
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <h2 className="text-lg font-medium text-gray-900">Security Settings</h2>
-                </CardHeader>
-                <CardBody>
+              <GlassCard>
+                <GlassCardBody>
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Settings</h2>
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h3>
-                        <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Add an extra layer of security to your account</p>
                       </div>
                       <button
                         onClick={() => handleSecurityToggle('twoFactorEnabled')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                          securitySettings.twoFactorEnabled ? 'bg-primary-600' : 'bg-gray-200'
+                          securitySettings.twoFactorEnabled ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                         }`}
                       >
                         <span
@@ -198,13 +222,13 @@ const SettingsPage: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900">Device Fingerprinting</h3>
-                        <p className="text-sm text-gray-500">Track and prevent duplicate voting from same device</p>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Device Fingerprinting</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Track and prevent duplicate voting from same device</p>
                       </div>
                       <button
                         onClick={() => handleSecurityToggle('deviceFingerprinting')}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                          securitySettings.deviceFingerprinting ? 'bg-primary-600' : 'bg-gray-200'
+                          securitySettings.deviceFingerprinting ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                         }`}
                       >
                         <span
@@ -215,58 +239,73 @@ const SettingsPage: React.FC = () => {
                       </button>
                     </div>
 
-                    <div className="border-t border-gray-200 pt-6">
-                      <h3 className="text-sm font-medium text-gray-900 mb-4">Change Password</h3>
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Change Password</h3>
                       <div className="space-y-4">
                         <div className="relative">
-                          <Input
-                            label="Current Password"
-                            type={showPassword ? 'text' : 'password'}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Current Password
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
                         </div>
-                        <Input
-                          label="New Password"
-                          type="password"
-                        />
-                        <Input
-                          label="Confirm New Password"
-                          type="password"
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            New Password
+                          </label>
+                          <input
+                            type="password"
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Confirm New Password
+                          </label>
+                          <input
+                            type="password"
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                          />
+                        </div>
                       </div>
                       <div className="mt-4">
-                        <Button>Update Password</Button>
+                        <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                          Update Password
+                        </Button>
                       </div>
                     </div>
                   </div>
-                </CardBody>
-              </Card>
+                </GlassCardBody>
+              </GlassCard>
             </div>
           )}
 
           {/* Notifications Settings */}
           {activeTab === 'notifications' && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Notification Preferences</h2>
-              </CardHeader>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Notification Preferences</h2>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">Email Notifications</h3>
-                      <p className="text-sm text-gray-500">Receive notifications via email</p>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">Email Notifications</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Receive notifications via email</p>
                     </div>
                     <button
                       onClick={() => handleNotificationToggle('emailNotifications')}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                        securitySettings.emailNotifications ? 'bg-primary-600' : 'bg-gray-200'
+                        securitySettings.emailNotifications ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                       }`}
                     >
                       <span
@@ -279,13 +318,13 @@ const SettingsPage: React.FC = () => {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">SMS Notifications</h3>
-                      <p className="text-sm text-gray-500">Receive notifications via SMS</p>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">SMS Notifications</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Receive notifications via SMS</p>
                     </div>
                     <button
                       onClick={() => handleNotificationToggle('smsNotifications')}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                        securitySettings.smsNotifications ? 'bg-primary-600' : 'bg-gray-200'
+                        securitySettings.smsNotifications ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                       }`}
                     >
                       <span
@@ -296,88 +335,119 @@ const SettingsPage: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="border-t border-gray-200 pt-6">
-                    <h3 className="text-sm font-medium text-gray-900 mb-4">Notification Types</h3>
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Notification Types</h3>
                     <div className="space-y-3">
                       <label className="flex items-center">
-                        <input type="checkbox" defaultChecked className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-                        <span className="ml-2 text-sm text-gray-700">Election reminders</span>
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="rounded border-gray-200 dark:border-gray-700 text-purple-600 focus:ring-purple-500 dark:bg-dark-300"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Election reminders</span>
                       </label>
                       <label className="flex items-center">
-                        <input type="checkbox" defaultChecked className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-                        <span className="ml-2 text-sm text-gray-700">Voting confirmations</span>
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="rounded border-gray-200 dark:border-gray-700 text-purple-600 focus:ring-purple-500 dark:bg-dark-300"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Voting confirmations</span>
                       </label>
                       <label className="flex items-center">
-                        <input type="checkbox" defaultChecked className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-                        <span className="ml-2 text-sm text-gray-700">Results announcements</span>
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="rounded border-gray-200 dark:border-gray-700 text-purple-600 focus:ring-purple-500 dark:bg-dark-300"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Results announcements</span>
                       </label>
                       <label className="flex items-center">
-                        <input type="checkbox" className="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-                        <span className="ml-2 text-sm text-gray-700">Security alerts</span>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-200 dark:border-gray-700 text-purple-600 focus:ring-purple-500 dark:bg-dark-300"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Security alerts</span>
                       </label>
                     </div>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           )}
 
           {/* Organization Settings */}
           {activeTab === 'organization' && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Organization Settings</h2>
-              </CardHeader>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Organization Settings</h2>
                 <div className="space-y-6">
                   <div className="flex items-center space-x-6">
-                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="w-20 h-20 bg-gray-100 dark:bg-dark-300 rounded-lg flex items-center justify-center">
                       {organizationSettings.logo ? (
                         <img src={organizationSettings.logo} alt="Logo" className="w-16 h-16 object-contain" />
                       ) : (
-                        <Building className="w-8 h-8 text-gray-400" />
+                        <Building className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       )}
                     </div>
                     <div>
-                      <Button variant="outline">Upload Logo</Button>
+                      <Button
+                        variant="outline"
+                        className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                      >
+                        Upload Logo
+                      </Button>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                      label="Organization Name"
-                      value={organizationSettings.name}
-                      onChange={(e) => setOrganizationSettings(prev => ({ ...prev, name: e.target.value }))}
-                    />
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Organization Type</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Organization Name
+                      </label>
+                      <input
+                        type="text"
+                        value={organizationSettings.name}
+                        onChange={(e) => setOrganizationSettings(prev => ({ ...prev, name: e.target.value }))}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Organization Type
+                      </label>
                       <select
                         value={organizationSettings.type}
                         onChange={(e) => setOrganizationSettings(prev => ({ ...prev, type: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                       >
                         <option value="school">School</option>
                         <option value="church">Church</option>
                         <option value="organization">Organization</option>
                       </select>
                     </div>
-                    <Input
-                      label="Primary Color"
-                      type="color"
-                      value={organizationSettings.primaryColor}
-                      onChange={(e) => setOrganizationSettings(prev => ({ ...prev, primaryColor: e.target.value }))}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Primary Color
+                      </label>
+                      <input
+                        type="color"
+                        value={organizationSettings.primaryColor}
+                        onChange={(e) => setOrganizationSettings(prev => ({ ...prev, primaryColor: e.target.value }))}
+                        className="w-full h-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">Custom Branding</h3>
-                      <p className="text-sm text-gray-500">Enable custom colors and branding</p>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">Custom Branding</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Enable custom colors and branding</p>
                     </div>
                     <button
                       onClick={() => setOrganizationSettings(prev => ({ ...prev, customBranding: !prev.customBranding }))}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                        organizationSettings.customBranding ? 'bg-primary-600' : 'bg-gray-200'
+                        organizationSettings.customBranding ? 'bg-purple-600' : 'bg-gray-200 dark:bg-gray-700'
                       }`}
                     >
                       <span
@@ -389,74 +459,76 @@ const SettingsPage: React.FC = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button>Save Organization Settings</Button>
+                    <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                      Save Organization Settings
+                    </Button>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           )}
 
           {/* Appearance Settings */}
           {activeTab === 'appearance' && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-medium text-gray-900">Appearance Settings</h2>
-              </CardHeader>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Appearance Settings</h2>
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-4">Theme</h3>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Theme</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="border-2 border-primary-500 rounded-lg p-4 bg-white">
+                      <div className="border-2 border-purple-500 dark:border-purple-400 rounded-lg p-4 bg-white dark:bg-dark-300">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Light</span>
-                          <div className="w-4 h-4 bg-primary-600 rounded-full"></div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Light</span>
+                          <div className="w-4 h-4 bg-purple-600 rounded-full"></div>
                         </div>
-                        <div className="h-20 bg-gray-100 rounded"></div>
+                        <div className="h-20 bg-gray-100 dark:bg-gray-800 rounded"></div>
                       </div>
-                      <div className="border-2 border-gray-200 rounded-lg p-4 bg-white">
+                      <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-dark-300">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Dark</span>
-                          <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Dark</span>
+                          <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
                         </div>
-                        <div className="h-20 bg-gray-800 rounded"></div>
+                        <div className="h-20 bg-gray-800 dark:bg-gray-900 rounded"></div>
                       </div>
-                      <div className="border-2 border-gray-200 rounded-lg p-4 bg-white">
+                      <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-dark-300">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Auto</span>
-                          <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Auto</span>
+                          <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
                         </div>
-                        <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-800 rounded"></div>
+                        <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-800 dark:from-gray-800 dark:to-gray-900 rounded"></div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-4">Layout</h3>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Layout</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border-2 border-primary-500 rounded-lg p-4">
+                      <div className="border-2 border-purple-500 dark:border-purple-400 rounded-lg p-4 bg-white/50 dark:bg-dark-300/50">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Compact</span>
-                          <Monitor className="w-4 h-4 text-primary-600" />
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Compact</span>
+                          <Monitor className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                         </div>
-                        <p className="text-xs text-gray-500">Tighter spacing for more content</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Tighter spacing for more content</p>
                       </div>
-                      <div className="border-2 border-gray-200 rounded-lg p-4">
+                      <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white/50 dark:bg-dark-300/50">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Comfortable</span>
-                          <Smartphone className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">Comfortable</span>
+                          <Smartphone className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                         </div>
-                        <p className="text-xs text-gray-500">More breathing room</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">More breathing room</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex justify-end">
-                    <Button>Save Appearance</Button>
+                    <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                      Save Appearance
+                    </Button>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           )}
         </div>
       </div>

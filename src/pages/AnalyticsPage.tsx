@@ -13,7 +13,9 @@ import {
   Calendar,
   Clock
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard from '../components/ui/GlassCard';
+import { GlassCardBody } from '../components/ui/GlassCard';
+import Button from '../components/ui/Button';
 import { Analytics } from '../types';
 import { format } from 'date-fns';
 
@@ -116,8 +118,8 @@ const AnalyticsPage: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Analytics & Results</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics & Results</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
               Detailed insights into voting patterns and results
             </p>
           </div>
@@ -125,246 +127,241 @@ const AnalyticsPage: React.FC = () => {
             <select
               value={selectedElection}
               onChange={(e) => setSelectedElection(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             >
               <option value={1}>Student Council Election 2024</option>
               <option value={2}>Church Board Election</option>
               <option value={3}>Organization Leadership</option>
             </select>
-            <button className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+            <Button
+              variant="outline"
+              className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+            >
               <Download className="w-4 h-4 mr-2" />
               Export
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
             <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg">
+                <Users className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Voters</p>
-                <p className="text-2xl font-bold text-gray-900">{analytics.totalVoters.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Voters</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.totalVoters.toLocaleString()}</p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
 
-        <Card>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
             <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Vote className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg">
+                <Vote className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Votes</p>
-                <p className="text-2xl font-bold text-gray-900">{analytics.totalVotes.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Votes</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.totalVotes.toLocaleString()}</p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
 
-        <Card>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
+                <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Turnout Rate</p>
-                <p className="text-2xl font-bold text-gray-900">{analytics.turnoutRate}%</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Turnout Rate</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.turnoutRate}%</p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
 
-        <Card>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
             <div className="flex items-center">
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <Clock className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg">
+                <Clock className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Peak Hour</p>
-                <p className="text-2xl font-bold text-gray-900">2-4 PM</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Peak Hour</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">2-4 PM</p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Device Types */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">Device Types</h3>
-          </CardHeader>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Device Types</h3>
             <div className="space-y-4">
               {Object.entries(analytics.deviceTypes).map(([device, percentage]) => (
                 <div key={device} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    {getDeviceIcon(device)}
-                    <span className="text-sm font-medium text-gray-900 capitalize">{device}</span>
+                    <div className="text-gray-600 dark:text-gray-400">
+                      {getDeviceIcon(device)}
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">{device}</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                    <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
-                        className="bg-primary-600 h-2 rounded-full" 
+                        className="bg-gradient-to-r from-purple-600 to-purple-500 h-2 rounded-full" 
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-gray-900 w-8">{percentage}%</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{percentage}%</span>
                   </div>
                 </div>
               ))}
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
 
         {/* Browser Statistics */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">Browser Statistics</h3>
-          </CardHeader>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Browser Statistics</h3>
             <div className="space-y-4">
               {Object.entries(analytics.browserStats).map(([browser, percentage]) => (
                 <div key={browser} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    {getBrowserIcon(browser)}
-                    <span className="text-sm font-medium text-gray-900 capitalize">{browser}</span>
+                    <div className="text-gray-600 dark:text-gray-400">
+                      {getBrowserIcon(browser)}
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">{browser}</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                    <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                       <div 
-                        className="bg-green-600 h-2 rounded-full" 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full" 
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-gray-900 w-8">{percentage}%</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{percentage}%</span>
                   </div>
                 </div>
               ))}
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
       </div>
 
       {/* Voting Timeline */}
-      <Card className="mb-8">
-        <CardHeader>
-          <h3 className="text-lg font-medium text-gray-900">Voting Timeline</h3>
-        </CardHeader>
-        <CardBody>
+      <GlassCard className="mb-8 transform hover:scale-105 transition-all duration-300">
+        <GlassCardBody>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Voting Timeline</h3>
           <div className="h-64 flex items-end space-x-2">
             {analytics.votingTimeline.map((data, index) => (
               <div key={index} className="flex-1 flex flex-col items-center">
                 <div 
-                  className="w-full bg-primary-600 rounded-t"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 rounded-t"
                   style={{ 
                     height: `${(data.votes / Math.max(...analytics.votingTimeline.map(d => d.votes))) * 200}px` 
                   }}
                 />
-                <span className="text-xs text-gray-500 mt-2">{data.hour}:00</span>
-                <span className="text-xs font-medium text-gray-900">{data.votes}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">{data.hour}:00</span>
+                <span className="text-xs font-medium text-gray-900 dark:text-white">{data.votes}</span>
               </div>
             ))}
           </div>
-        </CardBody>
-      </Card>
+        </GlassCardBody>
+      </GlassCard>
 
       {/* Election Results */}
-      <Card>
-        <CardHeader>
-          <h3 className="text-lg font-medium text-gray-900">Election Results</h3>
-        </CardHeader>
-        <CardBody>
+      <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCardBody>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Election Results</h3>
           <div className="space-y-4">
             {analytics.results.map((result, index) => (
-              <div key={result.candidateId} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div key={result.candidateId} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50">
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
                     {index + 1}
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900">{result.candidateName}</h4>
-                    <p className="text-sm text-gray-500">{result.votes} votes</p>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white">{result.candidateName}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{result.votes} votes</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <div className="w-32 bg-gray-200 rounded-full h-2">
+                  <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
-                      className="bg-primary-600 h-2 rounded-full" 
+                      className="bg-gradient-to-r from-purple-600 to-purple-500 h-2 rounded-full" 
                       style={{ width: `${result.percentage}%` }}
                     />
                   </div>
-                  <span className="text-sm font-medium text-gray-900 w-12">{result.percentage}%</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white w-12">{result.percentage}%</span>
                 </div>
               </div>
             ))}
           </div>
-        </CardBody>
-      </Card>
+        </GlassCardBody>
+      </GlassCard>
 
       {/* Additional Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">Voting Patterns</h3>
-          </CardHeader>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Voting Patterns</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Average voting time:</span>
-                <span className="font-medium">2.5 minutes</span>
+                <span className="text-gray-600 dark:text-gray-400">Average voting time:</span>
+                <span className="font-medium text-gray-900 dark:text-white">2.5 minutes</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Most active day:</span>
-                <span className="font-medium">Wednesday</span>
+                <span className="text-gray-600 dark:text-gray-400">Most active day:</span>
+                <span className="font-medium text-gray-900 dark:text-white">Wednesday</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Peak voting hour:</span>
-                <span className="font-medium">2:00 PM</span>
+                <span className="text-gray-600 dark:text-gray-400">Peak voting hour:</span>
+                <span className="font-medium text-gray-900 dark:text-white">2:00 PM</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Completion rate:</span>
-                <span className="font-medium">94%</span>
+                <span className="text-gray-600 dark:text-gray-400">Completion rate:</span>
+                <span className="font-medium text-gray-900 dark:text-white">94%</span>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
 
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">Security Metrics</h3>
-          </CardHeader>
-          <CardBody>
+        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+          <GlassCardBody>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Metrics</h3>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Unique devices:</span>
-                <span className="font-medium">1,247</span>
+                <span className="text-gray-600 dark:text-gray-400">Unique devices:</span>
+                <span className="font-medium text-gray-900 dark:text-white">1,247</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Suspicious activities:</span>
-                <span className="font-medium text-green-600">0</span>
+                <span className="text-gray-600 dark:text-gray-400">Suspicious activities:</span>
+                <span className="font-medium text-green-600 dark:text-green-400">0</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Duplicate attempts:</span>
-                <span className="font-medium text-green-600">0</span>
+                <span className="text-gray-600 dark:text-gray-400">Duplicate attempts:</span>
+                <span className="font-medium text-green-600 dark:text-green-400">0</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Security score:</span>
-                <span className="font-medium text-green-600">98%</span>
+                <span className="text-gray-600 dark:text-gray-400">Security score:</span>
+                <span className="font-medium text-green-600 dark:text-green-400">98%</span>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
       </div>
     </div>
   );

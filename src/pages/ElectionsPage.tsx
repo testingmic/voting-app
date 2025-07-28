@@ -17,7 +17,8 @@ import {
   Trash2,
   Link as LinkIcon
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard from '../components/ui/GlassCard';
+import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import { Election } from '../types';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -155,30 +156,30 @@ const ElectionsPage: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
-        return <Clock className="w-4 h-4 text-green-600" />;
+        return <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />;
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-gray-600" />;
+        return <CheckCircle className="w-4 h-4 text-gray-600 dark:text-gray-400" />;
       case 'upcoming':
-        return <Calendar className="w-4 h-4 text-blue-600" />;
+        return <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
       case 'paused':
-        return <Pause className="w-4 h-4 text-yellow-600" />;
+        return <Pause className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />;
       default:
-        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
+        return <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       case 'completed':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
       case 'upcoming':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
       case 'paused':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       default:
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
     }
   };
 
@@ -220,13 +221,13 @@ const ElectionsPage: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Elections</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Elections</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
               Manage and monitor all your voting elections
             </p>
           </div>
           <Link to="/elections/create">
-            <Button>
+            <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
               <Plus className="w-4 h-4 mr-2" />
               Create Election
             </Button>
@@ -235,30 +236,30 @@ const ElectionsPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <Card className="mb-6">
-        <CardBody>
+      <GlassCard className="mb-6">
+        <GlassCardBody>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search elections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Status Filter */}
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-400" />
+              <Filter className="w-4 h-4 text-gray-400 dark:text-gray-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -268,14 +269,14 @@ const ElectionsPage: React.FC = () => {
               </select>
             </div>
           </div>
-        </CardBody>
-      </Card>
+        </GlassCardBody>
+      </GlassCard>
 
       {/* Elections Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredElections.map((election) => (
-          <Card key={election.id} className="hover:shadow-md transition-shadow duration-200">
-            <CardBody>
+          <GlassCard key={election.id} className="transform hover:scale-105 transition-all duration-300">
+            <GlassCardBody>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   {getStatusIcon(election.status)}
@@ -289,16 +290,16 @@ const ElectionsPage: React.FC = () => {
                       e.stopPropagation();
                       setActiveMenu(activeMenu === election.id ? null : election.id);
                     }}
-                    className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                    className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-dark-300"
                   >
                     <MoreVertical className="w-4 h-4" />
                   </button>
 
                   {activeMenu === election.id && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-dark-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
                       <Link
                         to={`/elections/${election.id}`}
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Eye className="w-4 h-4 mr-3" />
@@ -307,7 +308,7 @@ const ElectionsPage: React.FC = () => {
                       <Link
                         to={`/vote/${election.id}`}
                         target="_blank"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveMenu(null);
@@ -318,7 +319,7 @@ const ElectionsPage: React.FC = () => {
                       </Link>
                       <Link
                         to={`/elections/${election.id}/edit`}
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Edit className="w-4 h-4 mr-3" />
@@ -331,7 +332,7 @@ const ElectionsPage: React.FC = () => {
                             handlePauseElection(election.id);
                             setActiveMenu(null);
                           }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                         >
                           <Pause className="w-4 h-4 mr-3" />
                           Pause Election
@@ -344,7 +345,7 @@ const ElectionsPage: React.FC = () => {
                             handleResumeElection(election.id);
                             setActiveMenu(null);
                           }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                         >
                           <Play className="w-4 h-4 mr-3" />
                           Resume Election
@@ -357,7 +358,7 @@ const ElectionsPage: React.FC = () => {
                           toast.success('Election link copied to clipboard');
                           setActiveMenu(null);
                         }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                       >
                         <LinkIcon className="w-4 h-4 mr-3" />
                         Copy Vote Link
@@ -372,7 +373,7 @@ const ElectionsPage: React.FC = () => {
                           }
                           setActiveMenu(null);
                         }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                       >
                         <Trash2 className="w-4 h-4 mr-3" />
                         Delete Election
@@ -382,33 +383,33 @@ const ElectionsPage: React.FC = () => {
                 </div>
               </div>
 
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {election.title}
               </h3>
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
                 {election.description}
               </p>
 
               <div className="space-y-3 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Start Date</span>
-                  <span className="font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">Start Date</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
                     {format(new Date(election.startDate), 'MMM dd, yyyy')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">End Date</span>
-                  <span className="font-medium">
+                  <span className="text-gray-500 dark:text-gray-400">End Date</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
                     {format(new Date(election.endDate), 'MMM dd, yyyy')}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Voters</span>
-                  <span className="font-medium">{election.totalVoters}</span>
+                  <span className="text-gray-500 dark:text-gray-400">Voters</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{election.totalVoters}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Turnout</span>
-                  <span className="font-medium">{getTurnoutRate(election)}%</span>
+                  <span className="text-gray-500 dark:text-gray-400">Turnout</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{getTurnoutRate(election)}%</span>
                 </div>
               </div>
 
@@ -417,15 +418,19 @@ const ElectionsPage: React.FC = () => {
                   to={`/elections/${election.id}`}
                   className="flex-1"
                 >
-                  <Button variant="outline" className="w-full">
+                  <Button
+                    variant="outline"
+                    className="w-full border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                  >
                     View Details
                   </Button>
                 </Link>
                 
                 {election.status === 'active' && (
                   <Button
-                    variant="secondary"
+                    variant="outline"
                     onClick={() => handlePauseElection(election.id)}
+                    className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-900/30"
                   >
                     <Pause className="w-4 h-4" />
                   </Button>
@@ -433,25 +438,26 @@ const ElectionsPage: React.FC = () => {
                 
                 {election.status === 'paused' && (
                   <Button
-                    variant="secondary"
+                    variant="outline"
                     onClick={() => handleResumeElection(election.id)}
+                    className="border-green-500 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-900/30"
                   >
                     <Play className="w-4 h-4" />
                   </Button>
                 )}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         ))}
       </div>
 
       {filteredElections.length === 0 && (
-        <Card>
-          <CardBody>
+        <GlassCard>
+          <GlassCardBody>
             <div className="text-center py-12">
-              <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No elections found</h3>
-              <p className="text-gray-600 mb-4">
+              <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No elections found</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 {searchTerm || statusFilter !== 'all' 
                   ? 'Try adjusting your search or filter criteria.'
                   : 'Get started by creating your first election.'
@@ -459,15 +465,15 @@ const ElectionsPage: React.FC = () => {
               </p>
               {!searchTerm && statusFilter === 'all' && (
                 <Link to="/elections/create">
-                  <Button>
+                  <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
                     <Plus className="w-4 h-4 mr-2" />
                     Create Election
                   </Button>
                 </Link>
               )}
             </div>
-          </CardBody>
-        </Card>
+          </GlassCardBody>
+        </GlassCard>
       )}
     </div>
   );
