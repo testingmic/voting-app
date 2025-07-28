@@ -26,6 +26,9 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import NotificationsPage from './pages/NotificationsPage';
 import DocumentationPage from './pages/DocumentationPage';
 import BulkImportPage from './pages/BulkImportPage';
+import StatusPage from './pages/StatusPage';
+import SecurityPrivacyPage from './pages/SecurityPrivacyPage';
+import NotFoundPage from './pages/NotFoundPage';
 import './index.css';
 
 // Protected Route Component
@@ -238,6 +241,22 @@ const App: React.FC = () => {
                 }
               />
 
+              {/* Status Route */}
+              <Route
+                path="/status"
+                element={
+                  <StatusPage />
+                }
+              />
+
+              {/* Security & Privacy Route */}
+              <Route
+                path="/security-privacy"
+                element={
+                  <SecurityPrivacyPage />
+                }
+              />
+
               {/* Bulk Import Route */}
               <Route
                 path="/bulk-import"
@@ -248,8 +267,8 @@ const App: React.FC = () => {
                 }
               />
 
-              {/* Catch all route */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+              {/* 404 Catch-all Route */}
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
             </div>
             

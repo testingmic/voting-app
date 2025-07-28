@@ -19,7 +19,9 @@ import {
   Sun,
   Moon,
   CreditCard,
-  BookOpen
+  BookOpen,
+  Activity,
+  Shield
 } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -224,6 +226,20 @@ const Navbar: React.FC = () => {
                       <BookOpen className="w-4 h-4 mr-3" />
                       Documentation
                     </button>
+                    <button
+                      onClick={() => handleNavigation('/status')}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
+                    >
+                      <Activity className="w-4 h-4 mr-3" />
+                      System Status
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/security-privacy')}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
+                    >
+                      <Shield className="w-4 h-4 mr-3" />
+                      Security & Privacy
+                    </button>
                   </div>
                   <div className="border-t border-gray-200 dark:border-gray-700 py-1">
                     <button
@@ -324,6 +340,20 @@ const Navbar: React.FC = () => {
               >
                 <Building className="w-5 h-5 mr-3" />
                 Organization
+              </button>
+              <button
+                onClick={() => handleNavigation('/status')}
+                className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
+              >
+                <Activity className="w-5 h-5 mr-3" />
+                System Status
+              </button>
+              <button
+                onClick={() => handleNavigation('/security-privacy')}
+                className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
+              >
+                <Shield className="w-5 h-5 mr-3" />
+                Security & Privacy
               </button>
               <button
                 onClick={handleLogout}
