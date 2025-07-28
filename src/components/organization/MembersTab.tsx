@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import GlassCard, { GlassCardBody } from '../ui/GlassCard';
 import Button from '../ui/Button';
-import { Plus, Edit, Trash2, Eye, Crown, UserCheck, UserX, X, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Crown, UserCheck, UserX, X, Mail, Phone, MapPin, Upload, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface Member {
@@ -26,6 +27,8 @@ interface AddMemberForm {
   department: string;
 }
 
+
+
 const MembersTab: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,6 +36,9 @@ const MembersTab: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
   const [formData, setFormData] = useState<AddMemberForm>({
     name: '',
     email: '',
@@ -42,7 +48,7 @@ const MembersTab: React.FC = () => {
     department: ''
   });
 
-  // Mock initial data
+  // Mock initial data with more members for pagination demo
   useEffect(() => {
     setMembers([
       {
@@ -92,6 +98,78 @@ const MembersTab: React.FC = () => {
         phone: '+1 (555) 456-7890',
         position: 'Teacher',
         department: 'English'
+      },
+      {
+        id: 5,
+        name: 'David Brown',
+        email: 'david.brown@sampleschool.edu',
+        role: 'voter',
+        status: 'active',
+        joinedAt: '2023-04-12',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 567-8901',
+        position: 'Teacher',
+        department: 'Science'
+      },
+      {
+        id: 6,
+        name: 'Emily Chen',
+        email: 'emily.chen@sampleschool.edu',
+        role: 'voter',
+        status: 'active',
+        joinedAt: '2023-05-08',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 678-9012',
+        position: 'Teacher',
+        department: 'History'
+      },
+      {
+        id: 7,
+        name: 'Robert Taylor',
+        email: 'robert.taylor@sampleschool.edu',
+        role: 'admin',
+        status: 'active',
+        joinedAt: '2023-06-15',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 789-0123',
+        position: 'Head of IT',
+        department: 'Information Technology'
+      },
+      {
+        id: 8,
+        name: 'Maria Garcia',
+        email: 'maria.garcia@sampleschool.edu',
+        role: 'voter',
+        status: 'inactive',
+        joinedAt: '2023-07-22',
+        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 890-1234',
+        position: 'Teacher',
+        department: 'Spanish'
+      },
+      {
+        id: 9,
+        name: 'James Wilson',
+        email: 'james.wilson@sampleschool.edu',
+        role: 'voter',
+        status: 'active',
+        joinedAt: '2023-08-30',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 901-2345',
+        position: 'Teacher',
+        department: 'Physical Education'
+      },
+      {
+        id: 10,
+        name: 'Jennifer Lee',
+        email: 'jennifer.lee@sampleschool.edu',
+        role: 'voter',
+        status: 'active',
+        joinedAt: '2023-09-14',
+        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+        phone: '+1 (555) 012-3456',
+        position: 'Teacher',
+        department: 'Art'
       }
     ]);
   }, []);
@@ -239,6 +317,42 @@ const MembersTab: React.FC = () => {
     setShowViewModal(true);
   };
 
+  // Search and pagination logic
+  const filteredMembers = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return members;
+    }
+    
+    const query = searchQuery.toLowerCase();
+    return members.filter(member => 
+      member.name.toLowerCase().includes(query) ||
+      member.email.toLowerCase().includes(query) ||
+      member.position?.toLowerCase().includes(query) ||
+      member.department?.toLowerCase().includes(query) ||
+      member.role.toLowerCase().includes(query) ||
+      member.status.toLowerCase().includes(query)
+    );
+  }, [members, searchQuery]);
+
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentMembers = filteredMembers.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(1);
+  };
+
   return (
     <div className="space-y-6">
       <GlassCard>
@@ -250,17 +364,80 @@ const MembersTab: React.FC = () => {
                 Manage your organization's members and their roles
               </p>
             </div>
-            <Button 
-              onClick={() => setShowAddModal(true)}
-              className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white shadow-lg shadow-primary-500/25"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Member
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Link to="/bulk-import">
+                <Button 
+                  variant="outline"
+                  className="border-primary-500 text-primary-600 hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Bulk Import
+                </Button>
+              </Link>
+              <Button 
+                onClick={() => setShowAddModal(true)}
+                className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white shadow-lg shadow-primary-500/25"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Member
+              </Button>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search members by name, email, position, department, role, or status..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent placeholder-gray-500 dark:placeholder-gray-400"
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            {searchQuery && (
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Found {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''} matching "{searchQuery}"
+              </div>
+            )}
           </div>
           
           <div className="space-y-4">
-            {members.map((member) => (
+            {currentMembers.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 dark:text-gray-500 mb-4">
+                  <Search className="w-16 h-16 mx-auto" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  {searchQuery ? 'No members found' : 'No members yet'}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {searchQuery 
+                    ? `No members match your search for "${searchQuery}"`
+                    : 'Get started by adding your first organization member.'
+                  }
+                </p>
+                {!searchQuery && (
+                  <Button
+                    onClick={() => setShowAddModal(true)}
+                    className="mt-4 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white shadow-lg shadow-primary-500/25"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add First Member
+                  </Button>
+                )}
+              </div>
+            ) : (
+              currentMembers.map((member) => (
               <div
                 key={member.id}
                 className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-gray-800/50 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors duration-200"
@@ -324,8 +501,58 @@ const MembersTab: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-between">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredMembers.length)} of {filteredMembers.length} members
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="border-primary-500 text-primary-600 hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Previous
+                </Button>
+                
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-1 text-sm font-medium rounded-md transition-colors duration-200 ${
+                        page === currentPage
+                          ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/25'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="border-primary-500 text-primary-600 hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </GlassCardBody>
       </GlassCard>
 
@@ -632,6 +859,8 @@ const MembersTab: React.FC = () => {
           </div>
         </div>
       )}
+
+
     </div>
   );
 };

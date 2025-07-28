@@ -25,6 +25,7 @@ import VotingPage from './pages/VotingPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import NotificationsPage from './pages/NotificationsPage';
 import DocumentationPage from './pages/DocumentationPage';
+import BulkImportPage from './pages/BulkImportPage';
 import './index.css';
 
 // Protected Route Component
@@ -234,6 +235,16 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <DocumentationPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Bulk Import Route */}
+              <Route
+                path="/bulk-import"
+                element={
+                  <ProtectedRoute>
+                    <BulkImportPage />
                   </ProtectedRoute>
                 }
               />
