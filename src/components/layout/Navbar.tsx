@@ -156,6 +156,17 @@ const Navbar: React.FC = () => {
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 hours ago</p>
                     </div>
                   </div>
+                  <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      onClick={() => {
+                        handleNavigation('/notifications');
+                        setIsNotificationsOpen(false);
+                      }}
+                      className="w-full text-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                    >
+                      View All Notifications
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

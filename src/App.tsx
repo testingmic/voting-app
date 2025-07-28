@@ -20,6 +20,7 @@ import EditElectionPage from './pages/EditElectionPage';
 import ElectionDetailsPage from './pages/ElectionDetailsPage';
 import VotingPage from './pages/VotingPage';
 import SubscriptionPage from './pages/SubscriptionPage';
+import NotificationsPage from './pages/NotificationsPage';
 import './index.css';
 
 // Protected Route Component
@@ -190,6 +191,16 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Layout>
                       <OrganizationPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <NotificationsPage />
                     </Layout>
                   </ProtectedRoute>
                 }
