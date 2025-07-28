@@ -16,7 +16,8 @@ import {
   MapPin,
   Building
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard from '../components/ui/GlassCard';
+import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { useAuth } from '../contexts/AuthContext';
@@ -152,8 +153,8 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Manage your personal information and account settings
         </p>
       </div>
@@ -161,24 +162,24 @@ const ProfilePage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Profile Card */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardBody className="text-center">
+          <GlassCard className="transform hover:scale-105 transition-all duration-300">
+            <GlassCardBody className="text-center">
               <div className="relative inline-block">
                 <img
-                  className="h-32 w-32 rounded-full object-cover mx-auto mb-4"
-                  src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=3b82f6&color=fff&size=128`}
+                  className="h-32 w-32 rounded-full object-cover mx-auto mb-4 border-4 border-white dark:border-gray-800 shadow-lg"
+                  src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=6366f1&color=fff&size=128`}
                   alt={user?.name}
                 />
-                <button className="absolute bottom-4 right-4 p-2 bg-primary-600 text-white rounded-full hover:bg-primary-700 transition-colors duration-200">
+                <button className="absolute bottom-4 right-4 p-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-full hover:from-purple-500 hover:to-purple-600 transition-colors duration-200">
                   <Camera className="w-4 h-4" />
                 </button>
               </div>
               
-              <h2 className="text-xl font-bold text-gray-900 mb-1">{user?.name}</h2>
-              <p className="text-gray-500 mb-2">{user?.role === 'admin' ? 'Administrator' : 'Voter'}</p>
-              <p className="text-sm text-gray-400 mb-4">{user?.organization}</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{user?.name}</h2>
+              <p className="text-gray-500 dark:text-gray-400 mb-2">{user?.role === 'admin' ? 'Administrator' : 'Voter'}</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">{user?.organization}</p>
               
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center justify-center">
                   <Mail className="w-4 h-4 mr-2" />
                   {user?.email}
@@ -197,14 +198,14 @@ const ProfilePage: React.FC = () => {
                 <Button
                   variant="outline"
                   onClick={() => setEditing(!editing)}
-                  className="w-full"
+                  className="w-full border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   {editing ? 'Cancel Edit' : 'Edit Profile'}
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         </div>
 
         {/* Main Content */}
@@ -220,8 +221,8 @@ const ProfilePage: React.FC = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center px-1 py-2 text-sm font-medium border-b-2 transition-colors duration-200 ${
                       activeTab === tab.id
-                        ? 'border-primary-500 text-primary-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
                   >
                     <Icon className="w-4 h-4 mr-2" />
@@ -235,176 +236,223 @@ const ProfilePage: React.FC = () => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-                </CardHeader>
-                <CardBody>
+              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+                <GlassCardBody>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Personal Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                      label="Full Name"
-                      value={profileData.name}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                      disabled={!editing}
-                    />
-                    <Input
-                      label="Email Address"
-                      type="email"
-                      value={profileData.email}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                      disabled={!editing}
-                    />
-                    <Input
-                      label="Phone Number"
-                      value={profileData.phone}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                      disabled={!editing}
-                    />
-                    <Input
-                      label="Location"
-                      value={profileData.location}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
-                      disabled={!editing}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={profileData.name}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                        disabled={!editing}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={profileData.email}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                        disabled={!editing}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={profileData.phone}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                        disabled={!editing}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={profileData.location}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
+                        disabled={!editing}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
+                      />
+                    </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bio</label>
                       <textarea
                         rows={3}
                         value={profileData.bio}
                         onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
                         disabled={!editing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent disabled:bg-gray-50 dark:disabled:bg-dark-400 disabled:text-gray-500 dark:disabled:text-gray-400"
                       />
                     </div>
                   </div>
 
                   {editing && (
                     <div className="flex justify-end mt-6">
-                      <Button onClick={handleProfileSave} loading={loading}>
+                      <Button
+                        onClick={handleProfileSave}
+                        loading={loading}
+                        className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                      >
                         <Save className="w-4 h-4 mr-2" />
                         Save Changes
                       </Button>
                     </div>
                   )}
-                </CardBody>
-              </Card>
+                </GlassCardBody>
+              </GlassCard>
 
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-medium text-gray-900">Account Statistics</h3>
-                </CardHeader>
-                <CardBody>
+              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+                <GlassCardBody>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Account Statistics</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">12</div>
-                      <div className="text-sm text-gray-600">Elections Created</div>
+                    <div className="text-center p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">12</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Elections Created</div>
                     </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">45</div>
-                      <div className="text-sm text-gray-600">Votes Cast</div>
+                    <div className="text-center p-4 bg-green-50/50 dark:bg-green-900/20 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">45</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Votes Cast</div>
                     </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">8</div>
-                      <div className="text-sm text-gray-600">Candidates Added</div>
+                    <div className="text-center p-4 bg-purple-50/50 dark:bg-purple-900/20 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">8</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Candidates Added</div>
                     </div>
                   </div>
-                </CardBody>
-              </Card>
+                </GlassCardBody>
+              </GlassCard>
             </div>
           )}
 
           {/* Security Tab */}
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-medium text-gray-900">Security Settings</h3>
-                </CardHeader>
-                <CardBody>
+              <GlassCard className="transform hover:scale-105 transition-all duration-300">
+                <GlassCardBody>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Security Settings</h3>
                   <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
-                        <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Add an extra layer of security to your account</p>
                       </div>
                       <div className="flex items-center space-x-2">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user?.twoFactorEnabled ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                          user?.twoFactorEnabled
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
                         }`}>
                           {user?.twoFactorEnabled ? 'Enabled' : 'Disabled'}
                         </span>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-purple-500 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                        >
                           {user?.twoFactorEnabled ? 'Disable' : 'Enable'}
                         </Button>
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 pt-6">
-                      <h4 className="text-sm font-medium text-gray-900 mb-4">Change Password</h4>
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Change Password</h4>
                       <div className="space-y-4">
                         <div className="relative">
-                          <Input
-                            label="Current Password"
-                            type={showPassword ? 'text' : 'password'}
-                            value={passwordData.currentPassword}
-                            onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Current Password
+                          </label>
+                          <div className="relative">
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              value={passwordData.currentPassword}
+                              onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                              className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
                         </div>
-                        <Input
-                          label="New Password"
-                          type="password"
-                          value={passwordData.newPassword}
-                          onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                        />
-                        <Input
-                          label="Confirm New Password"
-                          type="password"
-                          value={passwordData.confirmPassword}
-                          onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        />
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            New Password
+                          </label>
+                          <input
+                            type="password"
+                            value={passwordData.newPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Confirm New Password
+                          </label>
+                          <input
+                            type="password"
+                            value={passwordData.confirmPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                          />
+                        </div>
                       </div>
                       <div className="mt-4">
-                        <Button onClick={handlePasswordChange} loading={loading}>
+                        <Button
+                          onClick={handlePasswordChange}
+                          loading={loading}
+                          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                        >
                           Update Password
                         </Button>
                       </div>
                     </div>
                   </div>
-                </CardBody>
-              </Card>
+                </GlassCardBody>
+              </GlassCard>
             </div>
           )}
 
           {/* Activity Tab */}
           {activeTab === 'activity' && (
-            <Card>
-              <CardHeader>
-                <h3 className="text-lg font-medium text-gray-900">Recent Activity</h3>
-              </CardHeader>
-              <CardBody>
+            <GlassCard className="transform hover:scale-105 transition-all duration-300">
+              <GlassCardBody>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Recent Activity</h3>
                 <div className="space-y-4">
                   {activities.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                      <div className="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <div
+                      key={activity.id}
+                      className="flex items-start space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50 hover:bg-gray-50/50 dark:hover:bg-dark-400/50 transition-colors duration-200"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
                         <span className="text-lg">{activity.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                        <p className="text-sm text-gray-500">{activity.description}</p>
-                        <p className="text-xs text-gray-400 mt-1">{formatDate(activity.timestamp)}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.title}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{activity.description}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{formatDate(activity.timestamp)}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           )}
         </div>
       </div>
