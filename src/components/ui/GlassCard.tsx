@@ -15,7 +15,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    default: 'bg-white/10 dark:bg-gray-900/50 border-white/10 dark:border-gray-700/50',
+    default: 'bg-white dark:bg-gray-900/50 border-white/10 dark:border-gray-700/50',
     primary: 'bg-blue-50/10 dark:bg-blue-900/20 border-blue-100/20 dark:border-blue-700/30',
     success: 'bg-green-50/10 dark:bg-green-900/20 border-green-100/20 dark:border-green-700/30',
     warning: 'bg-orange-50/10 dark:bg-orange-900/20 border-orange-100/20 dark:border-orange-700/30'

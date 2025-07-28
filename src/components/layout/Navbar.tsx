@@ -92,7 +92,8 @@ const Navbar: React.FC = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:ml-8 md:flex md:space-x-4">
               {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
+                const isActive = location.pathname === item.href || 
+                  (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
                 return (
                   <button
                     key={item.name}
@@ -277,7 +278,8 @@ const Navbar: React.FC = () => {
             </button>
 
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = location.pathname === item.href || 
+                (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
               return (
                 <button
                   key={item.name}

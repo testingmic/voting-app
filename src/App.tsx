@@ -50,11 +50,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 // Layout Component
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-dark-100 dark:via-dark-200 dark:to-dark-300 transition-colors duration-300">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)]"></div>
+    <>
       <Navbar />
       <main className="relative">{children}</main>
-    </div>
+    </>
   );
 };
 
@@ -63,8 +62,10 @@ const App: React.FC = () => {
     <AuthProvider>
       <ThemeProvider>
         <Router>
-          <div className="App">
-            <Routes>
+          <div className="App min-h-screen bg-gradient-to-br from-gray-100 to-gray-100 dark:from-dark-100 dark:via-dark-200 dark:to-dark-300 transition-colors duration-300">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)]"></div>
+            <div className="relative">
+              <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
@@ -233,9 +234,7 @@ const App: React.FC = () => {
               <Route
                 path="/docs"
                 element={
-                  <ProtectedRoute>
-                    <DocumentationPage />
-                  </ProtectedRoute>
+                  <DocumentationPage />
                 }
               />
 
@@ -252,6 +251,7 @@ const App: React.FC = () => {
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            </div>
             
             {/* Toast notifications */}
             <Toaster

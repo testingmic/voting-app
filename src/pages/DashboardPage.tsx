@@ -355,7 +355,7 @@ const DashboardPage: React.FC = () => {
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Stats</h2>
             <div className="grid grid-cols-2 gap-4">
-              <GlassCard variant="success" className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard variant="success" className="bg-white transform hover:scale-105 transition-all duration-300">
                 <CardBody>
                   <div className="flex items-center">
                     <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -367,7 +367,7 @@ const DashboardPage: React.FC = () => {
                 </CardBody>
               </GlassCard>
 
-              <GlassCard variant="primary" className="transform hover:scale-105 transition-all duration-300">
+              <GlassCard variant="primary" className="bg-white transform hover:scale-105 transition-all duration-300">
                 <CardBody>
                   <div className="flex items-center">
                     <Calendar className="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -379,7 +379,7 @@ const DashboardPage: React.FC = () => {
                 </CardBody>
               </GlassCard>
 
-              <GlassCard variant="warning" className="transform hover:scale-105 transition-all duration-300 col-span-2">
+              <GlassCard variant="warning" className="bg-white transform hover:scale-105 transition-all duration-300 col-span-2">
                 <CardBody>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
