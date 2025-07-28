@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   Filter,
@@ -19,72 +19,57 @@ import {
   Award,
   Briefcase,
   Save,
-  Eye
+  Eye,
+  AlertTriangle
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
 import { Link } from 'react-router-dom';
-
-interface Candidate {
-  id: number;
-  name: string;
-  position: string;
-  bio: string;
-  photoUrl: string;
-  email: string;
-  phone: string;
-  location: string;
-  experience: string[];
-  education: string[];
-  achievements: string[];
-  socialLinks: {
-    facebook?: string;
-    twitter?: string;
-    linkedin?: string;
-    instagram?: string;
-  };
-  createdAt: string;
-}
+import { toast } from 'react-hot-toast';
+import apiService from '../services/api';
+import { Candidate } from '../types';
 
 const CandidatesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [candidateToDelete, setCandidateToDelete] = useState<Candidate | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  // Mock data
-  const positions = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Board Member'];
-  const candidates: Candidate[] = [
-    {
-      id: 1,
-      name: 'John Smith',
-      position: 'President',
-      bio: 'Experienced leader with a track record of success in organizational management and strategic planning.',
-      photoUrl: 'https://ui-avatars.com/api/?name=John+Smith&background=6366f1&color=fff',
-      email: 'john.smith@example.com',
-      phone: '+1 (555) 123-4567',
-      location: 'New York, NY',
-      experience: [
-        'CEO at Tech Innovations (2018-Present)',
-        'Director of Operations at Global Solutions (2015-2018)',
-        'Project Manager at Future Corp (2012-2015)'
-      ],
-      education: [
-        'MBA, Harvard Business School',
-        'BS in Business Administration, Yale University'
-      ],
-      achievements: [
-        'Led company to 300% growth in 3 years',
-        'Awarded "Leader of the Year" 2021',
-        'Published author in Business Weekly'
-      ],
-      socialLinks: {
-        linkedin: 'https://linkedin.com/in/johnsmith',
-        twitter: 'https://twitter.com/johnsmith'
-      },
-      createdAt: '2024-01-15T10:00:00Z'
-    },
-    // Add more mock candidates here
-  ];
+  // Load candidates from API
+  useEffect(() => {
+    const loadCandidates = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getCandidates();
+        if (response.success && response.data && response.data.length > 0) {
+          setCandidates(response.data);
+          setError(null);
+        } else {
+          // No candidates found or empty response
+          setCandidates([]);
+          setError(null);
+        }
+      } catch (error: any) {
+        console.error('Failed to load candidates:', error);
+        setCandidates([]);
+        setError('No candidates found');
+        
+        // Fallback to mock data for demonstration
+        const mockCandidates: Candidate[] = [];
+        setCandidates(mockCandidates);
+        setError(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCandidates();
+  }, []);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -106,11 +91,26 @@ const CandidatesPage: React.FC = () => {
   };
 
   const handleDeleteCandidate = (candidate: Candidate) => {
-    // This function is no longer needed as modals are removed
+    setCandidateToDelete(candidate);
+    setDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    // This function is no longer needed as modals are removed
+  const confirmDelete = async () => {
+    if (!candidateToDelete) return;
+
+    setDeleting(true);
+    try {
+      await apiService.deleteCandidate(candidateToDelete.id);
+      setCandidates(candidates.filter(c => c.id !== candidateToDelete.id));
+      toast.success('Candidate deleted successfully!');
+      setDeleteModalOpen(false);
+      setCandidateToDelete(null);
+    } catch (error: any) {
+      console.error('Failed to delete candidate:', error);
+      toast.error(error.message || 'Failed to delete candidate');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const filteredCandidates = candidates.filter(candidate => {
@@ -119,6 +119,96 @@ const CandidatesPage: React.FC = () => {
     const matchesPosition = selectedPosition === 'all' || candidate.position === selectedPosition;
     return matchesSearch && matchesPosition;
   });
+
+  if (loading && candidates.length === 0) {
+    return <div className="text-center py-8">Loading candidates...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Candidates</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your election candidates</p>
+          </div>
+          <Link to="/candidates/add">
+            <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+              <Plus className="w-5 h-5 mr-2" />
+              Add Candidate
+            </Button>
+          </Link>
+        </div>
+        
+        <GlassCard>
+          <GlassCardBody>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Candidates Found</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {error === 'No candidates found' 
+                  ? 'No candidates have been added yet. Get started by creating your first candidate.'
+                  : 'Unable to load candidates at this time. Please try again later.'
+                }
+              </p>
+              <Link to="/candidates/add">
+                <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add Your First Candidate
+                </Button>
+              </Link>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      </div>
+    );
+  }
+
+  if (candidates.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Candidates</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your election candidates</p>
+          </div>
+          <Link to="/candidates/add">
+            <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+              <Plus className="w-5 h-5 mr-2" />
+              Add Candidate
+            </Button>
+          </Link>
+        </div>
+        
+        <GlassCard>
+          <GlassCardBody>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Candidates Found</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                {searchTerm || selectedPosition !== 'all' 
+                  ? 'No candidates match your search criteria. Try adjusting your filters.'
+                  : 'No candidates have been added yet. Get started by creating your first candidate.'
+                }
+              </p>
+              {!searchTerm && selectedPosition === 'all' && (
+                <Link to="/candidates/add">
+                  <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Add Your First Candidate
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -155,7 +245,7 @@ const CandidatesPage: React.FC = () => {
             className="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-200 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
           >
             <option value="all">All Positions</option>
-            {positions.map((position) => (
+            {Array.from(new Set(candidates.map(c => c.position))).map((position) => (
               <option key={position} value={position}>{position}</option>
             ))}
           </select>
@@ -203,25 +293,21 @@ const CandidatesPage: React.FC = () => {
               </div>
               <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center">
-                  <Mail className="w-4 h-4 mr-2" />
-                  {candidate.email}
-                </div>
-                <div className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  {candidate.phone}
-                </div>
-                <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-2" />
-                  {candidate.location}
+                  {candidate.bio.substring(0, 50)}...
+                </div>
+                <div className="flex items-center">
+                  <Award className="w-4 h-4 mr-2" />
+                  {candidate.voteCount} votes
                 </div>
               </div>
               <div className="mt-4 flex justify-center space-x-3">
-                {candidate.socialLinks.linkedin && (
+                {candidate.socialLinks?.linkedin && (
                   <a href={candidate.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                     <Linkedin className="w-5 h-5" />
                   </a>
                 )}
-                {candidate.socialLinks.twitter && (
+                {candidate.socialLinks?.twitter && (
                   <a href={candidate.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-400 dark:text-gray-400 dark:hover:text-blue-300">
                     <Twitter className="w-5 h-5" />
                   </a>
@@ -236,7 +322,33 @@ const CandidatesPage: React.FC = () => {
       {/* Removed as per edit hint */}
 
       {/* Delete Confirmation Modal */}
-      {/* Removed as per edit hint */}
+      {deleteModalOpen && candidateToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-dark-100 p-6 rounded-lg shadow-xl max-w-md w-full">
+            <div className="flex justify-center items-center mb-4">
+              <AlertTriangle className="w-12 h-12 text-red-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              Confirm Deletion
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Are you sure you want to delete candidate "{candidateToDelete.name}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={confirmDelete}
+                loading={deleting}
+                className="bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

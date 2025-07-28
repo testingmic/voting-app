@@ -15,7 +15,9 @@ import {
   Eye,
   Edit,
   Trash2,
-  Link as LinkIcon
+  Link as LinkIcon,
+  X,
+  AlertTriangle
 } from 'lucide-react';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
@@ -23,6 +25,7 @@ import Button from '../components/ui/Button';
 import { Election } from '../types';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'react-hot-toast';
+import apiService from '../services/api';
 
 const ElectionsPage: React.FC = () => {
   const [elections, setElections] = useState<Election[]>([]);
@@ -31,108 +34,133 @@ const ElectionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [electionToDelete, setElectionToDelete] = useState<Election | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  // Mock data for demonstration
+  // Load elections from API
   useEffect(() => {
-    const mockElections: Election[] = [
-      {
-        id: 1,
-        title: 'Student Council Election 2024',
-        description: 'Annual election for student council positions including President, Vice President, Secretary, and Treasurer.',
-        startDate: '2024-01-15T09:00:00Z',
-        endDate: '2024-12-31T17:00:00Z',
-        status: 'active',
-        totalVoters: 1247,
-        totalVotes: 987,
-        candidates: [
+    const loadElections = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getElections();
+        if (response.success && response.data && response.data.length > 0) {
+          setElections(response.data);
+          setFilteredElections(response.data);
+        } else {
+          // No elections found or empty response
+          setElections([]);
+          setFilteredElections([]);
+        }
+      } catch (error: any) {
+        console.error('Failed to load elections:', error);
+        setElections([]);
+        setFilteredElections([]);
+        
+        // Fallback to mock data for demonstration
+        const mockElections: Election[] = [
           {
             id: 1,
-            name: 'John Smith',
-            position: 'President',
-            bio: 'Experienced leader with proven track record',
-            photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-            voteCount: 245,
-            electionId: 1,
-            createdAt: '2024-01-10T10:00:00Z'
+            title: 'Student Council Election 2024',
+            description: 'Annual election for student council positions including President, Vice President, Secretary, and Treasurer.',
+            startDate: '2024-01-15T09:00:00Z',
+            endDate: '2024-12-31T17:00:00Z',
+            status: 'active',
+            totalVoters: 1247,
+            totalVotes: 987,
+            candidates: [
+              {
+                id: 1,
+                name: 'John Smith',
+                position: 'President',
+                bio: 'Experienced leader with proven track record',
+                photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+                voteCount: 245,
+                electionId: 1,
+                createdAt: '2024-01-10T10:00:00Z'
+              },
+              {
+                id: 2,
+                name: 'Sarah Johnson',
+                position: 'President',
+                bio: 'Passionate about student welfare',
+                photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+                voteCount: 198,
+                electionId: 1,
+                createdAt: '2024-01-10T10:00:00Z'
+              },
+              {
+                id: 3,
+                name: 'Michael Brown',
+                position: 'Vice President',
+                bio: 'Dedicated to improving campus life',
+                photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+                voteCount: 156,
+                electionId: 1,
+                createdAt: '2024-01-10T10:00:00Z'
+              },
+              {
+                id: 4,
+                name: 'Emily Davis',
+                position: 'Vice President',
+                bio: 'Committed to student success',
+                photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+                voteCount: 134,
+                electionId: 1,
+                createdAt: '2024-01-10T10:00:00Z'
+              }
+            ],
+            createdAt: '2024-01-10T10:00:00Z',
+            updatedAt: '2024-01-15T09:00:00Z'
           },
           {
             id: 2,
-            name: 'Sarah Johnson',
-            position: 'President',
-            bio: 'Passionate about student welfare',
-            photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
-            voteCount: 198,
-            electionId: 1,
-            createdAt: '2024-01-10T10:00:00Z'
+            title: 'Church Board Election',
+            description: 'Election for church board members to serve for the next two years.',
+            startDate: '2024-01-20T10:00:00Z',
+            endDate: '2024-01-22T18:00:00Z',
+            status: 'completed',
+            totalVoters: 856,
+            totalVotes: 856,
+            candidates: [],
+            createdAt: '2024-01-15T14:00:00Z',
+            updatedAt: '2024-01-22T18:00:00Z'
           },
           {
             id: 3,
-            name: 'Michael Brown',
-            position: 'Vice President',
-            bio: 'Dedicated to improving campus life',
-            photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-            voteCount: 156,
-            electionId: 1,
-            createdAt: '2024-01-10T10:00:00Z'
+            title: 'Organization Leadership',
+            description: 'Leadership election for community organization board positions.',
+            startDate: '2024-02-01T08:00:00Z',
+            endDate: '2024-02-03T20:00:00Z',
+            status: 'upcoming',
+            totalVoters: 0,
+            totalVotes: 0,
+            candidates: [],
+            createdAt: '2024-01-25T09:00:00Z',
+            updatedAt: '2024-01-25T09:00:00Z'
           },
           {
             id: 4,
-            name: 'Emily Davis',
-            position: 'Vice President',
-            bio: 'Committed to student success',
-            photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-            voteCount: 134,
-            electionId: 1,
-            createdAt: '2024-01-10T10:00:00Z'
+            title: 'Class Representative Election',
+            description: 'Election for class representatives across all departments.',
+            startDate: '2024-01-18T08:00:00Z',
+            endDate: '2024-01-19T18:00:00Z',
+            status: 'paused',
+            totalVoters: 450,
+            totalVotes: 320,
+            candidates: [],
+            createdAt: '2024-01-12T10:00:00Z',
+            updatedAt: '2024-01-18T12:00:00Z'
           }
-        ],
-        createdAt: '2024-01-10T10:00:00Z',
-        updatedAt: '2024-01-15T09:00:00Z'
-      },
-      {
-        id: 2,
-        title: 'Church Board Election',
-        description: 'Election for church board members to serve for the next two years.',
-        startDate: '2024-01-20T10:00:00Z',
-        endDate: '2024-01-22T18:00:00Z',
-        status: 'completed',
-        totalVoters: 856,
-        totalVotes: 856,
-        candidates: [],
-        createdAt: '2024-01-15T14:00:00Z',
-        updatedAt: '2024-01-22T18:00:00Z'
-      },
-      {
-        id: 3,
-        title: 'Organization Leadership',
-        description: 'Leadership election for community organization board positions.',
-        startDate: '2024-02-01T08:00:00Z',
-        endDate: '2024-02-03T20:00:00Z',
-        status: 'upcoming',
-        totalVoters: 0,
-        totalVotes: 0,
-        candidates: [],
-        createdAt: '2024-01-25T09:00:00Z',
-        updatedAt: '2024-01-25T09:00:00Z'
-      },
-      {
-        id: 4,
-        title: 'Class Representative Election',
-        description: 'Election for class representatives across all departments.',
-        startDate: '2024-01-18T08:00:00Z',
-        endDate: '2024-01-19T18:00:00Z',
-        status: 'paused',
-        totalVoters: 450,
-        totalVotes: 320,
-        candidates: [],
-        createdAt: '2024-01-12T10:00:00Z',
-        updatedAt: '2024-01-18T12:00:00Z'
+        ];
+        setElections(mockElections);
+        setFilteredElections(mockElections);
+      } finally {
+        setLoading(false);
       }
-    ];
+    };
 
-    setElections(mockElections);
-    setFilteredElections(mockElections);
-    setLoading(false);
+    loadElections();
   }, []);
 
   // Filter elections based on search term and status
@@ -188,24 +216,76 @@ const ElectionsPage: React.FC = () => {
     return Math.round((election.totalVotes / election.totalVoters) * 100);
   };
 
-  const handlePauseElection = (electionId: number) => {
-    setElections(prev => 
-      prev.map(election => 
-        election.id === electionId 
-          ? { ...election, status: 'paused' as const }
-          : election
-      )
-    );
+  const handlePauseElection = async (electionId: number) => {
+    try {
+      // Make API call to pause election
+      await apiService.pauseElection(electionId);
+      
+      // Update local state
+      setElections(prev => 
+        prev.map(election => 
+          election.id === electionId 
+            ? { ...election, status: 'paused' as const }
+            : election
+        )
+      );
+      toast.success('Election paused successfully');
+    } catch (error: any) {
+      console.error('Failed to pause election:', error);
+      toast.error(error.message || 'Failed to pause election. Please try again.');
+    }
   };
 
-  const handleResumeElection = (electionId: number) => {
-    setElections(prev => 
-      prev.map(election => 
-        election.id === electionId 
-          ? { ...election, status: 'active' as const }
-          : election
-      )
-    );
+  const handleResumeElection = async (electionId: number) => {
+    try {
+      // Make API call to resume election
+      await apiService.resumeElection(electionId);
+      
+      // Update local state
+      setElections(prev => 
+        prev.map(election => 
+          election.id === electionId 
+            ? { ...election, status: 'active' as const }
+            : election
+        )
+      );
+      toast.success('Election resumed successfully');
+    } catch (error: any) {
+      console.error('Failed to resume election:', error);
+      toast.error(error.message || 'Failed to resume election. Please try again.');
+    }
+  };
+
+  const handleDeleteClick = (election: Election) => {
+    setElectionToDelete(election);
+    setDeleteModalOpen(true);
+    setActiveMenu(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!electionToDelete) return;
+    
+    setDeleting(true);
+    try {
+      // Make API call to delete election
+      await apiService.deleteElection(electionToDelete.id);
+      
+      // Remove election from state
+      setElections(prev => prev.filter(e => e.id !== electionToDelete.id));
+      toast.success('Election deleted successfully');
+      setDeleteModalOpen(false);
+      setElectionToDelete(null);
+    } catch (error: any) {
+      console.error('Failed to delete election:', error);
+      toast.error(error.message || 'Failed to delete election. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setElectionToDelete(null);
   };
 
   if (loading) {
@@ -366,12 +446,7 @@ const ElectionsPage: React.FC = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (window.confirm('Are you sure you want to delete this election?')) {
-                            // Handle delete
-                            setElections(prev => prev.filter(e => e.id !== election.id));
-                            toast.success('Election deleted successfully');
-                          }
-                          setActiveMenu(null);
+                          handleDeleteClick(election);
                         }}
                         className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                       >
@@ -455,25 +530,135 @@ const ElectionsPage: React.FC = () => {
         <GlassCard>
           <GlassCardBody>
             <div className="text-center py-12">
-              <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No elections found</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Elections Found</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 {searchTerm || statusFilter !== 'all' 
-                  ? 'Try adjusting your search or filter criteria.'
-                  : 'Get started by creating your first election.'
+                  ? 'No elections match your search criteria. Try adjusting your filters.'
+                  : 'No elections have been created yet. Get started by creating your first election.'
                 }
               </p>
               {!searchTerm && statusFilter === 'all' && (
                 <Link to="/elections/create">
                   <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Election
+                    Create Your First Election
                   </Button>
                 </Link>
               )}
             </div>
           </GlassCardBody>
         </GlassCard>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && electionToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <GlassCard className="w-full max-w-md transform transition-all">
+            <GlassCardBody className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                    <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Delete Election
+                  </h3>
+                </div>
+                <button
+                  onClick={handleDeleteCancel}
+                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Are you sure you want to delete this election? This action cannot be undone.
+                </p>
+
+                <div className="bg-gray-50 dark:bg-dark-300 rounded-lg p-4 space-y-3">
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                      {electionToDelete.title}
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {electionToDelete.description}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500 dark:text-gray-400">Status:</span>
+                      <span className={`ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(electionToDelete.status)}`}>
+                        {electionToDelete.status.charAt(0).toUpperCase() + electionToDelete.status.slice(1)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 dark:text-gray-400">Total Voters:</span>
+                      <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                        {electionToDelete.totalVoters}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 dark:text-gray-400">Total Votes:</span>
+                      <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                        {electionToDelete.totalVotes}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 dark:text-gray-400">Turnout:</span>
+                      <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                        {getTurnoutRate(electionToDelete)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">Created:</span>
+                    <span className="ml-2 font-medium text-gray-900 dark:text-white">
+                      {format(new Date(electionToDelete.createdAt), 'MMM dd, yyyy')}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-red-700 dark:text-red-300">
+                      <p className="font-medium">Warning:</p>
+                      <ul className="mt-1 space-y-1">
+                        <li>• All voting data will be permanently deleted</li>
+                        <li>• Candidate information will be lost</li>
+                        <li>• This action cannot be undone</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={handleDeleteCancel}
+                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteConfirm}
+                  loading={deleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+                >
+                  {deleting ? 'Deleting...' : 'Delete Election'}
+                </Button>
+              </div>
+            </GlassCardBody>
+          </GlassCard>
+        </div>
       )}
     </div>
   );
