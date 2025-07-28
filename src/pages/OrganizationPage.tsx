@@ -18,12 +18,17 @@ import {
   Eye,
   Crown,
   UserCheck,
-  UserX
+  UserX,
+  CreditCard,
+  X,
+  AlertCircle,
+  Home
 } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-hot-toast';
+import GlassCard, { GlassCardBody } from '../components/ui/GlassCard';
 
 const OrganizationPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -49,6 +54,7 @@ const OrganizationPage: React.FC = () => {
     { id: 'overview', name: 'Overview', icon: Building },
     { id: 'members', name: 'Members', icon: Users },
     { id: 'branding', name: 'Branding', icon: Palette },
+    { id: 'payment', name: 'Payment Methods', icon: CreditCard },
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
@@ -141,6 +147,214 @@ const OrganizationPage: React.FC = () => {
         {status === 'active' ? <UserCheck className="w-3 h-3 mr-1" /> : <UserX className="w-3 h-3 mr-1" />}
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
+    );
+  };
+
+  const PaymentMethodsTab: React.FC = () => {
+    const [cards, setCards] = useState([
+      {
+        id: 'card_1',
+        brand: 'visa',
+        last4: '4242',
+        expMonth: 12,
+        expYear: 2024,
+        isDefault: true
+      },
+      {
+        id: 'card_2',
+        brand: 'mastercard',
+        last4: '8888',
+        expMonth: 3,
+        expYear: 2025,
+        isDefault: false
+      }
+    ]);
+
+    const [showAddCard, setShowAddCard] = useState(false);
+
+    const handleSetDefault = (cardId: string) => {
+      setCards(cards.map(card => ({
+        ...card,
+        isDefault: card.id === cardId
+      })));
+    };
+
+    const handleRemoveCard = (cardId: string) => {
+      setCards(cards.filter(card => card.id !== cardId));
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Payment Methods</h3>
+          <Button
+            onClick={() => setShowAddCard(true)}
+            className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Payment Method
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {cards.map((card) => (
+            <GlassCard
+              key={card.id}
+              className="transform hover:scale-105 transition-all duration-300"
+            >
+              <GlassCardBody>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 bg-gray-100 dark:bg-dark-300 rounded-lg">
+                      <CreditCard className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          •••• {card.last4}
+                        </p>
+                        {card.isDefault && (
+                          <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Expires {card.expMonth}/{card.expYear}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {!card.isDefault && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSetDefault(card.id)}
+                        className="text-purple-600 border-purple-500 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-400 dark:hover:bg-purple-900/30"
+                      >
+                        Set Default
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveCard(card.id)}
+                      className="text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </GlassCardBody>
+            </GlassCard>
+          ))}
+        </div>
+
+        {/* Add Card Modal */}
+        {showAddCard && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[70]">
+            <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl w-full max-w-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add Payment Method</h3>
+                <button
+                  onClick={() => setShowAddCard(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Card Number
+                  </label>
+                  <div className="relative">
+                    <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="1234 5678 9012 3456"
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Expiry Date
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      CVC
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="123"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Name on Card
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="John Smith"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex items-center mt-4">
+                  <input
+                    type="checkbox"
+                    id="setDefault"
+                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                  />
+                  <label htmlFor="setDefault" className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                    Set as default payment method
+                  </label>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAddCard(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
+                  >
+                    Add Card
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-8 p-4 bg-gray-50 dark:bg-dark-300 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Payment Security</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Your payment information is securely stored and processed by our payment provider.
+                We never store your full card details on our servers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -469,6 +683,11 @@ const OrganizationPage: React.FC = () => {
                 </CardBody>
               </Card>
             </div>
+          )}
+
+          {/* Payment Methods Tab */}
+          {activeTab === 'payment' && (
+            <PaymentMethodsTab />
           )}
 
           {/* Settings Tab */}

@@ -19,6 +19,7 @@ import CreateElectionPage from './pages/CreateElectionPage';
 import EditElectionPage from './pages/EditElectionPage';
 import ElectionDetailsPage from './pages/ElectionDetailsPage';
 import VotingPage from './pages/VotingPage';
+import SubscriptionPage from './pages/SubscriptionPage';
 import './index.css';
 
 // Protected Route Component
@@ -196,6 +197,18 @@ const App: React.FC = () => {
               
               {/* Public Voting Route */}
               <Route path="/vote/:id" element={<VotingPage />} />
+
+              {/* Subscription Route */}
+              <Route
+                path="/subscription"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <SubscriptionPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/" replace />} />

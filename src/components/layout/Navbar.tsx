@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   Sun,
-  Moon
+  Moon,
+  CreditCard
 } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -168,6 +169,14 @@ const Navbar: React.FC = () => {
                     >
                       <Building className="w-4 h-4 mr-3" />
                       Organization
+                    </Link>
+                    <Link
+                      to="/subscription"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <CreditCard className="w-4 h-4 mr-3" />
+                      Subscription
                     </Link>
                   </div>
                   <div className="border-t border-gray-200 dark:border-gray-700 py-1">
