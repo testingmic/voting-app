@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, UserPlus, Building2, Mail, Lock } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -9,6 +9,7 @@ import GlassCard from '../../components/ui/GlassCard';
 
 const SignupPage: React.FC = () => {
   const { signup } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -32,6 +33,7 @@ const SignupPage: React.FC = () => {
     try {
       await signup(formData);
       toast.success('Account created successfully!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error('Failed to create account');
     } finally {
