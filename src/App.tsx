@@ -24,6 +24,7 @@ import ElectionDetailsPage from './pages/ElectionDetailsPage';
 import VotingPage from './pages/VotingPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import NotificationsPage from './pages/NotificationsPage';
+import DocumentationPage from './pages/DocumentationPage';
 import './index.css';
 
 // Protected Route Component
@@ -223,6 +224,16 @@ const App: React.FC = () => {
                     <Layout>
                       <SubscriptionPage />
                     </Layout>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Documentation Route */}
+              <Route
+                path="/docs"
+                element={
+                  <ProtectedRoute>
+                    <DocumentationPage />
                   </ProtectedRoute>
                 }
               />

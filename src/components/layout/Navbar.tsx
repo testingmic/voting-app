@@ -18,7 +18,8 @@ import {
   X,
   Sun,
   Moon,
-  CreditCard
+  CreditCard,
+  BookOpen
 } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -52,6 +53,7 @@ const Navbar: React.FC = () => {
     { name: 'Candidates', href: '/candidates', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Documentation', href: '/docs', icon: BookOpen },
   ];
 
   const handleLogout = async () => {
