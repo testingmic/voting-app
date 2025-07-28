@@ -21,7 +21,7 @@ import {
   Home,
   Share2
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard, { GlassCardHeader, GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import { toast } from 'react-hot-toast';
 
@@ -325,7 +325,7 @@ const VotingPage: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             {validating ? 'Validating election...' : 'Loading election details...'}
           </p>
         </div>
@@ -337,78 +337,78 @@ const VotingPage: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16">
         {error.type === 'invalid' && (
-          <Card>
-            <CardBody>
+          <GlassCard>
+            <GlassCardBody>
               <div className="text-center">
                 <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Invalid Election</h2>
-                <p className="text-gray-600 mb-6">{error.message}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Invalid Election</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
                 <Button onClick={() => navigate('/')}>
                   Return Home
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         )}
 
         {error.type === 'not-started' && (
-          <Card>
-            <CardBody>
+          <GlassCard>
+            <GlassCardBody>
               <div className="text-center">
                 <Clock className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Election Not Started</h2>
-                <p className="text-gray-600 mb-6">{error.message}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Election Not Started</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
                 <Button onClick={() => navigate('/')}>
                   Return Later
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         )}
 
         {error.type === 'ended' && (
-          <Card>
-            <CardBody>
+          <GlassCard>
+            <GlassCardBody>
               <div className="text-center">
                 <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Election Ended</h2>
-                <p className="text-gray-600 mb-6">{error.message}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Election Ended</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
                 <Button onClick={() => navigate('/')}>
                   View Results
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         )}
 
         {error.type === 'paused' && (
-          <Card>
-            <CardBody>
+          <GlassCard>
+            <GlassCardBody>
               <div className="text-center">
                 <Lock className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Election Paused</h2>
-                <p className="text-gray-600 mb-6">{error.message}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Election Paused</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
                 <Button onClick={() => navigate('/')}>
                   Check Back Later
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         )}
 
         {error.type === 'already-voted' && (
-          <Card>
-            <CardBody>
+          <GlassCard>
+            <GlassCardBody>
               <div className="text-center">
                 <ThumbsUp className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Already Voted</h2>
-                <p className="text-gray-600 mb-6">{error.message}</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Already Voted</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
                 <Button onClick={() => navigate('/')}>
                   View Results
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         )}
       </div>
     );
@@ -425,105 +425,109 @@ const VotingPage: React.FC = () => {
           {/* Organization & Election Info */}
           <div className="text-center mb-8">
             <Building2 className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
-            <p className="text-lg text-gray-600">{election.description}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{election.title}</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400">{election.description}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Election Details */}
-            <Card>
-              <CardHeader>
+            <GlassCard>
+              <GlassCardHeader>
                 <div className="flex items-center space-x-2">
                   <Info className="w-5 h-5 text-primary-600" />
-                  <h2 className="text-xl font-medium text-gray-900">Election Details</h2>
+                  <h2 className="text-xl font-medium text-gray-900 dark:text-white">Election Details</h2>
                 </div>
-              </CardHeader>
-              <CardBody>
+              </GlassCardHeader>
+              <GlassCardBody>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Start Date</span>
-                    <span className="font-medium">{new Date(election.startDate).toLocaleDateString()} {new Date(election.startDate).toLocaleTimeString()}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Start Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {new Date(election.startDate).toLocaleDateString()} {new Date(election.startDate).toLocaleTimeString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">End Date</span>
-                    <span className="font-medium">{new Date(election.endDate).toLocaleDateString()} {new Date(election.endDate).toLocaleTimeString()}</span>
+                    <span className="text-gray-600 dark:text-gray-400">End Date</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {new Date(election.endDate).toLocaleDateString()} {new Date(election.endDate).toLocaleTimeString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Status</span>
+                    <span className="text-gray-600 dark:text-gray-400">Status</span>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      election.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      election.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                     }`}>
                       {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Multiple Votes</span>
-                    <span className="font-medium">{election.allowMultipleVotes ? 'Allowed' : 'Not Allowed'}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Multiple Votes</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{election.allowMultipleVotes ? 'Allowed' : 'Not Allowed'}</span>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
 
             {/* Positions Overview */}
-            <Card>
-              <CardHeader>
+            <GlassCard>
+              <GlassCardHeader>
                 <div className="flex items-center space-x-2">
                   <ListChecks className="w-5 h-5 text-primary-600" />
-                  <h2 className="text-xl font-medium text-gray-900">Positions</h2>
+                  <h2 className="text-xl font-medium text-gray-900 dark:text-white">Positions</h2>
                 </div>
-              </CardHeader>
-              <CardBody>
+              </GlassCardHeader>
+              <GlassCardBody>
                 <div className="space-y-4">
                   {election.positions.map((position, index) => (
                     <div key={position.id} className="flex items-center space-x-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-medium">
+                      <div className="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center font-medium">
                         {index + 1}
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-medium text-gray-900">{position.title}</h3>
-                        <p className="text-xs text-gray-500">{position.candidates.length} candidates</p>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">{position.title}</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{position.candidates.length} candidates</p>
                       </div>
                     </div>
                   ))}
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           </div>
 
           {/* Important Information */}
-          <Card>
-            <CardHeader>
+          <GlassCard>
+            <GlassCardHeader>
               <div className="flex items-center space-x-2">
-                <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                <h2 className="text-xl font-medium text-gray-900">Important Information</h2>
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                <h2 className="text-xl font-medium text-gray-900 dark:text-white">Important Information</h2>
               </div>
-            </CardHeader>
-            <CardBody>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <Timer className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <Timer className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">Time Limit</h3>
-                    <p className="text-sm text-gray-600">Once you begin voting, please complete your selections for all positions. Your session may expire if left inactive for too long.</p>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">Time Limit</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Once you begin voting, please complete your selections for all positions. Your session may expire if left inactive for too long.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <ListChecks className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <ListChecks className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">Selection Rules</h3>
-                    <p className="text-sm text-gray-600">You must select candidates for all positions. Each position may have different voting limits.</p>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">Selection Rules</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">You must select candidates for all positions. Each position may have different voting limits.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <AlertCircle className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
                   <div>
-                    <h3 className="text-sm font-medium text-gray-900">Vote Confirmation</h3>
-                    <p className="text-sm text-gray-600">You will have a chance to review all your selections before final submission. {!election.allowMultipleVotes && "Once submitted, you cannot change your votes or vote again."}</p>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">Vote Confirmation</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">You will have a chance to review all your selections before final submission. {!election.allowMultipleVotes && "Once submitted, you cannot change your votes or vote again."}</p>
                   </div>
                 </div>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Begin Voting Button */}
           <div className="flex items-center justify-between pt-6">
@@ -541,16 +545,16 @@ const VotingPage: React.FC = () => {
         <>
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{election.title}</h1>
-            <p className="text-gray-600">{election.description}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{election.title}</h1>
+            <p className="text-gray-600 dark:text-gray-400">{election.description}</p>
             
             <div className="mt-4 flex items-center space-x-4">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                 <Clock className="w-4 h-4 mr-1" />
                 Ends {new Date(election.endDate).toLocaleDateString()}
               </span>
               {election.allowMultipleVotes && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
                   <AlertTriangle className="w-4 h-4 mr-1" />
                   Multiple votes allowed
                 </span>
@@ -560,13 +564,13 @@ const VotingPage: React.FC = () => {
 
           {/* Progress Bar */}
           <div className="mb-6">
-            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
               <span>Position {currentPositionIndex + 1} of {election.positions.length}</span>
               <span>{Math.round(getProgress())}% Complete</span>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full">
+            <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
               <div
-                className="h-2 bg-primary-600 rounded-full transition-all duration-300"
+                className="h-2 bg-primary-600 dark:bg-primary-500 rounded-full transition-all duration-300"
                 style={{ width: `${getProgress()}%` }}
               />
             </div>
@@ -574,29 +578,29 @@ const VotingPage: React.FC = () => {
 
           {/* Current Position */}
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
+            <GlassCard>
+              <GlassCardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                       {election.positions[currentPositionIndex].title}
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {election.positions[currentPositionIndex].description}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className={`text-sm font-medium ${
                       getPositionVoteStatus(election.positions[currentPositionIndex].id).complete
-                        ? 'text-green-600'
-                        : 'text-gray-500'
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-gray-500 dark:text-gray-400'
                     }`}>
                       {getPositionVoteStatus(election.positions[currentPositionIndex].id).message}
                     </p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardBody>
+              </GlassCardHeader>
+              <GlassCardBody>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {election.positions[currentPositionIndex].candidates.map((candidate) => {
                     const selectedIds = selectedVotes.find(
@@ -613,8 +617,8 @@ const VotingPage: React.FC = () => {
                         )}
                         className={`flex items-start space-x-4 p-4 rounded-lg border-2 transition-all duration-200 ${
                           isSelected
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            ? 'border-primary-500 bg-primary-50 dark:border-primary-400 dark:bg-primary-900/20'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                         }`}
                       >
                         <img
@@ -623,20 +627,20 @@ const VotingPage: React.FC = () => {
                           className="w-16 h-16 rounded-full object-cover"
                         />
                         <div className="flex-1 text-left">
-                          <h3 className="text-lg font-medium text-gray-900">
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                             {candidate.name}
                             {isSelected && (
-                              <CheckCircle className="w-5 h-5 text-primary-600 inline ml-2" />
+                              <CheckCircle className="w-5 h-5 text-primary-600 dark:text-primary-400 inline ml-2" />
                             )}
                           </h3>
-                          <p className="text-sm text-gray-600">{candidate.bio}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{candidate.bio}</p>
                         </div>
                       </button>
                     );
                   })}
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           </div>
 
           {/* Navigation */}
@@ -649,7 +653,7 @@ const VotingPage: React.FC = () => {
               {currentPositionIndex === 0 ? 'Exit' : 'Previous Position'}
             </Button>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 Position {currentPositionIndex + 1} of {election.positions.length}
               </div>
               <Button
@@ -674,23 +678,23 @@ const VotingPage: React.FC = () => {
       ) : currentStep === 'review' ? (
         <>
           {/* Review Step */}
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-bold text-gray-900">Review Your Votes</h2>
-              <p className="text-sm text-gray-600">
+          <GlassCard>
+            <GlassCardHeader>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Review Your Votes</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Please review your selections carefully before submitting.
               </p>
-            </CardHeader>
-            <CardBody>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="space-y-6">
                 {election.positions.map((position) => {
                   const selectedIds = selectedVotes.find(v => v.positionId === position.id)?.candidateIds || [];
                   const selectedCandidates = position.candidates.filter(c => selectedIds.includes(c.id));
                   
                   return (
-                    <div key={position.id} className="border-b border-gray-200 last:border-0 pb-6 last:pb-0">
+                    <div key={position.id} className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">{position.title}</h3>
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">{position.title}</h3>
                         <Button
                           variant="outline"
                           size="sm"
@@ -706,7 +710,7 @@ const VotingPage: React.FC = () => {
                           {selectedCandidates.map((candidate) => (
                             <div
                               key={candidate.id}
-                              className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg"
+                              className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg"
                             >
                               <img
                                 src={candidate.photoUrl}
@@ -714,21 +718,21 @@ const VotingPage: React.FC = () => {
                                 className="w-10 h-10 rounded-full object-cover"
                               />
                               <div>
-                                <p className="font-medium text-gray-900">{candidate.name}</p>
-                                <p className="text-sm text-gray-600">{candidate.bio}</p>
+                                <p className="font-medium text-gray-900 dark:text-white">{candidate.name}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{candidate.bio}</p>
                               </div>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-500 italic">No candidate selected</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">No candidate selected</p>
                       )}
                     </div>
                   );
                 })}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Submit */}
           <div className="mt-8 flex items-center justify-between">
@@ -753,7 +757,7 @@ const VotingPage: React.FC = () => {
             {/* Success Animation */}
             <div className="mb-8 relative">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-ping h-32 w-32 rounded-full bg-green-100 opacity-75"></div>
+                <div className="animate-ping h-32 w-32 rounded-full bg-green-100 dark:bg-green-900/30 opacity-75"></div>
               </div>
               <div className="relative flex justify-center">
                 <CheckCircle className="w-32 h-32 text-green-500" />
@@ -761,40 +765,40 @@ const VotingPage: React.FC = () => {
             </div>
 
             {/* Thank You Message */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Thank You for Voting!
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
               Your vote has been successfully recorded for the {election.title}.
               {!election.allowMultipleVotes && " You will not be able to change your vote or vote again in this election."}
             </p>
 
             {/* Vote Details */}
-            <Card className="mb-8">
-              <CardBody>
+            <GlassCard className="mb-8">
+              <GlassCardBody>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Election</span>
-                    <span className="font-medium">{election.title}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Election</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{election.title}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Date & Time</span>
-                    <span className="font-medium">
+                    <span className="text-gray-600 dark:text-gray-400">Date & Time</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {new Date().toLocaleString()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Positions Voted</span>
-                    <span className="font-medium">{election.positions.length}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Positions Voted</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{election.positions.length}</span>
                   </div>
-                  <div className="border-t border-gray-200 pt-4 mt-4">
-                    <p className="text-sm text-gray-500 text-center">
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                       A confirmation has been sent to your email address.
                     </p>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -820,7 +824,7 @@ const VotingPage: React.FC = () => {
             </div>
 
             {/* Additional Info */}
-            <div className="mt-8 text-sm text-gray-500">
+            <div className="mt-8 text-sm text-gray-500 dark:text-gray-400">
               <p>
                 Results will be available after the election ends on{' '}
                 {new Date(election.endDate).toLocaleDateString()}.

@@ -8,9 +8,22 @@ export function useClickOutside<T extends HTMLElement = HTMLElement>(handler: Ha
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node;
+      
+      // If the click is inside the ref element, do nothing
       if (!ref.current || ref.current.contains(target)) {
         return;
       }
+
+      // Check if the click was on a link or button
+      let element = target as HTMLElement;
+      while (element) {
+        if (element.tagName === 'A' || element.tagName === 'BUTTON') {
+          // Let the click event propagate for links and buttons
+          return;
+        }
+        element = element.parentElement as HTMLElement;
+      }
+
       handler(event);
     };
 

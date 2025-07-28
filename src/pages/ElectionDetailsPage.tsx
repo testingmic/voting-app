@@ -22,7 +22,7 @@ import {
   Globe,
   Eye
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/ui/Card';
+import GlassCard, { GlassCardHeader, GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Election, Analytics } from '../types';
@@ -173,8 +173,8 @@ const ElectionDetailsPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Election Not Found</h1>
-          <p className="text-gray-600 mb-8">The election you're looking for doesn't exist.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Election Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">The election you're looking for doesn't exist.</p>
           <Button onClick={() => navigate('/elections')}>
             Back to Elections
           </Button>
@@ -198,8 +198,8 @@ const ElectionDetailsPage: React.FC = () => {
                 {election.status.charAt(0).toUpperCase() + election.status.slice(1)}
               </span>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mt-4">{election.title}</h1>
-            <p className="mt-2 text-gray-600">{election.description}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-4">{election.title}</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">{election.description}</p>
           </div>
           <div className="flex items-center space-x-3">
             <Button variant="outline" onClick={handleCopyLink}>
@@ -226,14 +226,14 @@ const ElectionDetailsPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-gray-200 dark:border-gray-800">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-1 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
               activeTab === 'overview'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-700'
             }`}
           >
             Overview
@@ -242,8 +242,8 @@ const ElectionDetailsPage: React.FC = () => {
             onClick={() => setActiveTab('positions')}
             className={`px-1 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
               activeTab === 'positions'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-700'
             }`}
           >
             Positions & Candidates
@@ -252,8 +252,8 @@ const ElectionDetailsPage: React.FC = () => {
             onClick={() => setActiveTab('analytics')}
             className={`px-1 py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
               activeTab === 'analytics'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-700'
             }`}
           >
             Analytics
@@ -266,119 +266,119 @@ const ElectionDetailsPage: React.FC = () => {
         <div className="space-y-6">
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
                 <div className="flex items-center">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Users className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Voters</p>
-                    <p className="text-2xl font-bold text-gray-900">{analytics.totalVoters.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Voters</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.totalVoters.toLocaleString()}</p>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
 
-            <Card>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
                 <div className="flex items-center">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <Vote className="w-6 h-6 text-green-600" />
+                  <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <Vote className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Votes</p>
-                    <p className="text-2xl font-bold text-gray-900">{analytics.totalVotes.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Votes</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.totalVotes.toLocaleString()}</p>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
 
-            <Card>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
                 <div className="flex items-center">
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Turnout Rate</p>
-                    <p className="text-2xl font-bold text-gray-900">{analytics.turnoutRate}%</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Turnout Rate</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.turnoutRate}%</p>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
 
-            <Card>
-              <CardBody>
+            <GlassCard>
+              <GlassCardBody>
                 <div className="flex items-center">
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <Eye className="w-6 h-6 text-orange-600" />
+                  <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                    <Eye className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Time Left</p>
-                    <p className="text-2xl font-bold text-gray-900">2d 4h</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Time Left</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">2d 4h</p>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           </div>
 
           {/* Election Details */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Election Details</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Election Details</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Schedule</h4>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Schedule</h4>
                   <div className="space-y-3">
                     <div className="flex items-center">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-2" />
+                      <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Start Date</p>
-                        <p className="text-sm text-gray-500">{format(new Date(election.startDate), 'PPP p')}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Start Date</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(election.startDate), 'PPP p')}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-2" />
+                      <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">End Date</p>
-                        <p className="text-sm text-gray-500">{format(new Date(election.endDate), 'PPP p')}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">End Date</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(election.endDate), 'PPP p')}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Status Information</h4>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status Information</h4>
                   <div className="space-y-3">
                     <div className="flex items-center">
-                      <Clock className="w-5 h-5 text-gray-400 mr-2" />
+                      <Clock className="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Created</p>
-                        <p className="text-sm text-gray-500">{format(new Date(election.createdAt), 'PPP p')}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Created</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(election.createdAt), 'PPP p')}</p>
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <Clock className="w-5 h-5 text-gray-400 mr-2" />
+                      <Clock className="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Last Updated</p>
-                        <p className="text-sm text-gray-500">{format(new Date(election.updatedAt), 'PPP p')}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Last Updated</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{format(new Date(election.updatedAt), 'PPP p')}</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Quick Actions</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Quick Actions</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Button variant="outline" className="w-full" onClick={handleCopyLink}>
                   <Copy className="w-4 h-4 mr-2" />
@@ -393,8 +393,8 @@ const ElectionDetailsPage: React.FC = () => {
                   View Analytics
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         </div>
       )}
 
@@ -402,8 +402,8 @@ const ElectionDetailsPage: React.FC = () => {
       {activeTab === 'positions' && (
         <div className="space-y-6">
           {election.candidates.map((candidate) => (
-            <Card key={candidate.id}>
-              <CardBody>
+            <GlassCard key={candidate.id}>
+              <GlassCardBody>
                 <div className="flex items-start space-x-4">
                   <img
                     src={candidate.photoUrl}
@@ -411,25 +411,25 @@ const ElectionDetailsPage: React.FC = () => {
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{candidate.name}</h3>
-                    <p className="text-sm text-gray-500">{candidate.position}</p>
-                    <p className="text-sm text-gray-600 mt-2">{candidate.bio}</p>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">{candidate.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{candidate.position}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{candidate.bio}</p>
                     <div className="mt-3 flex items-center space-x-4">
-                      <span className="text-sm text-gray-500">Votes: {candidate.voteCount}</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Votes: {candidate.voteCount}</span>
+                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
-                          className="bg-primary-600 h-2 rounded-full"
+                          className="bg-primary-600 dark:bg-primary-500 h-2 rounded-full"
                           style={{ width: `${(candidate.voteCount / analytics.totalVotes) * 100}%` }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {((candidate.voteCount / analytics.totalVotes) * 100).toFixed(1)}%
                       </span>
                     </div>
                   </div>
                 </div>
-              </CardBody>
-            </Card>
+              </GlassCardBody>
+            </GlassCard>
           ))}
         </div>
       )}
@@ -438,119 +438,119 @@ const ElectionDetailsPage: React.FC = () => {
       {activeTab === 'analytics' && (
         <div className="space-y-6">
           {/* Device Types */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Device Types</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Device Types</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="space-y-4">
                 {Object.entries(analytics.deviceTypes).map(([device, percentage]) => (
                   <div key={device} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      {device === 'mobile' && <Smartphone className="w-4 h-4" />}
-                      {device === 'desktop' && <Monitor className="w-4 h-4" />}
-                      {device === 'tablet' && <Tablet className="w-4 h-4" />}
-                      <span className="text-sm font-medium text-gray-900 capitalize">{device}</span>
+                      {device === 'mobile' && <Smartphone className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                      {device === 'desktop' && <Monitor className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                      {device === 'tablet' && <Tablet className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                      <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">{device}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
-                          className="bg-primary-600 h-2 rounded-full" 
+                          className="bg-primary-600 dark:bg-primary-500 h-2 rounded-full" 
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-900 w-8">{percentage}%</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{percentage}%</span>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Browser Statistics */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Browser Statistics</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Browser Statistics</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="space-y-4">
                 {Object.entries(analytics.browserStats).map(([browser, percentage]) => (
                   <div key={browser} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      {browser === 'chrome' && <Chrome className="w-4 h-4" />}
-                      {browser !== 'chrome' && <Globe className="w-4 h-4" />}
-                      <span className="text-sm font-medium text-gray-900 capitalize">{browser}</span>
+                      {browser === 'chrome' && <Chrome className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                      {browser !== 'chrome' && <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+                      <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">{browser}</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
-                          className="bg-green-600 h-2 rounded-full" 
+                          className="bg-green-600 dark:bg-green-500 h-2 rounded-full" 
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-900 w-8">{percentage}%</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{percentage}%</span>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Voting Timeline */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Voting Timeline</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Voting Timeline</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="h-64 flex items-end space-x-2">
                 {analytics.votingTimeline.map((data, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center">
                     <div 
-                      className="w-full bg-primary-600 rounded-t"
+                      className="w-full bg-primary-600 dark:bg-primary-500 rounded-t"
                       style={{ 
                         height: `${(data.votes / Math.max(...analytics.votingTimeline.map(d => d.votes))) * 200}px` 
                       }}
                     />
-                    <span className="text-xs text-gray-500 mt-2">{data.hour}:00</span>
-                    <span className="text-xs font-medium text-gray-900">{data.votes}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">{data.hour}:00</span>
+                    <span className="text-xs font-medium text-gray-900 dark:text-white">{data.votes}</span>
                   </div>
                 ))}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
 
           {/* Results */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">Results</h3>
-            </CardHeader>
-            <CardBody>
+          <GlassCard>
+            <GlassCardHeader>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Results</h3>
+            </GlassCardHeader>
+            <GlassCardBody>
               <div className="space-y-4">
                 {analytics.results.map((result, index) => (
-                  <div key={result.candidateId} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                  <div key={result.candidateId} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                     <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white font-medium">
+                      <div className="w-10 h-10 bg-primary-600 dark:bg-primary-500 rounded-full flex items-center justify-center text-white font-medium">
                         {index + 1}
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900">{result.candidateName}</h4>
-                        <p className="text-sm text-gray-500">{result.votes} votes</p>
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white">{result.candidateName}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{result.votes} votes</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
-                          className="bg-primary-600 h-2 rounded-full" 
+                          className="bg-primary-600 dark:bg-primary-500 h-2 rounded-full" 
                           style={{ width: `${result.percentage}%` }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-900 w-12">{result.percentage}%</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-12">{result.percentage}%</span>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardBody>
-          </Card>
+            </GlassCardBody>
+          </GlassCard>
         </div>
       )}
     </div>

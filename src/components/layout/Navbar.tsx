@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useClickOutside } from '../../hooks/useClickOutside';
@@ -26,6 +26,7 @@ const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -54,7 +55,20 @@ const Navbar: React.FC = () => {
   ];
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+      setIsProfileOpen(false);
+      setIsMobileMenuOpen(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const handleNavigation = (href: string) => {
+    navigate(href);
+    setIsProfileOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   if (!user) return null;
@@ -66,12 +80,12 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <Link to="/" className="flex items-center">
+              <button onClick={() => handleNavigation('/')} className="flex items-center">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold">
                   V
                 </div>
                 <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">VoteFlow</span>
-              </Link>
+              </button>
             </div>
 
             {/* Desktop Navigation */}
@@ -79,9 +93,9 @@ const Navbar: React.FC = () => {
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
-                  <Link
+                  <button
                     key={item.name}
-                    to={item.href}
+                    onClick={() => handleNavigation(item.href)}
                     className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
                       isActive
                         ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
@@ -90,7 +104,7 @@ const Navbar: React.FC = () => {
                   >
                     <item.icon className="w-4 h-4 mr-2" />
                     {item.name}
-                  </Link>
+                  </button>
                 );
               })}
             </div>
@@ -169,30 +183,27 @@ const Navbar: React.FC = () => {
                     <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                   </div>
                   <div className="py-1">
-                    <Link
-                      to="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
-                      onClick={() => setIsProfileOpen(false)}
+                    <button
+                      onClick={() => handleNavigation('/profile')}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                     >
                       <User className="w-4 h-4 mr-3" />
                       Profile
-                    </Link>
-                    <Link
-                      to="/organization"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
-                      onClick={() => setIsProfileOpen(false)}
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/organization')}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                     >
                       <Building className="w-4 h-4 mr-3" />
                       Organization
-                    </Link>
-                    <Link
-                      to="/subscription"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
-                      onClick={() => setIsProfileOpen(false)}
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('/subscription')}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
                     >
                       <CreditCard className="w-4 h-4 mr-3" />
                       Subscription
-                    </Link>
+                    </button>
                   </div>
                   <div className="border-t border-gray-200 dark:border-gray-700 py-1">
                     <button
@@ -249,19 +260,18 @@ const Navbar: React.FC = () => {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <Link
+                <button
                   key={item.name}
-                  to={item.href}
-                  className={`flex items-center px-3 py-2 rounded-lg text-base font-medium transition-colors duration-200 ${
+                  onClick={() => handleNavigation(item.href)}
+                  className={`flex items-center w-full px-3 py-2 rounded-lg text-base font-medium transition-colors duration-200 ${
                     isActive
                       ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
                       : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300'
                   }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon className="w-5 h-5 mr-3" />
                   {item.name}
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -280,27 +290,22 @@ const Navbar: React.FC = () => {
               </div>
             </div>
             <div className="mt-3 space-y-1">
-              <Link
-                to="/profile"
-                className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                onClick={() => handleNavigation('/profile')}
+                className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
               >
                 <User className="w-5 h-5 mr-3" />
                 Profile
-              </Link>
-              <Link
-                to="/organization"
-                className="flex items-center px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
-                onClick={() => setIsMobileMenuOpen(false)}
+              </button>
+              <button
+                onClick={() => handleNavigation('/organization')}
+                className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
               >
                 <Building className="w-5 h-5 mr-3" />
                 Organization
-              </Link>
+              </button>
               <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMobileMenuOpen(false);
-                }}
+                onClick={handleLogout}
                 className="flex items-center w-full px-3 py-2 rounded-lg text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-dark-300"
               >
                 <LogOut className="w-5 h-5 mr-3" />
