@@ -7,10 +7,8 @@ interface ThemeContextType {
   setPrimaryColor: (color: string) => void;
   accentColor: string;
   setAccentColor: (color: string) => void;
-  layout: 'default' | 'compact' | 'comfortable';
-  setLayout: (layout: 'default' | 'compact' | 'comfortable') => void;
-  density: 'default' | 'compact' | 'comfortable';
-  setDensity: (density: 'default' | 'compact' | 'comfortable') => void;
+  density: 'compact' | 'default' | 'comfortable';
+  setDensity: (density: 'compact' | 'default' | 'comfortable') => void;
   radius: 'none' | 'small' | 'medium' | 'large' | 'full';
   setRadius: (radius: 'none' | 'small' | 'medium' | 'large' | 'full') => void;
 }
@@ -37,12 +35,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.getItem('accentColor') || '#8b5cf6'
   );
 
-  // Layout preferences
-  const [layout, setLayout] = useState<'default' | 'compact' | 'comfortable'>(() => 
-    (localStorage.getItem('layout') as 'default' | 'compact' | 'comfortable') || 'default'
-  );
-  const [density, setDensity] = useState<'default' | 'compact' | 'comfortable'>(() => 
-    (localStorage.getItem('density') as 'default' | 'compact' | 'comfortable') || 'default'
+  // Density and radius preferences
+  const [density, setDensity] = useState<'compact' | 'default' | 'comfortable'>(() => 
+    (localStorage.getItem('density') as 'compact' | 'default' | 'comfortable') || 'default'
   );
   const [radius, setRadius] = useState<'none' | 'small' | 'medium' | 'large' | 'full'>(() => 
     (localStorage.getItem('radius') as 'none' | 'small' | 'medium' | 'large' | 'full') || 'medium'
@@ -69,20 +64,34 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('accentColor', accentColor);
   }, [accentColor]);
 
-  // Update layout preferences
+  // Update density
   useEffect(() => {
-    localStorage.setItem('layout', layout);
-    document.documentElement.setAttribute('data-layout', layout);
-  }, [layout]);
-
-  useEffect(() => {
+    const spacingValues = {
+      compact: { base: '0.75rem', lg: '1rem' },
+      default: { base: '1rem', lg: '1.5rem' },
+      comfortable: { base: '1.25rem', lg: '2rem' }
+    };
+    
+    const spacing = spacingValues[density];
+    document.documentElement.style.setProperty('--spacing-base', spacing.base);
+    document.documentElement.style.setProperty('--spacing-lg', spacing.lg);
     localStorage.setItem('density', density);
-    document.documentElement.setAttribute('data-density', density);
   }, [density]);
 
+  // Update radius
   useEffect(() => {
+    const radiusValues = {
+      none: { base: '0', lg: '0' },
+      small: { base: '0.25rem', lg: '0.375rem' },
+      medium: { base: '0.375rem', lg: '0.5rem' },
+      large: { base: '0.5rem', lg: '0.75rem' },
+      full: { base: '9999px', lg: '9999px' }
+    };
+    
+    const radiusValue = radiusValues[radius];
+    document.documentElement.style.setProperty('--radius-base', radiusValue.base);
+    document.documentElement.style.setProperty('--radius-lg', radiusValue.lg);
     localStorage.setItem('radius', radius);
-    document.documentElement.setAttribute('data-radius', radius);
   }, [radius]);
 
   const toggleTheme = () => {
@@ -96,8 +105,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     setPrimaryColor,
     accentColor,
     setAccentColor,
-    layout,
-    setLayout,
     density,
     setDensity,
     radius,
