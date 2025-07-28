@@ -18,11 +18,13 @@ import {
   Calendar,
   Award,
   Briefcase,
-  Save
+  Save,
+  Eye
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
+import { Link } from 'react-router-dom';
 
 interface Candidate {
   id: number;
@@ -48,12 +50,6 @@ interface Candidate {
 const CandidatesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('all');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedCandidate, setEditedCandidate] = useState<Candidate | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   // Mock data
   const positions = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Board Member'];
@@ -95,46 +91,26 @@ const CandidatesPage: React.FC = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-        if (editedCandidate) {
-          setEditedCandidate({
-            ...editedCandidate,
-            photoUrl: reader.result as string
-          });
-        }
+        // This function is no longer needed as modals are removed
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleEditCandidate = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    setEditedCandidate(candidate);
-    setPreviewImage(candidate.photoUrl);
-    setIsEditing(true);
-    setIsModalOpen(true);
+    // This function is no longer needed as modals are removed
   };
 
   const handleSaveCandidate = () => {
-    // Here you would typically make an API call to save the candidate
-    console.log('Saving candidate:', editedCandidate);
-    setIsModalOpen(false);
-    setIsEditing(false);
-    setSelectedCandidate(null);
-    setEditedCandidate(null);
-    setPreviewImage(null);
+    // This function is no longer needed as modals are removed
   };
 
   const handleDeleteCandidate = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    setIsDeleteModalOpen(true);
+    // This function is no longer needed as modals are removed
   };
 
   const confirmDelete = () => {
-    // Here you would typically make an API call to delete the candidate
-    console.log('Deleting candidate:', selectedCandidate?.id);
-    setIsDeleteModalOpen(false);
-    setSelectedCandidate(null);
+    // This function is no longer needed as modals are removed
   };
 
   const filteredCandidates = candidates.filter(candidate => {
@@ -151,19 +127,12 @@ const CandidatesPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Candidates</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your election candidates</p>
         </div>
-        <Button
-          onClick={() => {
-            setIsEditing(false);
-            setSelectedCandidate(null);
-            setEditedCandidate(null);
-            setPreviewImage(null);
-            setIsModalOpen(true);
-          }}
-          className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Candidate
-        </Button>
+        <Link to="/candidates/add">
+          <Button className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25">
+            <Plus className="w-5 h-5 mr-2" />
+            Add Candidate
+          </Button>
+        </Link>
       </div>
 
       {/* Search and Filter */}
@@ -208,22 +177,24 @@ const CandidatesPage: React.FC = () => {
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-white dark:border-gray-800 shadow-lg"
                 />
                 <div className="absolute top-0 right-0 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Button
-                    onClick={() => handleEditCandidate(candidate)}
-                    variant="ghost"
-                    size="sm"
-                    className="bg-white/90 dark:bg-dark-200/90 text-gray-700 dark:text-gray-300"
+                  <Link
+                    to={`/candidates/${candidate.id}`}
+                    className="inline-flex items-center p-2 bg-white/90 dark:bg-dark-200/90 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white dark:hover:bg-dark-200 transition-colors duration-200"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    to={`/candidates/${candidate.id}/edit`}
+                    className="inline-flex items-center p-2 bg-white/90 dark:bg-dark-200/90 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white dark:hover:bg-dark-200 transition-colors duration-200"
                   >
                     <Edit2 className="w-4 h-4" />
-                  </Button>
-                  <Button
+                  </Link>
+                  <button
                     onClick={() => handleDeleteCandidate(candidate)}
-                    variant="ghost"
-                    size="sm"
-                    className="bg-white/90 dark:bg-dark-200/90 text-red-600 dark:text-red-400"
+                    className="p-2 bg-white/90 dark:bg-dark-200/90 text-red-600 dark:text-red-400 rounded-lg hover:bg-white dark:hover:bg-dark-200 transition-colors duration-200"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </Button>
+                  </button>
                 </div>
               </div>
               <div className="text-center mb-4">
@@ -262,299 +233,10 @@ const CandidatesPage: React.FC = () => {
       </div>
 
       {/* Add/Edit Candidate Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {isEditing ? 'Edit Candidate' : 'Add New Candidate'}
-                </h2>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Photo Upload */}
-                <div className="md:col-span-2 flex justify-center">
-                  <div className="relative group">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700">
-                      {previewImage ? (
-                        <img
-                          src={previewImage}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                          <Camera className="w-8 h-8 text-gray-400 dark:text-gray-500" />
-                        </div>
-                      )}
-                    </div>
-                    <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer hover:bg-purple-700 transition-colors duration-200">
-                      <Upload className="w-4 h-4" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                      />
-                    </label>
-                  </div>
-                </div>
-
-                {/* Basic Information */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={editedCandidate?.name || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, name: e.target.value} : null)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Position
-                    </label>
-                    <select
-                      value={editedCandidate?.position || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, position: e.target.value} : null)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    >
-                      <option value="">Select Position</option>
-                      {positions.map((position) => (
-                        <option key={position} value={position}>{position}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={editedCandidate?.email || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, email: e.target.value} : null)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      value={editedCandidate?.phone || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, phone: e.target.value} : null)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Additional Information */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      value={editedCandidate?.location || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, location: e.target.value} : null)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Bio
-                    </label>
-                    <textarea
-                      value={editedCandidate?.bio || ''}
-                      onChange={(e) => setEditedCandidate(prev => prev ? {...prev, bio: e.target.value} : null)}
-                      rows={3}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Social Links
-                    </label>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Linkedin className="w-5 h-5 text-gray-400" />
-                        <input
-                          type="url"
-                          placeholder="LinkedIn URL"
-                          value={editedCandidate?.socialLinks.linkedin || ''}
-                          onChange={(e) => setEditedCandidate(prev => prev ? {
-                            ...prev,
-                            socialLinks: { ...prev.socialLinks, linkedin: e.target.value }
-                          } : null)}
-                          className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                        />
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Twitter className="w-5 h-5 text-gray-400" />
-                        <input
-                          type="url"
-                          placeholder="Twitter URL"
-                          value={editedCandidate?.socialLinks.twitter || ''}
-                          onChange={(e) => setEditedCandidate(prev => prev ? {
-                            ...prev,
-                            socialLinks: { ...prev.socialLinks, twitter: e.target.value }
-                          } : null)}
-                          className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Experience Section */}
-                <div className="md:col-span-2">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Experience & Achievements</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Experience
-                      </label>
-                      <div className="space-y-2">
-                        {editedCandidate?.experience.map((exp, index) => (
-                          <div key={index} className="flex items-center space-x-2">
-                            <Briefcase className="w-4 h-4 text-gray-400" />
-                            <input
-                              type="text"
-                              value={exp}
-                              onChange={(e) => {
-                                const newExp = [...(editedCandidate?.experience || [])];
-                                newExp[index] = e.target.value;
-                                setEditedCandidate(prev => prev ? {...prev, experience: newExp} : null);
-                              }}
-                              className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                            />
-                            <button
-                              onClick={() => {
-                                const newExp = editedCandidate?.experience.filter((_, i) => i !== index);
-                                setEditedCandidate(prev => prev ? {...prev, experience: newExp} : null);
-                              }}
-                              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                        <Button
-                          onClick={() => setEditedCandidate(prev => prev ? {
-                            ...prev,
-                            experience: [...prev.experience, '']
-                          } : null)}
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                        >
-                          Add Experience
-                        </Button>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Achievements
-                      </label>
-                      <div className="space-y-2">
-                        {editedCandidate?.achievements.map((achievement, index) => (
-                          <div key={index} className="flex items-center space-x-2">
-                            <Award className="w-4 h-4 text-gray-400" />
-                            <input
-                              type="text"
-                              value={achievement}
-                              onChange={(e) => {
-                                const newAchievements = [...(editedCandidate?.achievements || [])];
-                                newAchievements[index] = e.target.value;
-                                setEditedCandidate(prev => prev ? {...prev, achievements: newAchievements} : null);
-                              }}
-                              className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                            />
-                            <button
-                              onClick={() => {
-                                const newAchievements = editedCandidate?.achievements.filter((_, i) => i !== index);
-                                setEditedCandidate(prev => prev ? {...prev, achievements: newAchievements} : null);
-                              }}
-                              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                        <Button
-                          onClick={() => setEditedCandidate(prev => prev ? {
-                            ...prev,
-                            achievements: [...prev.achievements, '']
-                          } : null)}
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                        >
-                          Add Achievement
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end space-x-3">
-                <Button
-                  onClick={() => setIsModalOpen(false)}
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveCandidate}
-                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white shadow-lg shadow-purple-500/25"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {isEditing ? 'Save Changes' : 'Create Candidate'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Removed as per edit hint */}
 
       {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl w-full max-w-md p-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Delete Candidate</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Are you sure you want to delete {selectedCandidate?.name}? This action cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <Button
-                onClick={() => setIsDeleteModalOpen(false)}
-                variant="outline"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={confirmDelete}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Removed as per edit hint */}
     </div>
   );
 };

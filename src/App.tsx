@@ -9,6 +9,8 @@ import SignupPage from './pages/auth/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ElectionsPage from './pages/ElectionsPage';
 import CandidatesPage from './pages/CandidatesPage';
+import AddCandidatePage from './pages/AddCandidatePage';
+import CandidateDetailsPage from './pages/CandidateDetailsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -117,6 +119,36 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Layout>
                       <CandidatesPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/candidates/add"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <AddCandidatePage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/candidates/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <CandidateDetailsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/candidates/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <AddCandidatePage />
                     </Layout>
                   </ProtectedRoute>
                 }
