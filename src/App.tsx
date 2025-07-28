@@ -15,6 +15,7 @@ import OrganizationPage from './pages/OrganizationPage';
 import CreateElectionPage from './pages/CreateElectionPage';
 import EditElectionPage from './pages/EditElectionPage';
 import ElectionDetailsPage from './pages/ElectionDetailsPage';
+import VotingPage from './pages/VotingPage';
 import './index.css';
 
 // Protected Route Component
@@ -158,6 +159,9 @@ const App: React.FC = () => {
               }
             />
             
+            {/* Public Voting Route */}
+            <Route path="/vote/:id" element={<VotingPage />} />
+
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

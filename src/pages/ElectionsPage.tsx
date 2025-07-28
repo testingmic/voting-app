@@ -39,11 +39,52 @@ const ElectionsPage: React.FC = () => {
         title: 'Student Council Election 2024',
         description: 'Annual election for student council positions including President, Vice President, Secretary, and Treasurer.',
         startDate: '2024-01-15T09:00:00Z',
-        endDate: '2024-01-17T17:00:00Z',
+        endDate: '2024-12-31T17:00:00Z',
         status: 'active',
         totalVoters: 1247,
         totalVotes: 987,
-        candidates: [],
+        candidates: [
+          {
+            id: 1,
+            name: 'John Smith',
+            position: 'President',
+            bio: 'Experienced leader with proven track record',
+            photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+            voteCount: 245,
+            electionId: 1,
+            createdAt: '2024-01-10T10:00:00Z'
+          },
+          {
+            id: 2,
+            name: 'Sarah Johnson',
+            position: 'President',
+            bio: 'Passionate about student welfare',
+            photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+            voteCount: 198,
+            electionId: 1,
+            createdAt: '2024-01-10T10:00:00Z'
+          },
+          {
+            id: 3,
+            name: 'Michael Brown',
+            position: 'Vice President',
+            bio: 'Dedicated to improving campus life',
+            photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+            voteCount: 156,
+            electionId: 1,
+            createdAt: '2024-01-10T10:00:00Z'
+          },
+          {
+            id: 4,
+            name: 'Emily Davis',
+            position: 'Vice President',
+            bio: 'Committed to student success',
+            photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+            voteCount: 134,
+            electionId: 1,
+            createdAt: '2024-01-10T10:00:00Z'
+          }
+        ],
         createdAt: '2024-01-10T10:00:00Z',
         updatedAt: '2024-01-15T09:00:00Z'
       },
@@ -262,6 +303,18 @@ const ElectionsPage: React.FC = () => {
                       >
                         <Eye className="w-4 h-4 mr-3" />
                         View Details
+                      </Link>
+                      <Link
+                        to={`/vote/${election.id}`}
+                        target="_blank"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                        }}
+                      >
+                        <Users className="w-4 h-4 mr-3" />
+                        Preview Vote
                       </Link>
                       <Link
                         to={`/elections/${election.id}/edit`}
