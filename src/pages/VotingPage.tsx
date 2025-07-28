@@ -17,7 +17,9 @@ import {
   Building2,
   Info,
   ListChecks,
-  Timer
+  Timer,
+  Home,
+  Share2
 } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -66,7 +68,7 @@ const VotingPage: React.FC = () => {
     type: 'invalid' | 'not-started' | 'ended' | 'paused' | 'already-voted' | null;
     message: string;
   }>({ type: null, message: '' });
-  const [currentStep, setCurrentStep] = useState<'intro' | 'voting' | 'review'>('intro');
+  const [currentStep, setCurrentStep] = useState<'intro' | 'voting' | 'review' | 'success'>('intro');
   const [selectedVotes, setSelectedVotes] = useState<VoteSelection[]>([]);
   const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
 
@@ -264,8 +266,7 @@ const VotingPage: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast.success('Your votes have been cast successfully!');
-      // Redirect to success page or show success state
-      setCurrentStep('review');
+      setCurrentStep('success');
     } catch (error) {
       toast.error('Failed to submit votes. Please try again.');
     } finally {
@@ -670,7 +671,7 @@ const VotingPage: React.FC = () => {
             </div>
           </div>
         </>
-      ) : (
+      ) : currentStep === 'review' ? (
         <>
           {/* Review Step */}
           <Card>
@@ -745,6 +746,88 @@ const VotingPage: React.FC = () => {
             </Button>
           </div>
         </>
+      ) : (
+        // Success Step
+        <div className="text-center py-12">
+          <div className="max-w-xl mx-auto">
+            {/* Success Animation */}
+            <div className="mb-8 relative">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-ping h-32 w-32 rounded-full bg-green-100 opacity-75"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <CheckCircle className="w-32 h-32 text-green-500" />
+              </div>
+            </div>
+
+            {/* Thank You Message */}
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Thank You for Voting!
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              Your vote has been successfully recorded for the {election.title}.
+              {!election.allowMultipleVotes && " You will not be able to change your vote or vote again in this election."}
+            </p>
+
+            {/* Vote Details */}
+            <Card className="mb-8">
+              <CardBody>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Election</span>
+                    <span className="font-medium">{election.title}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Date & Time</span>
+                    <span className="font-medium">
+                      {new Date().toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Positions Voted</span>
+                    <span className="font-medium">{election.positions.length}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <p className="text-sm text-gray-500 text-center">
+                      A confirmation has been sent to your email address.
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/')}
+                className="w-full sm:w-auto"
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Return Home
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/vote/${election.id}`);
+                  toast.success('Election link copied to clipboard');
+                }}
+                className="w-full sm:w-auto"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Election
+              </Button>
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-8 text-sm text-gray-500">
+              <p>
+                Results will be available after the election ends on{' '}
+                {new Date(election.endDate).toLocaleDateString()}.
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
