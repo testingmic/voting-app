@@ -89,6 +89,16 @@ const App: React.FC = () => {
                 }
               />
               <Route
+                path="/dashboard/:id/results"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <DashboardPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/elections"
                 element={
                   <ProtectedRoute>

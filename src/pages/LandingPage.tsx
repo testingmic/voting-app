@@ -611,7 +611,7 @@ const LandingPage: React.FC = () => {
                 <li><a href="#features" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Features</a></li>
                 <li><a href="#pricing" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Pricing</a></li>
                 {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">API</a></li> */}
-                <li><a href="/docs" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Documentation</a></li>
+                <li><a onClick={() => navigate('/docs')} className="text-gray-600 cursor-pointer dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Documentation</a></li>
               </ul>
             </div>
             <div>
@@ -628,8 +628,8 @@ const LandingPage: React.FC = () => {
               <ul className="space-y-2">
                 {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Help Center</a></li> */}
                 {/* <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Community</a></li> */}
-                <li><a href="/status" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Status</a></li>
-                <li><a href="/security-privacy" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Security</a></li>
+                <li><a onClick={() => navigate('/status')} className="text-gray-600 cursor-pointer dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Status</a></li>
+                <li><a onClick={() => navigate('/security-privacy')} className="text-gray-600 cursor-pointer dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">Security</a></li>
               </ul>
             </div>
           </div>

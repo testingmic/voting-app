@@ -474,7 +474,7 @@ const VotingPage: React.FC = () => {
                   <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Election Ended</h2>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
-                  <Button onClick={() => navigate('/')}>
+                  <Button onClick={() => navigate(`/dashboard/${id}/results`)}>
                     View Results
                   </Button>
                 </div>
@@ -504,7 +504,7 @@ const VotingPage: React.FC = () => {
                   <ThumbsUp className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Already Voted</h2>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">{error.message}</p>
-                  <Button onClick={() => navigate('/')}>
+                  <Button onClick={() => navigate(`/dashboard/${id}/results`)}>
                     View Results
                   </Button>
                 </div>
