@@ -481,6 +481,31 @@ const EditElectionPage: React.FC = () => {
                       placeholder="e.g., Student Council Election 2024"
                     />
                   </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea
+                      rows={4}
+                      value={electionData.description}
+                      onChange={(e) => setElectionData(prev => prev ? { ...prev, description: e.target.value } : null)}
+                      placeholder="Describe the purpose and scope of this election..."
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <Input
+                    label="Start Date & Time"
+                    type="datetime-local"
+                    value={electionData.startDate}
+                    onChange={(e) => setElectionData(prev => prev ? { ...prev, startDate: e.target.value } : null)}
+                  />
+                  <Input
+                    label="End Date & Time"
+                    type="datetime-local"
+                    value={electionData.endDate}
+                    onChange={(e) => setElectionData(prev => prev ? { ...prev, endDate: e.target.value } : null)}
+                  />
+
+
                   
                   {/* Election Image Upload */}
                   <div className="md:col-span-2">
@@ -503,7 +528,7 @@ const EditElectionPage: React.FC = () => {
                               <X className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2">
                             <input
                               type="file"
                               accept="image/*"
@@ -515,7 +540,7 @@ const EditElectionPage: React.FC = () => {
                               htmlFor="election-image-upload-change"
                               className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-md cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200"
                             >
-                              <Upload className="w-4 h-4 mr-1" />
+                              <Upload className="w-4 h-4" />
                               Change Image
                             </label>
                             <button
@@ -550,28 +575,6 @@ const EditElectionPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                    <textarea
-                      rows={4}
-                      value={electionData.description}
-                      onChange={(e) => setElectionData(prev => prev ? { ...prev, description: e.target.value } : null)}
-                      placeholder="Describe the purpose and scope of this election..."
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <Input
-                    label="Start Date & Time"
-                    type="datetime-local"
-                    value={electionData.startDate}
-                    onChange={(e) => setElectionData(prev => prev ? { ...prev, startDate: e.target.value } : null)}
-                  />
-                  <Input
-                    label="End Date & Time"
-                    type="datetime-local"
-                    value={electionData.endDate}
-                    onChange={(e) => setElectionData(prev => prev ? { ...prev, endDate: e.target.value } : null)}
-                  />
                 </div>
               </div>
             </div>

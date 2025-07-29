@@ -410,7 +410,30 @@ const CreateElectionPage: React.FC = () => {
                       placeholder="e.g., Student Council Election 2024"
                     />
                   </div>
-                  
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea
+                      rows={4}
+                      value={electionData.description}
+                      onChange={(e) => setElectionData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Describe the purpose and scope of this election..."
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <Input
+                    label="Start Date & Time"
+                    type="datetime-local"
+                    value={electionData.startDate}
+                    onChange={(e) => setElectionData(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                  <Input
+                    label="End Date & Time"
+                    type="datetime-local"
+                    value={electionData.endDate}
+                    onChange={(e) => setElectionData(prev => ({ ...prev, endDate: e.target.value }))}
+                  />
+
                   {/* Election Image Upload */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -432,7 +455,7 @@ const CreateElectionPage: React.FC = () => {
                               <X className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2">
                             <input
                               type="file"
                               accept="image/*"
@@ -479,28 +502,6 @@ const CreateElectionPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                    <textarea
-                      rows={4}
-                      value={electionData.description}
-                      onChange={(e) => setElectionData(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Describe the purpose and scope of this election..."
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <Input
-                    label="Start Date & Time"
-                    type="datetime-local"
-                    value={electionData.startDate}
-                    onChange={(e) => setElectionData(prev => ({ ...prev, startDate: e.target.value }))}
-                  />
-                  <Input
-                    label="End Date & Time"
-                    type="datetime-local"
-                    value={electionData.endDate}
-                    onChange={(e) => setElectionData(prev => ({ ...prev, endDate: e.target.value }))}
-                  />
                 </div>
               </div>
             </div>

@@ -43,13 +43,6 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Background Effects */}
-      <div className="absolute inset-0 w-full h-full">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-orange-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
-
       <div className="relative w-full max-w-lg px-4">
         <GlassCard className="w-full">
           {/* Logo/Header */}
@@ -137,28 +130,6 @@ const SignupPage: React.FC = () => {
                   className="pl-10 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:bg-white/80 dark:focus:bg-gray-800/80 transition-colors duration-200"
                 />
                 <Building2 className="absolute left-3 top-[38px] w-4 h-4 text-gray-400" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Organization Type
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {['school', 'church', 'organization'].map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, organizationType: type as any })}
-                      className={`py-2 px-4 text-sm font-medium rounded-lg border transition-colors duration-200 ${
-                        formData.organizationType === type
-                          ? 'bg-purple-500 text-white border-purple-600'
-                          : 'bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/20'
-                      }`}
-                    >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
 

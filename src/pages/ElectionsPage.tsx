@@ -355,7 +355,7 @@ const ElectionsPage: React.FC = () => {
       {/* Elections Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredElections.map((election) => (
-          <GlassCard key={election.id} className="transform hover:scale-105 transition-all duration-300">
+          <GlassCard key={election.id} className="transition-all duration-300 transform hover:-translate-y-1">
             <GlassCardBody>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-2">

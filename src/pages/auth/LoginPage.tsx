@@ -34,14 +34,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Background Effects */}
-      <div className="absolute inset-0 w-full h-full">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-orange-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
-
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-white-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="relative w-full max-w-md px-4">
         <GlassCard className="w-full">
           {/* Logo/Header */}

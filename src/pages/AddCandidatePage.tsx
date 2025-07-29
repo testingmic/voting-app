@@ -91,7 +91,7 @@ const AddCandidatePage: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Photo Upload */}
-        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCard className="transform">
           <GlassCardBody>
             <div className="flex justify-center">
               <div className="relative group">
@@ -123,7 +123,7 @@ const AddCandidatePage: React.FC = () => {
         </GlassCard>
 
         {/* Basic Information */}
-        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCard className="transform">
           <GlassCardBody>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -211,7 +211,7 @@ const AddCandidatePage: React.FC = () => {
         </GlassCard>
 
         {/* Experience & Education */}
-        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCard className="transform">
           <GlassCardBody>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Experience & Education</h2>
             
@@ -298,7 +298,7 @@ const AddCandidatePage: React.FC = () => {
         </GlassCard>
 
         {/* Achievements */}
-        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCard className="transform">
           <GlassCardBody>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Achievements</h2>
@@ -338,7 +338,7 @@ const AddCandidatePage: React.FC = () => {
         </GlassCard>
 
         {/* Social Links */}
-        <GlassCard className="transform hover:scale-105 transition-all duration-300">
+        <GlassCard className="transform">
           <GlassCardBody>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Social Links</h2>
             <div className="space-y-4">
