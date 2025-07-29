@@ -198,13 +198,13 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-white via-white to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-blob"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-purple-400/20 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
-      </div>
+      </div> */}
 
       {/* Navigation */}
       <nav className="relative z-10 px-4 sm:px-6 lg:px-8 py-4">
@@ -402,7 +402,7 @@ const LandingPage: React.FC = () => {
                   </div>
                 )}
 
-                <GlassCard className={`h-full transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                <GlassCard className={`h-full transition-all duration-300 transform hover:-translate-y-1 ${
                   plan.popular ? 'ring-2 ring-purple-500 dark:ring-purple-400' : ''
                 }`}>
                   <GlassCardBody className="p-8">

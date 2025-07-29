@@ -26,6 +26,7 @@ import { Election } from '../types';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import apiService from '../services/api';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 const ElectionsPage: React.FC = () => {
   const [elections, setElections] = useState<Election[]>([]);
@@ -37,6 +38,18 @@ const ElectionsPage: React.FC = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [electionToDelete, setElectionToDelete] = useState<Election | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Click outside hook to close context menu
+  const menuRef = useClickOutside<HTMLDivElement>(() => {
+    setActiveMenu(null);
+  });
+
+  // Click outside hook to close delete modal
+  const deleteModalRef = useClickOutside<HTMLDivElement>(() => {
+    if (deleteModalOpen) {
+      handleDeleteCancel();
+    }
+  });
 
   // Load elections from API
   useEffect(() => {
@@ -376,7 +389,10 @@ const ElectionsPage: React.FC = () => {
                   </button>
 
                   {activeMenu === election.id && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-dark-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+                    <div 
+                      ref={activeMenu === election.id ? menuRef : undefined}
+                      className="absolute right-0 mt-1 w-48 bg-white dark:bg-dark-200 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10"
+                    >
                       <Link
                         to={`/elections/${election.id}`}
                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300"
@@ -564,7 +580,8 @@ const ElectionsPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && electionToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <GlassCard className="w-full max-w-md transform transition-all">
+          <div ref={deleteModalRef}>
+            <GlassCard className="w-full max-w-md transform transition-all">
             <GlassCardBody className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
@@ -666,6 +683,7 @@ const ElectionsPage: React.FC = () => {
               </div>
             </GlassCardBody>
           </GlassCard>
+        </div>
         </div>
       )}
     </div>
