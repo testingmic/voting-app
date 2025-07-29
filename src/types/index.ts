@@ -2,7 +2,11 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  organization: string;
+  phone?: string;
+  location?: string;
+  timezone?: string;
+  bio?: string;
+  organization?: string;
   role: 'admin' | 'voter';
   avatar?: string;
   twoFactorEnabled: boolean;

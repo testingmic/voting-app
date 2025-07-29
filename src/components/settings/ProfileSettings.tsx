@@ -12,7 +12,10 @@ const ProfileSettings: React.FC = () => {
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '+1234567890'
+    phone: user?.phone || '',
+    location: user?.location || '',
+    bio: user?.bio || '',
+    timezone: user?.timezone || ''
   });
 
   const handleProfileSave = async () => {
@@ -38,14 +41,6 @@ const ProfileSettings: React.FC = () => {
               src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name}&background=6366f1&color=fff`}
               alt={user?.name}
             />
-            <div>
-              <Button
-                variant="outline"
-                className="border-primary-500 text-primary-600 hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30"
-              >
-                Change Photo
-              </Button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -79,6 +74,17 @@ const ProfileSettings: React.FC = () => {
                 type="tel"
                 value={profileData.phone}
                 onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Location
+              </label>
+              <input
+                type="text"
+                value={profileData.location}
+                onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
                 className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent"
               />
             </div>

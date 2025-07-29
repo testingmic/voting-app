@@ -39,10 +39,10 @@ const ProfilePage: React.FC = () => {
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '+1234567890',
-    bio: 'Experienced administrator with a passion for transparent and secure voting systems.',
-    location: 'New York, NY',
-    timezone: 'America/New_York'
+    phone: user?.phone || '',
+    bio: user?.bio || '',
+    location: user?.location || '',
+    timezone: user?.timezone || ''
   });
 
   const [passwordData, setPasswordData] = useState({
