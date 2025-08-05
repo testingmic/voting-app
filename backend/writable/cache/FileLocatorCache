@@ -1,0 +1,203 @@
+<?php return array (
+  'search' => 
+  array (
+    'Config/Services' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Config/Services.php',
+          1 => '/Users/nanakwesi/voting-app/backend/system/Config/Services.php',
+        ),
+      ),
+    ),
+    'Config/Registrar.php' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+        ),
+      ),
+    ),
+    'Helpers/kint_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/system/Helpers/kint_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/url_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/system/Helpers/url_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/configs_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/configs_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/contents_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/contents_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/text_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/system/Helpers/text_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/auth_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/auth_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/database_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/database_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/utilities_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/utilities_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/users_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/users_helper.php',
+        ),
+      ),
+    ),
+    'Helpers/posts_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+        ),
+      ),
+    ),
+    'Helpers/accounts_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Helpers/accounts_helper.php',
+        ),
+      ),
+    ),
+    'Config/Events.php' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Config/Events.php',
+        ),
+      ),
+    ),
+    'Config/Filters.php' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Config/Filters.php',
+          1 => '/Users/nanakwesi/voting-app/backend/system/Config/Filters.php',
+        ),
+      ),
+    ),
+    'Helpers/array_helper' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/system/Helpers/array_helper.php',
+        ),
+      ),
+    ),
+    'Config/Routes.php' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/app/Config/Routes.php',
+        ),
+      ),
+    ),
+    'Language/en/HTTP.php' => 
+    array (
+      'php' => 
+      array (
+        0 => 
+        array (
+          0 => '/Users/nanakwesi/voting-app/backend/system/Language/en/HTTP.php',
+        ),
+      ),
+    ),
+    'Config/General' => 
+    array (
+      'php' => 
+      array (
+        1 => 
+        array (
+        ),
+      ),
+    ),
+  ),
+  'findQualifiedNameFromPath' => 
+  array (
+    '/Users/nanakwesi/voting-app/backend/app/Config/Services.php' => 'Config\\Services',
+  ),
+  'getClassname' => 
+  array (
+    '/Users/nanakwesi/voting-app/backend/app/Config/Filters.php' => 'Config\\Filters',
+    '/Users/nanakwesi/voting-app/backend/system/Config/Filters.php' => 'CodeIgniter\\Config\\Filters',
+  ),
+);

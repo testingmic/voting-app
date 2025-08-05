@@ -69,7 +69,32 @@ logs
 !.env.example
 heatmap_db*
 test.php
+test_2.php
+test_3.php
 
-# Currency data
-currency.json
-tmp/*
+vendor/
+writable/logs/*
+!writable/logs/index.html
+writable/cache/*
+!writable/cache/index.html
+writable/debugbar/*
+!writable/debugbar/index.html
+writable/session/*
+!writable/session/index.html
+writable/uploads/*
+!writable/uploads/index.html
+# pnpm-lock.yaml
+package-lock.json
+
+public/assets/uploads/*
+public/assets/uploads/thumbnails/*
+
+public/tmp/*
+!public/tmp/index.html
+.env
+.vscode
+composer.phar
+frontend/.env
+writable/websites.json
+writable/imf.json
+voteflow_db*
