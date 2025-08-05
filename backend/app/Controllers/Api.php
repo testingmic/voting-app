@@ -157,6 +157,8 @@ class Api extends BaseController
         if(isset($payload['debugger'])) {
             remove_configs();
         }
+
+        $payload['fingerprint'] = json_encode($payload);
             
         // get the class name
         $classname = "\\App\\Controllers\\".ucfirst($class).'\\'.ucfirst($class);
@@ -325,9 +327,6 @@ class Api extends BaseController
             // set the payload
             $classObject->payload = $validObject->parsedPayload;
             $classObject->mainRawId = $this->mainRawId;
-            
-            // manipulate the payload
-            $payload = $validObject->manipulatePayload($payload, $class, $this->uniqueId, $this->mainRawId);
 
             // set the current user
             $cacheObject->currentUser = $classObject->currentUser;
@@ -390,7 +389,7 @@ class Api extends BaseController
             }
 
             // log the api request
-            $cacheObject->logApiRequest($this->req_path, $this->requestMethod, $this->statusCode, $classObject->payload, $start_time, $end_time, $finalResponse);
+            // $cacheObject->logApiRequest($this->req_path, $this->requestMethod, $this->statusCode, $classObject->payload, $start_time, $end_time, $finalResponse);
 
             // return the final response
             return $finalResponse;

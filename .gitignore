@@ -73,24 +73,25 @@ test_2.php
 test_3.php
 
 vendor/
-writable/logs/*
-!writable/logs/index.html
-writable/cache/*
-!writable/cache/index.html
-writable/debugbar/*
-!writable/debugbar/index.html
-writable/session/*
-!writable/session/index.html
-writable/uploads/*
-!writable/uploads/index.html
+backend/writable/logs/*
+!backend/writable/logs/index.html
+backend/writable/cache/*
+!backend/writable/cache/index.html
+backend/writable/debugbar/*
+!backend/writable/debugbar/index.html
+backend/writable/session/*
+!backend/writable/session/index.html
+backend/writable/uploads/*
+!backend/writable/uploads/index.html
+backend/writable/cache/throttl*
 # pnpm-lock.yaml
 package-lock.json
 
-public/assets/uploads/*
-public/assets/uploads/thumbnails/*
+backend/public/assets/uploads/*
+backend/public/assets/uploads/thumbnails/*
 
-public/tmp/*
-!public/tmp/index.html
+backend/public/tmp/*
+!backend/public/tmp/index.html
 .env
 .vscode
 composer.phar

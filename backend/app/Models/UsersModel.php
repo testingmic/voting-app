@@ -96,7 +96,7 @@ class UsersModel extends Model {
         try {
             return $this->db->table($this->table)->where('user_id', $userId)->get()->getRowArray();
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -111,7 +111,7 @@ class UsersModel extends Model {
         try {
             $this->db->table($this->table)->where('user_id', $userId)->update($data);
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -133,7 +133,7 @@ class UsersModel extends Model {
                 'device_type' => $deviceType
             ]);
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -147,7 +147,7 @@ class UsersModel extends Model {
         try {
             return $this->db->table($this->table)->where('user_id', $userId)->orderBy('last_active', 'DESC')->get()->getResultArray();
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -161,7 +161,7 @@ class UsersModel extends Model {
         try {
             $this->db->table($this->table)->where('user_id', $userId)->update(['is_active' => false]);
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -175,7 +175,7 @@ class UsersModel extends Model {
         try {
             $this->db->table($this->table)->where('user_id', $userId)->update(['is_active' => true]);
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -189,7 +189,7 @@ class UsersModel extends Model {
         try {
             return $this->db->table($this->table)->where([$column => $email, 'is_active' => '1'])->get()->getRowArray();
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -220,7 +220,7 @@ class UsersModel extends Model {
             // delete the user from the chat rooms
             $this->chatsDb->table('user_chat_rooms')->where('user_id', $userId)->delete();
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -313,7 +313,7 @@ class UsersModel extends Model {
                 ]
             ];
         } catch (DatabaseException $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
@@ -711,8 +711,6 @@ class UsersModel extends Model {
             return $this->db->query($sql, $params)->getResultArray();
 
         } catch (DatabaseException $e) {
-            print_r($e->getMessage());
-            exit;
             return [];
         }
     }
