@@ -19,7 +19,7 @@ class ApiService {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+    this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
     this.api = axios.create({
       baseURL: this.baseURL,
       timeout: 10000,
@@ -78,6 +78,8 @@ class ApiService {
   async logout(): Promise<void> {
     try {
       await this.api.post('/auth/logout');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
