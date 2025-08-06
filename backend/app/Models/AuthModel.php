@@ -12,7 +12,7 @@ class AuthModel extends Model {
     protected $table;
     protected $userTokenAuthTable;
     protected $primaryKey = "token_id";
-    protected $allowedFields = ["login", "description", "password", "date_created", "date_expired", "system_token", "hash_algo"];
+    protected $allowedFields = ["login", "description", "password", "date_created", "date_expired", "hash_algo"];
 
     public function __construct() {
         parent::__construct();
@@ -54,7 +54,7 @@ class AuthModel extends Model {
      */
     public function findRecordByToken($token) {
         try {
-            return $this->db->table($this->userTokenAuthTable)->select('login, hash_algo, date_expired, description')->where([
+            return $this->db->table($this->userTokenAuthTable)->select('login, date_expired')->where([
                 'password' => $token
             ])->groupStart()
                 ->where('date_expired', null)

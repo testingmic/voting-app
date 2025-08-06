@@ -26,7 +26,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,10 +55,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.login({ email, password, rememberMe });
       
       if (response.success && response.data) {
-        const { user: userData, token } = response.data;
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+        let res = response.data;
+        localStorage.setItem('authToken', res.token);
+        localStorage.setItem('user', JSON.stringify(res));
+        setUser(res);
       } else {
         throw new Error(response.message || 'Login failed');
       }
@@ -76,10 +76,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.signup(data);
       
       if (response.success && response.data) {
-        const { user: userData, token } = response.data;
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+        let res = response.data;
+        localStorage.setItem('authToken', res.token);
+        localStorage.setItem('user', JSON.stringify(res));
+        setUser(res);
       } else {
         throw new Error(response.message || 'Signup failed');
       }

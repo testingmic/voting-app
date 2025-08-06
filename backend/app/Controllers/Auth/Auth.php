@@ -107,12 +107,13 @@ class Auth extends LoadController {
 
         // Generate response
         $response = [
+            'id' =>  (int) $user['user_id'],
             'user_id'   => (int) $user['user_id'],
-            'full_name' => $user['full_name'],
+            'name' => $user['full_name'],
             'username' => $user['username'],
-            'two_factor_setup' => false,
+            'twoFactorEnabled' => false,
             'email' => $user['email'],
-            'user_type' => $user['user_type']
+            'role' => $user['user_type']
         ];
 
         // update the user last login date
@@ -126,7 +127,7 @@ class Auth extends LoadController {
         // if two factor setup is true, set the two factor setup and twofactor_secret
         if ($twoFactorSetup) {
             $response['token'] = false;
-            $response['two_factor_setup'] = true;
+            $response['twoFactorEnabled'] = true;
             $response['twofactor_secret'] = md5($user['twofactor_secret']);
         } else {
             // generate the token
@@ -237,7 +238,8 @@ class Auth extends LoadController {
             'full_name' => $this->payload['full_name'],
             'is_verified' => 0,
             'is_active' => 1,
-            'last_login' => date('Y-m-d H:i:s'),
+            'user_type' => 'user',
+            'last_login' => date('Y-m-d H:i:s')
         ];
 
         // Insert the user
@@ -249,6 +251,9 @@ class Auth extends LoadController {
 
         // create the user settings
         $this->usersModel->createUserSettings($userId, 'profile_visibility', 1);
+
+        // log the count
+        $this->analyticsObject->logCount('Users.' . $payload['user_type']);
 
         // set the internal to true
         $this->internal = true;
@@ -394,13 +399,9 @@ class Auth extends LoadController {
 
         // Insert the user token hash
         $this->authModel->insertToken([
-            'system_token' => 0,
             'login' => $user['username'],
             'password' => $hashTokenAuth,
             'date_created' => date('Y-m-d H:i:s'),
-            'hash_algo' => configs('algo'),
-            'description' => $description,
-            'description' => 'This is a user generated token.',
             'date_expired' => date('Y-m-d H:i:s', strtotime("+{$hours} hours"))
         ]);
 

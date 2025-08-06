@@ -6,6 +6,7 @@ use App\Models\UsersModel;
 use App\Models\AuthModel;
 use App\Libraries\Routing;
 use App\Libraries\Caching;
+use App\Controllers\Analytics\Analytics;
 
 class LoadController extends BaseController
 {
@@ -13,12 +14,14 @@ class LoadController extends BaseController
     
     protected $usersModel;
     protected $authModel;
+    protected $analyticsObject;
     
     public function __construct($model = [])
     {
         // initialize the models
         $this->authModel = new AuthModel();
         $this->usersModel = new UsersModel();
+        $this->analyticsObject = new Analytics();
         
         // initialize the cache object
         if(empty($this->cacheObject)) {

@@ -23,7 +23,7 @@ const AddCandidatePage: React.FC = () => {
   const navigate = useNavigate();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     position: '',
     email: '',
     phone: '',
@@ -133,7 +133,7 @@ const AddCandidatePage: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
+                  value={formData.full_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                   required

@@ -306,6 +306,8 @@ class Users extends LoadController {
      * @return array
      */
     public function profile() {
+
+        // get the user id
         $profile = $this->usersModel->getUserProfile($this->payload['userId']);
         if(empty($profile)) {
             return Routing::error('User not found');
@@ -319,23 +321,6 @@ class Users extends LoadController {
         // return the profile
         return Routing::success($profile);
 
-    }
-
-    /**
-     * Get user location
-     * 
-     * @return array
-     */
-    public function location() {
-        // get the user location
-        $location = manageUserLocation($this->payload, $this->cacheObject);
-        
-        // set the result
-        $result = $location['finalLocation'];
-        $result['agent'] = $location['agent'];
-        $result['ipaddress'] = $location['ipaddress'];
-
-        return Routing::success($result);
     }
 
     /**
@@ -403,32 +388,6 @@ class Users extends LoadController {
         return $this->usersModel->updateProfile($this->payload['userId'], $this->payload['data']);
     }
 
-    /**
-     * Register device
-     * 
-     * @return array
-     */
-    public function registerDevice() {
-        return $this->usersModel->registerDevice($this->payload['userId'], $this->payload['deviceId'], $this->payload['deviceName'], $this->payload['deviceType']);
-    }
-
-    /**
-     * Get user devices
-     * 
-     * @return array
-     */
-    public function getUserDevices() {
-        return $this->usersModel->getUserDevices($this->payload['userId']);
-    }
-
-    /**
-     * Deactivate account
-     * 
-     * @return array
-     */
-    public function deactivateAccount() {
-        return $this->usersModel->deactivateAccount($this->payload['userId']);
-    }
 
     /**
      * Reactivate account
@@ -536,7 +495,7 @@ class Users extends LoadController {
         $this->payload['full_name'] = $this->payload['name'] ?? ($this->payload['full_name'] ?? null);
 
         // update the user gender, full name, and location
-        foreach(['gender', 'full_name', 'location'] as $item) {
+        foreach(['gender', 'full_name', 'location', 'bio'] as $item) {
             // update the user gender
             if(!empty($this->payload[$item])) {
                 $payload[$item] = $this->payload[$item];

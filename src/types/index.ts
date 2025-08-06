@@ -7,10 +7,10 @@ export interface User {
   timezone?: string;
   bio?: string;
   organization?: string;
-  role: 'admin' | 'voter';
+  role: 'admin' | 'voter' | 'user';
   avatar?: string;
-  twoFactorEnabled: boolean;
-  createdAt: string;
+  twoFactorEnabled?: boolean;
+  createdAt?: string;
 }
 
 export interface Election {
