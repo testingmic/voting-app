@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Mail,
@@ -13,15 +13,27 @@ import {
   Save,
   X,
   Plus,
-  Briefcase
+  Briefcase,
+  Search,
+  User,
+  Check
 } from 'lucide-react';
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
+import apiService from '../services/api';
+import { User as UserType } from '../types';
 
 const AddCandidatePage: React.FC = () => {
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserType[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
     position: '',
@@ -38,6 +50,55 @@ const AddCandidatePage: React.FC = () => {
     }
   });
 
+  // Fetch users on component mount
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getUsers();
+        console.log(response);
+        if (response.status == 'success' && response.data) {
+          console.log({users: response?.data?.users});
+          setUsers(response?.data?.users);
+          setFilteredUsers(response?.data?.users);
+        }
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Filter users based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredUsers(users);
+    } else {
+      const filtered = users.filter(user =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [searchQuery, users]);
+
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -49,11 +110,62 @@ const AddCandidatePage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleUserSelect = (user: UserType) => {
+    setSelectedUser(user);
+    setFormData(prev => ({
+      ...prev,
+      full_name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      location: user.location || '',
+      bio: user.bio || ''
+    }));
+    setSearchQuery('');
+    setShowUserDropdown(false);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedUser(null);
+    setFormData(prev => ({
+      ...prev,
+      full_name: '',
+      email: '',
+      phone: '',
+      location: '',
+      bio: ''
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically make an API call to save the candidate
-    console.log('Saving candidate:', { ...formData, photo: previewImage });
-    navigate('/candidates');
+    
+    try {
+      const candidateData = {
+        name: formData.full_name,
+        position: formData.position,
+        bio: formData.bio,
+        email: formData.email,
+        phone: formData.phone,
+        location: formData.location,
+        photoUrl: previewImage,
+        socialLinks: {
+          linkedin: formData.socialLinks.linkedin,
+          twitter: formData.socialLinks.twitter
+        },
+        // If a user was selected, you might want to link them
+        userId: selectedUser?.id
+      };
+
+      // Here you would make the API call to create the candidate
+      // const response = await apiService.createCandidate(candidateData);
+      console.log('Saving candidate:', candidateData);
+      
+      // For now, just navigate back
+      navigate('/candidates');
+    } catch (error) {
+      console.error('Failed to create candidate:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   const handleArrayFieldAdd = (field: 'experience' | 'education' | 'achievements') => {
@@ -90,6 +202,104 @@ const AddCandidatePage: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* User Selection */}
+        <GlassCard className="transform">
+          <GlassCardBody>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Select Existing User</h2>
+            <div className="space-y-4">
+              {selectedUser ? (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-green-900 dark:text-green-100">{selectedUser.name}</h3>
+                        <p className="text-sm text-green-700 dark:text-green-300">{selectedUser.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleClearSelection}
+                      >
+                        Change User
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative" ref={dropdownRef}>
+                  <div className="flex items-center space-x-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search for existing users..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setShowUserDropdown(true);
+                        }}
+                        onFocus={() => setShowUserDropdown(true)}
+                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    >
+                      Browse Users
+                    </Button>
+                  </div>
+                  
+                  {showUserDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-300 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                      {loading ? (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                          Loading users...
+                        </div>
+                      ) : filteredUsers.length === 0 ? (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                          No users found
+                        </div>
+                      ) : (
+                        filteredUsers.map((user) => (
+                          <button
+                            key={user.id}
+                            type="button"
+                            onClick={() => handleUserSelect(user)}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center">
+                                <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+                              </div>
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <p>Select an existing user to pre-fill their information, or continue with manual entry below.</p>
+              </div>
+            </div>
+          </GlassCardBody>
+        </GlassCard>
+
         {/* Photo Upload */}
         <GlassCard className="transform">
           <GlassCardBody>
@@ -134,7 +344,7 @@ const AddCandidatePage: React.FC = () => {
                 <input
                   type="text"
                   value={formData.full_name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
                   className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                   required
                 />

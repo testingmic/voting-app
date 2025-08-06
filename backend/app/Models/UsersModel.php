@@ -345,19 +345,16 @@ class UsersModel extends Model {
                 $params[] = $searchTerm;
             }
 
-            if (!empty($filters['status']) && $filters['status'] !== 'all') {
-                $sql .= " AND status = ?";
-                $params[] = $filters['status'];
+            foreach(['user_id', 'status', 'gender'] as $filter) {
+                if(!empty($filters[$filter]) && $filters[$filter] !== 'all') {
+                    $sql .= " AND {$filter }= ?";
+                    $params[] = $filters[$filter];
+                }
             }
 
             if (!empty($filters['role']) && $filters['role'] !== 'all') {
                 $sql .= " AND user_type = ?";
                 $params[] = $filters['role'];
-            }
-
-            if (!empty($filters['gender']) && $filters['gender'] !== 'all') {
-                $sql .= " AND gender = ?";
-                $params[] = $filters['gender'];
             }
 
             $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";

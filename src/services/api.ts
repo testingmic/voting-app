@@ -260,6 +260,16 @@ class ApiService {
     }
   }
 
+  // Users
+  async getUsers(): Promise<ApiResponse<any | []>> {
+    try {
+      const response: AxiosResponse<ApiResponse<any | []>> = await this.api.get('/users');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch users');
+    }
+  }
+
   // User Profile
   async getUserProfile(): Promise<ApiResponse<User>> {
     try {

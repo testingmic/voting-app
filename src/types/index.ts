@@ -110,7 +110,8 @@ export interface Organization {
 }
 
 export interface ApiResponse<T> {
-  success: boolean;
+  success?: boolean;
+  status?: string;
   data?: T;
   message?: string;
   error?: string;

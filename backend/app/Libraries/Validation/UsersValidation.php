@@ -8,8 +8,8 @@ class UsersValidation {
             'method' => 'GET',
             'authenticate' => true,
             'payload' => [
-                'page' => 'required|integer',
-                'limit' => 'required|integer',
+                'page' => 'permit_empty|integer',
+                'limit' => 'permit_empty|integer',
             ]
         ],
         'view:user_id' => [
