@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   Mail,
@@ -34,6 +35,7 @@ const AddCandidatePage: React.FC = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [formData, setFormData] = useState({
     full_name: '',
     position: '',
@@ -56,9 +58,7 @@ const AddCandidatePage: React.FC = () => {
       try {
         setLoading(true);
         const response = await apiService.getUsers();
-        console.log(response);
         if (response.status == 'success' && response.data) {
-          console.log({users: response?.data?.users});
           setUsers(response?.data?.users);
           setFilteredUsers(response?.data?.users);
         }
@@ -111,6 +111,8 @@ const AddCandidatePage: React.FC = () => {
   };
 
   const handleUserSelect = (user: UserType) => {
+    console.log('user'); 
+    console.log({user});
     setSelectedUser(user);
     setFormData(prev => ({
       ...prev,
@@ -122,6 +124,17 @@ const AddCandidatePage: React.FC = () => {
     }));
     setSearchQuery('');
     setShowUserDropdown(false);
+  };
+
+  const updateDropdownPosition = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
   };
 
   const handleClearSelection = () => {
@@ -244,53 +257,71 @@ const AddCandidatePage: React.FC = () => {
                         onChange={(e) => {
                           setSearchQuery(e.target.value);
                           setShowUserDropdown(true);
+                          updateDropdownPosition();
                         }}
-                        onFocus={() => setShowUserDropdown(true)}
+                        onFocus={() => {
+                          setShowUserDropdown(true);
+                          updateDropdownPosition();
+                        }}
                         className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-300 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                       />
                     </div>
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setShowUserDropdown(!showUserDropdown)}
+                      onClick={() => {
+                        setShowUserDropdown(!showUserDropdown);
+                        if (!showUserDropdown) {
+                          updateDropdownPosition();
+                        }
+                      }}
                     >
                       Browse Users
                     </Button>
                   </div>
-                  
-                  {showUserDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-300 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                      {loading ? (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                          Loading users...
-                        </div>
-                      ) : filteredUsers.length === 0 ? (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                          No users found
-                        </div>
-                      ) : (
-                        filteredUsers.map((user) => (
-                          <button
-                            key={user.id}
-                            type="button"
-                            onClick={() => handleUserSelect(user)}
-                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center">
-                                <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                              </div>
-                              <div>
-                                <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
-                              </div>
-                            </div>
-                          </button>
-                        ))
-                      )}
-                    </div>
-                  )}
                 </div>
+              )}
+              
+              {/* Dropdown positioned with fixed positioning */}
+              {showUserDropdown && !selectedUser && createPortal(
+                <div 
+                  className="fixed bg-white dark:bg-dark-300 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-[9999] max-h-60 overflow-y-auto"
+                  style={{
+                    top: `${dropdownPosition.top}px`,
+                    left: `${dropdownPosition.left}px`,
+                    width: `${dropdownPosition.width}px`
+                  }}
+                >
+                    {loading ? (
+                      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                        Loading users...
+                      </div>
+                    ) : filteredUsers.length === 0 ? (
+                      <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                        No users found
+                      </div>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <button
+                          key={user.id}
+                          type="button"
+                          onClick={() => handleUserSelect(user)}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center">
+                              <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+                            </div>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>,
+                document.body
               )}
               
               <div className="text-sm text-gray-600 dark:text-gray-400">

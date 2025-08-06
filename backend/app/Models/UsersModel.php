@@ -13,7 +13,7 @@ class UsersModel extends Model {
     protected $primaryKey = "user_id";
     protected $allowedFields = [
         'username', 'email', 'password_hash', 'full_name', 'is_verified', 'user_type', 'status',
-        'is_active', 'last_login', 'bio', 'profile_image', 'location', 'gender'
+        'is_active', 'last_login', 'bio', 'profile_image', 'location', 'gender', 'position', 'phone'
     ];
 
     public $votesDb;
@@ -331,8 +331,8 @@ class UsersModel extends Model {
             $offset = ($page - 1) * $limit;
             
             $sql = "SELECT 
-                        user_id, full_name, username, email, user_type AS role, gender,
-                        status, created_at, last_login AS last_activity, profile_image 
+                        user_id AS id, user_id, full_name, full_name as name, username, email, user_type AS role, gender,
+                        status, created_at, last_login AS last_activity, profile_image, position, bio, phone, location
                     FROM users WHERE 1=1";
             $params = [];
 
