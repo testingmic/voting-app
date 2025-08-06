@@ -88,7 +88,12 @@ const AddCandidatePage: React.FC = () => {
   // Handle click outside dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      // Don't close if clicking inside the dropdown itself
+      const target = event.target as Node;
+      const dropdownElement = document.querySelector('[data-dropdown="user-dropdown"]');
+      
+      if (dropdownRef.current && !dropdownRef.current.contains(target) && 
+          dropdownElement && !dropdownElement.contains(target)) {
         setShowUserDropdown(false);
       }
     };
@@ -111,19 +116,26 @@ const AddCandidatePage: React.FC = () => {
   };
 
   const handleUserSelect = (user: UserType) => {
-    console.log('user'); 
-    console.log({user});
     setSelectedUser(user);
     setFormData(prev => ({
       ...prev,
       full_name: user.name,
       email: user.email,
       phone: user.phone || '',
+      position: user.position || '',
       location: user.location || '',
       bio: user.bio || ''
     }));
     setSearchQuery('');
     setShowUserDropdown(false);
+  };
+
+  const handleUserClick = (user: UserType, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTimeout(() => {
+      handleUserSelect(user);
+    }, 10);
   };
 
   const updateDropdownPosition = () => {
@@ -160,21 +172,21 @@ const AddCandidatePage: React.FC = () => {
         email: formData.email,
         phone: formData.phone,
         location: formData.location,
-        photoUrl: previewImage,
+        photoUrl: previewImage || undefined,
+        experience: formData.experience.filter(exp => exp.trim() !== ''),
+        education: formData.education.filter(edu => edu.trim() !== ''),
+        achievements: formData.achievements.filter(achievement => achievement.trim() !== ''),
         socialLinks: {
           linkedin: formData.socialLinks.linkedin,
           twitter: formData.socialLinks.twitter
         },
-        // If a user was selected, you might want to link them
         userId: selectedUser?.id
       };
 
-      // Here you would make the API call to create the candidate
-      // const response = await apiService.createCandidate(candidateData);
-      console.log('Saving candidate:', candidateData);
-      
-      // For now, just navigate back
-      navigate('/candidates');
+      const response = await apiService.createCandidate(candidateData);
+      if(response.status == 'success') {
+        navigate('/candidates');
+      }
     } catch (error) {
       console.error('Failed to create candidate:', error);
       // You might want to show an error message to the user here
@@ -285,6 +297,7 @@ const AddCandidatePage: React.FC = () => {
               {/* Dropdown positioned with fixed positioning */}
               {showUserDropdown && !selectedUser && createPortal(
                 <div 
+                  data-dropdown="user-dropdown"
                   className="fixed bg-white dark:bg-dark-300 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-[9999] max-h-60 overflow-y-auto"
                   style={{
                     top: `${dropdownPosition.top}px`,
@@ -305,7 +318,7 @@ const AddCandidatePage: React.FC = () => {
                         <button
                           key={user.id}
                           type="button"
-                          onClick={() => handleUserSelect(user)}
+                          onClick={(e) => handleUserClick(user, e)}
                           className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0"
                         >
                           <div className="flex items-center space-x-3">

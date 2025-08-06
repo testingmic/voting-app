@@ -495,7 +495,7 @@ class Users extends LoadController {
         $this->payload['full_name'] = $this->payload['name'] ?? ($this->payload['full_name'] ?? null);
 
         // update the user gender, full name, and location
-        foreach(['gender', 'full_name', 'location', 'bio'] as $item) {
+        foreach(['gender', 'full_name', 'location', 'bio', 'position', 'phone'] as $item) {
             // update the user gender
             if(!empty($this->payload[$item])) {
                 $payload[$item] = $this->payload[$item];

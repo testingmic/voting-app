@@ -6,6 +6,7 @@ export interface User {
   location?: string;
   timezone?: string;
   bio?: string;
+  position?: string;
   organization?: string;
   role: 'admin' | 'voter' | 'user';
   avatar?: string;
@@ -143,12 +144,19 @@ export interface CreateCandidateData {
   name: string;
   position: string;
   bio: string;
+  email: string;
+  phone: string;
+  location: string;
   manifesto?: string;
   photoUrl?: string;
+  experience?: string[];
+  education?: string[];
+  achievements?: string[];
   socialLinks?: {
     twitter?: string;
     linkedin?: string;
     website?: string;
   };
-  electionId: number;
+  electionId?: number;
+  userId?: number;
 } 
