@@ -24,6 +24,7 @@ import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import apiService from '../services/api';
 import { User as UserType } from '../types';
+import toast from 'react-hot-toast';
 
 const AddCandidatePage: React.FC = () => {
   const navigate = useNavigate();
@@ -188,8 +189,7 @@ const AddCandidatePage: React.FC = () => {
         navigate('/candidates');
       }
     } catch (error) {
-      console.error('Failed to create candidate:', error);
-      // You might want to show an error message to the user here
+      console.log((error as any).message);
     }
   };
 
