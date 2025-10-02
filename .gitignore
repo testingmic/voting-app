@@ -84,7 +84,7 @@ backend/writable/session/*
 backend/writable/uploads/*
 !backend/writable/uploads/index.html
 backend/writable/cache/throttl*
-# pnpm-lock.yaml
+# pnpm-lock.yamlD
 package-lock.json
 
 backend/public/assets/uploads/*
