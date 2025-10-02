@@ -16,13 +16,15 @@ class AuthValidation {
                 'pin' => 'required|max_length[6]|numeric'
             ]
         ],
-        'register' => [
+        'signup' => [
             'method' => 'POST',
             'payload' => [
-                'full_name' => 'required|max_length[100]',
+                'name' => 'required|max_length[100]',
+                'organizationName' => 'required|max_length[100]',
+                'organizationType' => 'required|in_list[school,church,organization]',
                 'email' => 'required|valid_email|max_length[100]',
                 'password' => 'required|valid_password|min_length[8]|max_length[32]',
-                'password_confirm' => 'required|matches[password]',
+                'confirmPassword' => 'required|matches[password]',
             ]
         ],
         'confirm' => [

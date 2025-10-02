@@ -18,6 +18,8 @@ $databases = [
         position TEXT,
         user_type TEXT DEFAULT 'user',
         location TEXT DEFAULT NULL,
+        organization_name TEXT DEFAULT NULL,
+        organization_type TEXT DEFAULT NULL,
         two_factor_setup BOOLEAN DEFAULT 0,
         profile_image TEXT,
         status TEXT DEFAULT 'active',
@@ -62,8 +64,8 @@ $databases = [
 
 // alter tables
 $alterTables = [
-    "ALTER TABLE users ADD COLUMN phone TEXT",
-    "ALTER TABLE users ADD COLUMN position TEXT",
+    "ALTER TABLE users ADD COLUMN organization_name TEXT",
+    "ALTER TABLE users ADD COLUMN organization_type TEXT",
 ];
 
 function createDatabaseStructure() {

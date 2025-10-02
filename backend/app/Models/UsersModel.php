@@ -12,8 +12,9 @@ class UsersModel extends Model {
     protected $table;
     protected $primaryKey = "user_id";
     protected $allowedFields = [
-        'username', 'email', 'password_hash', 'full_name', 'is_verified', 'user_type', 'status',
-        'is_active', 'last_login', 'bio', 'profile_image', 'location', 'gender', 'position', 'phone'
+        'username', 'email', 'password_hash', 'full_name', 'is_verified', 'user_type', 'status', 
+        'organization_name', 'organization_type', 'is_active', 'last_login', 'bio', 'profile_image', 
+        'location', 'gender', 'position', 'phone'
     ];
 
     public $votesDb;

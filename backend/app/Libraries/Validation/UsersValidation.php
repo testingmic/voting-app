@@ -12,6 +12,11 @@ class UsersValidation {
                 'limit' => 'permit_empty|integer',
             ]
         ],
+        'activities' => [
+            'method' => 'GET', 
+            'authenticate' => true,
+            'payload' => []
+        ],
         'view:user_id' => [
             'method' => 'GET',
             'authenticate' => true,

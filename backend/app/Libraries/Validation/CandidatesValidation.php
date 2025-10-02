@@ -12,11 +12,11 @@ class CandidatesValidation {
                 'limit' => 'permit_empty|integer',
             ]
         ],
-        'view:user_id' => [
+        'view:candidate_id' => [
             'method' => 'GET',
             'authenticate' => true,
             'payload' => [
-                'user_id' => 'required|integer',
+                'candidate_id' => 'required|integer',
             ]
         ],
         'create' => [
@@ -24,21 +24,30 @@ class CandidatesValidation {
             'authenticate' => true,
             'is_admin' => true,
             'payload' => [
-                'full_name' => 'required|max_length[100]',
+                'name' => 'required|max_length[100]',
                 'email' => 'required|valid_email|max_length[100]',
-                'password' => 'required|valid_password|min_length[8]|max_length[32]',
-                'status' => 'required|string|in_list[active,inactive,blocked,pending,suspended]',
+                'achievements' => 'permit_empty|is_array',
+                'education' => 'permit_empty|is_array',
+                'experience' => 'permit_empty|is_array',
+                'socialLinks' => 'permit_empty|is_array'
             ]
         ],
-        'update:user_id' => [
+        'update:candidate_id' => [
             'method' => 'POST,PUT',
             'authenticate' => true,
             'payload' => [
-                'user_id' => 'required|integer',
-                'name' => 'string|max_length[32]',
-                'gender' => 'string|in_list[Male,Female,Other]',
-                'setting' => 'string|max_length[100]',
-                'value' => 'max_length[100]',
+                'candidate_id' => 'required|numeric',
+                'achievements' => 'permit_empty|is_array',
+                'education' => 'permit_empty|is_array',
+                'experience' => 'permit_empty|is_array',
+                'socialLinks' => 'permit_empty|is_array'
+            ]
+        ],
+        'delete:candidate_id' => [
+            'method' => 'DELETE',
+            'authenticate' => true,
+            'payload' => [
+                'candidate_id' => 'required|integer',
             ]
         ]
     ];

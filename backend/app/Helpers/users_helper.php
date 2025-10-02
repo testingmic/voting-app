@@ -255,13 +255,35 @@ function thin_profile($userProfile) {
 }
 
 /**
- * Is instructor
+ * Is isCandidate
  * 
  * @param array $currentUser
  * 
  * @return bool
  */
-function is_moderator($currentUser, $key = 'isModerator') {
+function is_candidate($currentUser, $key = 'isCandidate') {
+    return (bool) !empty($currentUser[$key]);
+}
+
+/**
+ * Is isOfficer
+ * 
+ * @param array $currentUser
+ * 
+ * @return bool
+ */
+function is_officer($currentUser, $key = 'isOfficer') {
+    return (bool) !empty($currentUser[$key]);
+}
+
+/**
+ * Is some admin
+ * 
+ * @param array $currentUser
+ * 
+ * @return bool
+ */
+function hasSomeAdmin($currentUser, $key = 'someAdmin') {
     return (bool) !empty($currentUser[$key]);
 }
 
@@ -273,7 +295,7 @@ function is_moderator($currentUser, $key = 'isModerator') {
  * @return bool
  */
 function is_admin_or_moderator($currentUser) {
-    return is_admin($currentUser) || is_moderator($currentUser);
+    return is_admin($currentUser) || is_candidate($currentUser);
 }
 
 /**

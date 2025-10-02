@@ -58,11 +58,11 @@ class ApiService {
   }
 
   private handleError(error: any) {
-    let errorMessage = error.response.data.data;
-    for (const field in errorMessage) {
-      const message = errorMessage[field];
-      toast.error(message);
-    }
+    // let errorMessage = error.response.data.data;
+    // for (const field in errorMessage) {
+    //   const message = errorMessage[field];
+    //   toast.error(message);
+    // }
   }
 
   // Authentication
@@ -102,7 +102,7 @@ class ApiService {
   // Elections
   async getElections(): Promise<ApiResponse<Election[]>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election[]>> = await this.api.get('/elections');
+      const response: AxiosResponse<ApiResponse<Election[]>> = await this.api.get('/elections?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -112,7 +112,7 @@ class ApiService {
 
   async getElection(id: number): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.get(`/elections/${id}`);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.get(`/elections/${id}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -122,7 +122,7 @@ class ApiService {
 
   async createElection(data: CreateElectionData): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post('/elections', data);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post('/elections?token=' + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -132,7 +132,7 @@ class ApiService {
 
   async updateElection(id: number, data: Partial<CreateElectionData>): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.put(`/elections/${id}`, data);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.put(`/elections/${id}?token=` + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -142,7 +142,7 @@ class ApiService {
 
   async deleteElection(id: number): Promise<ApiResponse<void>> {
     try {
-      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete(`/elections/${id}`);
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete(`/elections/${id}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -152,7 +152,7 @@ class ApiService {
 
   async pauseElection(id: number): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/pause`);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/pause?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -162,7 +162,7 @@ class ApiService {
 
   async resumeElection(id: number): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/resume`);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/resume?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -172,7 +172,7 @@ class ApiService {
 
   async closeElection(id: number): Promise<ApiResponse<Election>> {
     try {
-      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/close`);
+      const response: AxiosResponse<ApiResponse<Election>> = await this.api.post(`/elections/${id}/close?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -184,7 +184,7 @@ class ApiService {
   async getCandidates(electionId?: number): Promise<ApiResponse<Candidate[]>> {
     try {
       const url = electionId ? `/candidates?electionId=${electionId}` : '/candidates';
-      const response: AxiosResponse<ApiResponse<Candidate[]>> = await this.api.get(url);
+      const response: AxiosResponse<ApiResponse<Candidate[]>> = await this.api.get(url + '?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -194,7 +194,7 @@ class ApiService {
 
   async getCandidate(id: number): Promise<ApiResponse<Candidate>> {
     try {
-      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.get(`/candidates/${id}`);
+      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.get(`/candidates/${id}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.data || 'Failed to fetch candidate');
@@ -203,7 +203,7 @@ class ApiService {
 
   async createCandidate(data: CreateCandidateData): Promise<ApiResponse<Candidate>> {
     try {
-      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.post('/candidates', data);
+      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.post('/candidates?token=' + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -213,7 +213,7 @@ class ApiService {
 
   async updateCandidate(id: number, data: Partial<CreateCandidateData>): Promise<ApiResponse<Candidate>> {
     try {
-      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.put(`/candidates/${id}`, data);
+      const response: AxiosResponse<ApiResponse<Candidate>> = await this.api.put(`/candidates/${id}?token=` + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.data || 'Failed to update candidate');
@@ -222,7 +222,7 @@ class ApiService {
 
   async deleteCandidate(id: number): Promise<ApiResponse<void>> {
     try {
-      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete(`/candidates/${id}`);
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete(`/candidates/${id}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       throw new Error(error.response.data.data || 'Failed to delete candidate');
@@ -233,6 +233,7 @@ class ApiService {
   async castVote(electionId: number, candidateId: number, deviceFingerprint: string): Promise<ApiResponse<Vote>> {
     try {
       const response: AxiosResponse<ApiResponse<Vote>> = await this.api.post('/votes', {
+        token: localStorage.getItem('authToken'),
         electionId,
         candidateId,
         deviceFingerprint,
@@ -246,7 +247,7 @@ class ApiService {
 
   async getVoteStatus(electionId: number): Promise<ApiResponse<{ hasVoted: boolean; votedFor?: number }>> {
     try {
-      const response: AxiosResponse<ApiResponse<{ hasVoted: boolean; votedFor?: number }>> = await this.api.get(`/votes/status/${electionId}`);
+      const response: AxiosResponse<ApiResponse<{ hasVoted: boolean; votedFor?: number }>> = await this.api.get(`/votes/status/${electionId}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -257,7 +258,7 @@ class ApiService {
   // Analytics
   async getAnalytics(electionId: number): Promise<ApiResponse<Analytics>> {
     try {
-      const response: AxiosResponse<ApiResponse<Analytics>> = await this.api.get(`/analytics/${electionId}`);
+      const response: AxiosResponse<ApiResponse<Analytics>> = await this.api.get(`/analytics/${electionId}?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -268,7 +269,7 @@ class ApiService {
   // Notifications
   async getNotifications(): Promise<ApiResponse<Notification[]>> {
     try {
-      const response: AxiosResponse<ApiResponse<Notification[]>> = await this.api.get('/notifications');
+      const response: AxiosResponse<ApiResponse<Notification[]>> = await this.api.get('/notifications?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -278,7 +279,7 @@ class ApiService {
 
   async markNotificationAsRead(id: number): Promise<ApiResponse<void>> {
     try {
-      const response: AxiosResponse<ApiResponse<void>> = await this.api.put(`/notifications/${id}/read`);
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.put(`/notifications/${id}/read?token=` + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -289,7 +290,7 @@ class ApiService {
   // Users
   async getUsers(): Promise<ApiResponse<any | []>> {
     try {
-      const response: AxiosResponse<ApiResponse<any | []>> = await this.api.get('/users');
+      const response: AxiosResponse<ApiResponse<any | []>> = await this.api.get('/users?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -298,19 +299,35 @@ class ApiService {
   }
 
   // User Profile
-  async getUserProfile(): Promise<ApiResponse<User>> {
+  async getUserProfile(): Promise<ApiResponse<any | []>> {
     try {
-      const response: AxiosResponse<ApiResponse<User>> = await this.api.get('/user/profile');
+      const response: AxiosResponse<ApiResponse<any | []>> = await this.api.get('/users/profile?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
-      this.handleError(error);
-      throw new Error(error.response?.data?.data || 'Failed to fetch user profile');
+      return {
+        success: false,
+        message: 'Failed to fetch user profile',
+        data: []
+      };
+    }
+  }
+
+  async getUserActivities(): Promise<ApiResponse<any | []>> {
+    try {
+      const response: AxiosResponse<ApiResponse<any | []>> = await this.api.get('/users/activities?token=' + localStorage.getItem('authToken'));
+      return response.data;
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Failed to fetch user activities',
+        data: []
+      };
     }
   }
 
   async updateUserProfile(data: Partial<User>): Promise<ApiResponse<User>> {
     try {
-      const response: AxiosResponse<ApiResponse<User>> = await this.api.put('/user/profile', data);
+      const response: AxiosResponse<ApiResponse<User>> = await this.api.put('/user/profile?token=' + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -321,7 +338,7 @@ class ApiService {
   // Organization
   async getOrganization(): Promise<ApiResponse<Organization>> {
     try {
-      const response: AxiosResponse<ApiResponse<Organization>> = await this.api.get('/organization');
+      const response: AxiosResponse<ApiResponse<Organization>> = await this.api.get('/organization?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -331,7 +348,7 @@ class ApiService {
 
   async updateOrganization(data: Partial<Organization>): Promise<ApiResponse<Organization>> {
     try {
-      const response: AxiosResponse<ApiResponse<Organization>> = await this.api.put('/organization', data);
+      const response: AxiosResponse<ApiResponse<Organization>> = await this.api.put('/organization?token=' + localStorage.getItem('authToken'), data);
       return response.data;
     } catch (error: any) {
       this.handleError(error);
@@ -376,7 +393,7 @@ class ApiService {
       const formData = new FormData();
       formData.append('logo', logoFile);
       
-      const response: AxiosResponse<ApiResponse<{ logoUrl: string }>> = await this.api.put('/organization', formData, {
+      const response: AxiosResponse<ApiResponse<{ logoUrl: string }>> = await this.api.put('/organization?token=' + localStorage.getItem('authToken'), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -390,7 +407,7 @@ class ApiService {
 
   async removeOrganizationLogo(): Promise<ApiResponse<void>> {
     try {
-      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete('/organization/removelogo');
+      const response: AxiosResponse<ApiResponse<void>> = await this.api.delete('/organization/removelogo?token=' + localStorage.getItem('authToken'));
       return response.data;
     } catch (error: any) {
       this.handleError(error);

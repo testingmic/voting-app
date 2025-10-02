@@ -218,7 +218,7 @@ class Auth extends LoadController {
      * 
      * @return array
      */
-    public function register() {
+    public function signup() {
 
         // check if the email is valid
         if(!isValidEmail($this->payload['email'])) {
@@ -235,7 +235,9 @@ class Auth extends LoadController {
             'username' => $this->payload['email'],
             'email' => $this->payload['email'],
             'password_hash' => hash_password($this->payload['password']),
-            'full_name' => $this->payload['full_name'],
+            'full_name' => $this->payload['name'],
+            'organization_name' => $this->payload['organizationName'],
+            'organization_type' => $this->payload['organizationType'],
             'is_verified' => 0,
             'is_active' => 1,
             'user_type' => 'user',
@@ -570,7 +572,11 @@ class Auth extends LoadController {
         }
 
         $getRecord['isAdmin'] = $getRecord['user_type'] == 'admin';
-        $getRecord['isModerator'] = $getRecord['user_type'] == 'moderator';
+        $getRecord['isCandidate'] = $getRecord['user_type'] == 'candidate';
+        $getRecord['isOfficer'] = $getRecord['user_type'] == 'officer';
+        $getRecord['isCommissioner'] = $getRecord['user_type'] == 'commissioner';
+
+        $getRecord['someAdmin'] = in_array($getRecord['user_type'], ['admin', 'candidate', 'commissioner']);
 
         // decode the statistics
         $getRecord['statistics'] = !empty($getRecord['statistics']) ? json_decode($getRecord['statistics'], true) : [];

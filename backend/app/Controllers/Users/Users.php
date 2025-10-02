@@ -62,6 +62,16 @@ class Users extends LoadController {
     }
 
     /**
+     * Get user activities
+     * 
+     * @return array
+     */
+    public function activities()
+    {
+        return Routing::success([]);
+    }
+
+    /**
      * Get user statistics
      * 
      * @return array

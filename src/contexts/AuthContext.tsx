@@ -5,6 +5,8 @@ import apiService from '../services/api';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  loadUser: () => Promise<any | []>;
+  getUserActivities: () => Promise<any | []>;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   signup: (data: any) => Promise<void>;
   logout: () => Promise<void>;
@@ -47,6 +49,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     setLoading(false);
   }, []);
+
+  const loadUser = async () => {
+    return await apiService.getUserProfile();
+  };
+
+  const getUserActivities = async () => {
+    return await apiService.getUserActivities();
+  };
 
   const login = async (email: string, password: string, rememberMe = false) => {
     try {
@@ -121,6 +131,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     loading,
+    loadUser,
+    getUserActivities,
     login,
     signup,
     logout,

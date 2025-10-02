@@ -24,16 +24,24 @@ import {
 import GlassCard from '../components/ui/GlassCard';
 import { GlassCardBody } from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const ProfilePage: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, loadUser } = useAuth();
+  const { getUserActivities } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
+
+  // let user = null;
+  const getUser = async () => {
+    const response = await loadUser();
+    if (response.status && response.data) {
+      return response.data;
+    }
+  };
 
   // Form states
   const [profileData, setProfileData] = useState({
@@ -64,40 +72,7 @@ const ProfilePage: React.FC = () => {
   ];
 
   // Mock activity data
-  const activities = [
-    {
-      id: 1,
-      type: 'election_created',
-      title: 'Created Student Council Election 2024',
-      description: 'You created a new election with 4 candidates',
-      timestamp: '2024-01-15T10:30:00Z',
-      icon: '🗳️'
-    },
-    {
-      id: 2,
-      type: 'vote_cast',
-      title: 'Vote cast in Church Board Election',
-      description: 'You participated in the church board election',
-      timestamp: '2024-01-20T14:15:00Z',
-      icon: '✅'
-    },
-    {
-      id: 3,
-      type: 'candidate_added',
-      title: 'Added candidate: Sarah Johnson',
-      description: 'You added a new candidate to the election',
-      timestamp: '2024-01-12T09:45:00Z',
-      icon: '👤'
-    },
-    {
-      id: 4,
-      type: 'settings_updated',
-      title: 'Updated security settings',
-      description: 'You enabled two-factor authentication',
-      timestamp: '2024-01-10T16:20:00Z',
-      icon: '🔒'
-    }
-  ];
+  const activities = getUserActivities() || [];
 
   const handleProfileSave = async () => {
     setLoading(true);
@@ -712,7 +687,7 @@ const ProfilePage: React.FC = () => {
               <GlassCardBody>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Recent Activity</h3>
                 <div className="space-y-4">
-                  {activities.map((activity) => (
+                  {/* {activities?.map((activity: any) => (
                     <div
                       key={activity.id}
                       className="flex items-start space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white/50 dark:bg-dark-300/50 hover:bg-gray-50/50 dark:hover:bg-dark-400/50 transition-colors duration-200"
@@ -726,7 +701,7 @@ const ProfilePage: React.FC = () => {
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{formatDate(activity.timestamp)}</p>
                       </div>
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               </GlassCardBody>
             </GlassCard>
